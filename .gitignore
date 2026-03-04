@@ -149,6 +149,11 @@ src/generated/client.ts
 # Claude Code instructions file
 CLAUDE.md
 
+# CodingMachine runtime files
+PROGRESS.md
+.state.json
+.current-prompt.md
+
 # Claude and Serena working directories
 .claude/
 .serena/
