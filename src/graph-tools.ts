@@ -474,6 +474,17 @@ export function registerGraphTools(
         .optional();
     }
 
+    // Override $count description to explain its role in enabling advanced query mode
+    if (paramSchema['count'] !== undefined || paramSchema['$count'] !== undefined) {
+      const countKey = paramSchema['$count'] !== undefined ? '$count' : 'count';
+      paramSchema[countKey] = z
+        .boolean()
+        .describe(
+          'Include count of items in response. IMPORTANT: Set to true to enable advanced query mode (equivalent to ConsistencyLevel: eventual). Required when using complex $filter expressions such as flag/flagStatus, contains() on sender address, or other filters that return InefficientFilter errors without it.'
+        )
+        .optional();
+    }
+
     // Add account parameter for multi-account mode.
     // Layer 2: Account names are surfaced in the description (not as a strict enum) so the LLM
     // sees available accounts upfront without a round-trip, but accounts added mid-session via
