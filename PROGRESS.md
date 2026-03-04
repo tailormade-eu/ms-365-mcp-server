@@ -52,3 +52,11 @@
 - Line 434: added error variable capture and included error details in existing logger.error for invalid regex pattern
 - Key decision: used `logger.debug` for the non-JSON parse (expected/normal flow) vs `logger.error` for the regex failure (actual error)
 - Build verified successfully
+
+## Task 06 - Create CLAUDE.md with architecture and patterns (2026-03-04)
+- Created `CLAUDE.md` in project root documenting full architecture, development workflow, and known quirks
+- Architecture section covers: endpoints.json → graph-tools.ts → MCP tools pipeline, all EndpointConfig fields, auto-pagination (100 pages max), $count=true advanced query mode, discovery mode
+- Adding/improving tools section: how to add llmTip, parameter describe() overrides, adding new endpoints, build commands
+- Known Graph API quirks: consolidated all 20 quirks from audit-report.md into categorized summary (query limitations, mail, calendar, files, planner, teams/chat, onenote, sharepoint)
+- Development section: all npm scripts, entry point flow, key files reference
+- Key decision: kept CLAUDE.md concise and actionable — detailed audit data stays in docs/audit-report.md, CLAUDE.md serves as quick-reference for contributors
