@@ -315,13 +315,6 @@
     "llmTip": "Returns the root folder metadata of a drive. Use this to get the root driveItem-id for listing children with list-folder-files. Prefer item IDs over paths for reliability in subsequent operations."
   },
   {
-    "pathPattern": "/drives/{drive-id}/root",
-    "method": "get",
-    "toolName": "get-root-folder",
-    "scopes": ["Files.Read"],
-    "llmTip": "Duplicate of get-drive-root-item — prefer using get-drive-root-item instead. Returns the root folder metadata of a drive."
-  },
-  {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/children",
     "method": "get",
     "toolName": "list-folder-files",
