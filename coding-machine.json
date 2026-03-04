@@ -3,7 +3,7 @@
   "projectPath": "D:/source/repos/Tailormade/Tailormade.Ms365Mcp",
   "mode": "serial",
   "branching": {
-    "enabled": true,
+    "enabled": false,
     "strategy": "per_session",
     "autoMerge": false,
     "sessionBranch": null

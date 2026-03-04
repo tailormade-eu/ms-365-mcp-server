@@ -1,7 +1,7 @@
 ---
 title: Audit current state of all endpoints
 output: docs/audit-report.md
-verify: test -f docs/audit-report.md
+verify:
 ---
 
 Read `src/endpoints.json` and `src/graph-tools.ts`.

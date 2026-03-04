@@ -474,13 +474,63 @@ export function registerGraphTools(
         .optional();
     }
 
-    // Override $count description to explain its role in enabling advanced query mode
+    // Override OData parameter descriptions with informative guidance
+    if (paramSchema['filter'] !== undefined || paramSchema['$filter'] !== undefined) {
+      const key = paramSchema['$filter'] !== undefined ? '$filter' : 'filter';
+      paramSchema[key] = z
+        .string()
+        .describe(
+          'OData filter expression. Add $count=true for advanced filters (flag/flagStatus, contains()). Cannot combine with $search.'
+        )
+        .optional();
+    }
+    if (paramSchema['search'] !== undefined || paramSchema['$search'] !== undefined) {
+      const key = paramSchema['$search'] !== undefined ? '$search' : 'search';
+      paramSchema[key] = z
+        .string()
+        .describe(
+          'KQL search query, wrap in double quotes. Cannot combine with $filter. Example: "from:john@example.com subject:meeting"'
+        )
+        .optional();
+    }
+    if (paramSchema['select'] !== undefined || paramSchema['$select'] !== undefined) {
+      const key = paramSchema['$select'] !== undefined ? '$select' : 'select';
+      paramSchema[key] = z
+        .string()
+        .describe(
+          'Comma-separated fields to return. Always use to reduce response size. Example: id,subject,from,receivedDateTime'
+        )
+        .optional();
+    }
+    if (paramSchema['orderby'] !== undefined || paramSchema['$orderby'] !== undefined) {
+      const key = paramSchema['$orderby'] !== undefined ? '$orderby' : 'orderby';
+      paramSchema[key] = z
+        .string()
+        .describe('Sort expression. Example: receivedDateTime desc')
+        .optional();
+    }
+    if (paramSchema['top'] !== undefined || paramSchema['$top'] !== undefined) {
+      const key = paramSchema['$top'] !== undefined ? '$top' : 'top';
+      paramSchema[key] = z
+        .number()
+        .describe(
+          'Max items per page (default varies, max 999 for mail). Server auto-paginates via nextLink.'
+        )
+        .optional();
+    }
+    if (paramSchema['skip'] !== undefined || paramSchema['$skip'] !== undefined) {
+      const key = paramSchema['$skip'] !== undefined ? '$skip' : 'skip';
+      paramSchema[key] = z
+        .number()
+        .describe('Items to skip for manual pagination. Not supported with $search.')
+        .optional();
+    }
     if (paramSchema['count'] !== undefined || paramSchema['$count'] !== undefined) {
       const countKey = paramSchema['$count'] !== undefined ? '$count' : 'count';
       paramSchema[countKey] = z
         .boolean()
         .describe(
-          'Include count of items in response. IMPORTANT: Set to true to enable advanced query mode (equivalent to ConsistencyLevel: eventual). Required when using complex $filter expressions such as flag/flagStatus, contains() on sender address, or other filters that return InefficientFilter errors without it.'
+          'Set true to enable advanced query mode (ConsistencyLevel: eventual). Required for complex $filter expressions like flag/flagStatus or contains().'
         )
         .optional();
     }

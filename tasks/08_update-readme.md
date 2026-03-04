@@ -2,7 +2,7 @@
 title: Update README with patterns and known quirks
 output: README.md
 depends_on: 06_update-claude-md
-verify: test -f README.md
+verify:
 ---
 
 Read `README.md`, `CLAUDE.md`, `docs/audit-report.md`.

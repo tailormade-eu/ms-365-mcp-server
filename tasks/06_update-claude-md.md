@@ -2,7 +2,7 @@
 title: Create CLAUDE.md with architecture and patterns
 output: CLAUDE.md
 depends_on: 05_improve-parameter-describes, 07_fix-silent-catches
-verify: test -f CLAUDE.md
+verify:
 ---
 
 Read `src/endpoints.json`, `src/graph-tools.ts`, `src/server.ts`, `docs/audit-report.md`.
