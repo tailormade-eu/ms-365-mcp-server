@@ -45,3 +45,10 @@
 - Replaced the existing verbose $count override with a shorter, consistent version matching the other params
 - All overrides use the same key-detection pattern (checking both `name` and `$name` variants) for robustness
 - Build verified successfully
+
+## Task 07 - Fix silent catch blocks (2026-03-04)
+- Fixed 2 empty catch blocks in graph-tools.ts that violated the "no silent catch" guideline
+- Line 387: added `logger.debug('Non-JSON response, skipping parse')` to JSON parse catch
+- Line 434: added error variable capture and included error details in existing logger.error for invalid regex pattern
+- Key decision: used `logger.debug` for the non-JSON parse (expected/normal flow) vs `logger.error` for the regex failure (actual error)
+- Build verified successfully

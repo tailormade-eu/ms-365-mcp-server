@@ -385,7 +385,7 @@ async function executeGraphTool(
           logger.info(`Response has pagination nextLink: ${jsonResponse['@odata.nextLink']}`);
         }
       } catch {
-        // Non-JSON response
+        logger.debug('Non-JSON response, skipping parse');
       }
     }
 
@@ -431,8 +431,8 @@ export function registerGraphTools(
     try {
       enabledToolsRegex = new RegExp(enabledToolsPattern, 'i');
       logger.info(`Tool filtering enabled with pattern: ${enabledToolsPattern}`);
-    } catch {
-      logger.error(`Invalid tool filter regex pattern: ${enabledToolsPattern}. Ignoring filter.`);
+    } catch (e) {
+      logger.error(`Invalid tool filter regex pattern: ${enabledToolsPattern}. Ignoring filter. Error: ${e}`);
     }
   }
 
