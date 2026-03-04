@@ -146,10 +146,8 @@ openapi
 src/generated/client.ts
 **/.claude/settings.local.json
 
-# Claude Code instructions file
-CLAUDE.md
-
-# CodingMachine runtime files
+# CodingMachine runtime files (local only — contains machine-specific paths)
+coding-machine.json
 PROGRESS.md
 .state.json
 .current-prompt.md
