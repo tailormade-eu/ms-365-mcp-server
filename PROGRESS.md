@@ -67,3 +67,9 @@
 - Key decision: kept it concise and user-facing (not developer-facing like CLAUDE.md) — shows practical examples with code blocks
 - Flag status values documented: flagged, complete, notFlagged
 - Well-known folder IDs listed: inbox, drafts, sentitems, deleteditems, junkemail, archive, flaggedItems
+
+## Task 09 - Add unit tests for critical Graph API tool logic (2026-03-04)
+- Created `src/__tests__/graph-tools.test.ts` with 7 tests covering 5 critical areas
+- Tests: $count query mode (ConsistencyLevel header), fetchAllPages pagination (nextLink following + 100-page limit), OData parameter describe() overrides ($filter/$search/$select/$orderby/$count), returnDownloadUrl (/content path stripping), supportsTimezone (Prefer header + schema injection)
+- Key decisions: mocked GraphClient, generated client (api.endpoints), fs.readFileSync (endpoints.json), and McpServer to isolate graph-tools.ts logic; used vi.resetModules() per test to re-import with fresh mocks
+- Note: `npm run generate` must be run first — `src/generated/client.ts` is gitignored but required for vitest to resolve the module import

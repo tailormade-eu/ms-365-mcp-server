@@ -6,5 +6,6 @@
   "06_update-claude-md": 2,
   "07_fix-silent-catches": 2,
   "08_update-readme": 2,
-  "01_audit-current-state": 2
+  "01_audit-current-state": 2,
+  "09_tests": 2
 }
