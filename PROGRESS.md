@@ -60,3 +60,10 @@
 - Known Graph API quirks: consolidated all 20 quirks from audit-report.md into categorized summary (query limitations, mail, calendar, files, planner, teams/chat, onenote, sharepoint)
 - Development section: all npm scripts, entry point flow, key files reference
 - Key decision: kept CLAUDE.md concise and actionable — detailed audit data stays in docs/audit-report.md, CLAUDE.md serves as quick-reference for contributors
+
+## Task 08 - Update README with patterns and known quirks (2026-03-04)
+- Added "Graph API Tips & Known Quirks" section to README.md, placed before Contributing
+- Covers 5 topics: advanced query mode ($count=true), $filter vs $search mutual exclusion, flagged mail best practice, update-mail-message body format, well-known folder IDs
+- Key decision: kept it concise and user-facing (not developer-facing like CLAUDE.md) — shows practical examples with code blocks
+- Flag status values documented: flagged, complete, notFlagged
+- Well-known folder IDs listed: inbox, drafts, sentitems, deleteditems, junkemail, archive, flaggedItems
