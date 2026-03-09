@@ -161,3 +161,7 @@ PROGRESS.md
 
 # Finder metadata files
 .DS_Store
+
+# CodingMachine workspace
+tasks/
+PROGRESS.md
