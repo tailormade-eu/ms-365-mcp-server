@@ -440,7 +440,7 @@
     "method": "get",
     "toolName": "list-todo-task-lists",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Lists all To Do task lists. Use $select=id,displayName to reduce response size. Returns todoTaskList-id needed for all task operations. The default list is typically called 'Tasks'."
+    "llmTip": "Lists all To Do task lists. Returns todoTaskList-id needed for all task operations. The default list is typically called 'Tasks'. NOTE: $select is NOT supported by this endpoint — do not pass select parameter, Graph returns 400."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks",
