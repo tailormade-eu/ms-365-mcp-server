@@ -780,6 +780,28 @@
     "llmTip": "Microsoft Search across M365 content. Body format: {\"requests\": [{\"entityTypes\": [\"message\"], \"query\": {\"queryString\": \"budget report\"}, \"from\": 0, \"size\": 25}]}. Supported entityTypes: 'message' (email), 'event' (calendar), 'driveItem' (files), 'site' (SharePoint), 'listItem' (SharePoint lists), 'chatMessage' (Teams). queryString uses KQL syntax: 'from:user@example.com', 'subject:meeting', 'filetype:pdf', 'path:\"sitename\"'. Can search multiple entity types in one request by adding more objects to the requests array. Results include hitsContainers with hits and hitHighlights. Maximum size: 25 for messages/events, 500 for driveItems."
   },
   {
+    "pathPattern": "/me/onlineMeetings",
+    "method": "get",
+    "toolName": "list-online-meetings",
+    "workScopes": ["OnlineMeetings.Read"],
+    "llmTip": "List online meetings. Use $filter=joinWebUrl eq '{url}' to find a specific meeting by its Teams join link. Returns meeting IDs needed for transcript access."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts",
+    "method": "get",
+    "toolName": "list-meeting-transcripts",
+    "workScopes": ["OnlineMeetingTranscript.Read.All"],
+    "llmTip": "Lists available transcripts for a meeting. Get the meeting ID first via list-online-meetings."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts/{callTranscript-id}/content",
+    "method": "get",
+    "toolName": "get-meeting-transcript-content",
+    "workScopes": ["OnlineMeetingTranscript.Read.All"],
+    "acceptType": "text/vtt",
+    "llmTip": "Returns the transcript content in WebVTT format with speaker identification and timestamps."
+  },
+  {
     "pathPattern": "/groups/{group-id}/conversations",
     "method": "get",
     "toolName": "list-group-conversations",
