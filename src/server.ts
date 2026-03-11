@@ -6,6 +6,7 @@ import express, { Request, Response } from 'express';
 import logger, { enableConsoleLogging } from './logger.js';
 import { registerAuthTools } from './auth-tools.js';
 import { registerGraphTools, registerDiscoveryTools } from './graph-tools.js';
+import { registerCustomTools } from './custom-tools.js';
 import GraphClient from './graph-client.js';
 import AuthManager, { buildScopesFromEndpoints } from './auth.js';
 import { MicrosoftOAuthProvider } from './oauth-provider.js';
@@ -73,6 +74,8 @@ class MicrosoftGraphServer {
     if (shouldRegisterAuthTools) {
       registerAuthTools(server, this.authManager);
     }
+
+    registerCustomTools(server, this.graphClient!, this.authManager);
 
     if (this.options.discovery) {
       registerDiscoveryTools(
