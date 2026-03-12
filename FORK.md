@@ -7,20 +7,12 @@ Fork van [softeria/ms-365-mcp-server](https://github.com/softeria/ms-365-mcp-ser
 | PR | Status | Wat |
 |----|--------|-----|
 | [#259](https://github.com/softeria/ms-365-mcp-server/pull/259) | 🟡 OPEN | llmTips, OData describe overrides, Windows chmod fix, tests, README tips |
+| [#269](https://github.com/softeria/ms-365-mcp-server/pull/269) | 🟡 OPEN | Bug fixes: OData param encoding, path param injection, ImmutableId header |
+| [#270](https://github.com/softeria/ms-365-mcp-server/pull/270) | 🟡 OPEN | docs: llmTips voor todo endpoints ($select niet supported) |
 
 ## Fixes — klaar voor upstream PR (nog geen PR)
 
-| Commit | Wat | Prioriteit |
-|--------|-----|-----------|
-| `05384c6` | fix: preserve literal commas in OData query param values | Hoog |
-| `dc72275` | fix: don't URL-encode query param keys ($ in $select, $filter) | Hoog |
-| `75829f0` | fix: auto-inject missing path params from tool.path into paramSchema | Hoog |
-| `bfc0d9c` | fix: kebab-case path params (message-id → messageId) | Hoog |
-| `8493f80` | fix: Prefer IdType=ImmutableId header (prevents RequestBroker errors) | Hoog |
-| `685facb` | docs: $select not supported on get-todo-task (llmTip) | Medium |
-| `1f936bb` | docs: $select not supported on list-todo-tasks (llmTip) | Medium |
-| `2c28fac` | docs: $select not supported on list-todo-task-lists (llmTip) | Medium |
-| `0b029e2` + `dd3f3e8` | test: unit tests voor path param + kebab-case normalisatie | Medium |
+*(leeg — alles ingediend)*
 
 ## Fork-only (NIET naar upstream)
 
@@ -42,9 +34,7 @@ git log HEAD..upstream/main          # nieuwe upstream commits
 git log upstream/main..HEAD          # onze commits bovenop upstream
 ```
 
-**Laatste sync:** upstream was op `66dcdca` toen wij onze branch maakten.
-**Upstream nu:** `8498efe` (v0.45.2 — 4 nieuwe commits, inc. token cache fix + online meeting tools).
-**Actie nodig:** merge of rebase op `upstream/main`.
+**Laatste sync:** 2026-03-12 — merged upstream v0.45.2 (`8498efe`).
 
 ## Changelog (Tailormade additions)
 
