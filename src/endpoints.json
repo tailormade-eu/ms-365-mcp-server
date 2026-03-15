@@ -457,6 +457,20 @@
     "llmTip": "Returns a single To Do task. NOTE: $select is NOT supported — do not pass select parameter, Graph returns RequestBroker--ParseUri (400). Use $expand=linkedResources to include linked email/resource. Returns body content (HTML format), checklist items, and linked resources."
   },
   {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}",
+    "method": "delete",
+    "toolName": "delete-todo-task-list",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Deletes a To Do task list and all its tasks. Requires todoTaskList-id — use list-todo-task-lists to find it. Cannot delete wellknownListName lists (defaultList, flaggedEmails)."
+  },
+  {
+    "pathPattern": "/me/todo/lists",
+    "method": "post",
+    "toolName": "create-todo-task-list",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Creates a new To Do task list. Body: {\"displayName\": \"Cardoen\"}. Returns the new list including its id — use this id for create-todo-task and other task operations."
+  },
+  {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks",
     "method": "post",
     "toolName": "create-todo-task",

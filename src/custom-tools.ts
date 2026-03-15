@@ -78,7 +78,7 @@ How it works:
 
 Returns: [{id, subject, from, received}]
 
-⚠️ Requires env vars: MS365_MCP_CLIENT_ID, MS365_MCP_CLIENT_SECRET, MS365_MCP_TENANT_ID
+⚠️ Requires env vars: EWS_CLIENT_ID, EWS_CLIENT_SECRET, EWS_TENANT_ID
 ⚠️ Azure app needs "full_access_as_app" on Office 365 Exchange Online (not just Graph)
 💡 search filters on subject substring — not full-text body search`,
     {
@@ -102,12 +102,12 @@ Returns: [{id, subject, from, received}]
     },
     async ({ account, search, top }) => {
       try {
-        const clientId = process.env.MS365_MCP_CLIENT_ID;
-        const clientSecret = process.env.MS365_MCP_CLIENT_SECRET;
-        const tenantId = process.env.MS365_MCP_TENANT_ID;
+        const clientId = process.env.EWS_CLIENT_ID;
+        const clientSecret = process.env.EWS_CLIENT_SECRET;
+        const tenantId = process.env.EWS_TENANT_ID;
 
         if (!clientId || !clientSecret || !tenantId) {
-          throw new Error('MS365_MCP_CLIENT_ID, MS365_MCP_CLIENT_SECRET and MS365_MCP_TENANT_ID env vars required');
+          throw new Error('EWS_CLIENT_ID, EWS_CLIENT_SECRET and EWS_TENANT_ID env vars required');
         }
 
         const userEmail = account ?? 'jara@tailormade.eu';
