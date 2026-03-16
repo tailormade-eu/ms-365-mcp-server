@@ -454,7 +454,7 @@
     "method": "get",
     "toolName": "get-todo-task",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Returns a single To Do task. NOTE: $select is NOT supported — do not pass select parameter, Graph returns RequestBroker--ParseUri (400). Use $expand=linkedResources to include linked email/resource. Returns body content (HTML format), checklist items, and linked resources."
+    "llmTip": "Returns a single To Do task. Requires todoTaskList-id and todoTask-id. NOTE: $select is NOT supported — do not pass select parameter, Graph returns RequestBroker--ParseUri (400). Use $expand=linkedResources to include linked email/resource. Returns body content (HTML format) and linked resources. Checklist items are NOT included — use list-todo-checklist-items separately."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}",
@@ -471,18 +471,25 @@
     "llmTip": "Creates a new To Do task list. Body: {\"displayName\": \"Cardoen\"}. Returns the new list including its id — use this id for create-todo-task and other task operations."
   },
   {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}",
+    "method": "patch",
+    "toolName": "update-todo-task-list",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Updates a To Do task list. Requires todoTaskList-id. Pass only properties to update. Example: {\"displayName\": \"New name\"}. Cannot update wellknownListName lists (defaultList, flaggedEmails)."
+  },
+  {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks",
     "method": "post",
     "toolName": "create-todo-task",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "Body format: {\"title\": \"...\", \"importance\": \"normal\", \"dueDateTime\": {\"dateTime\": \"2026-03-04T00:00:00\", \"timeZone\": \"Europe/Brussels\"}, \"body\": {\"contentType\": \"html\", \"content\": \"<p>Details</p>\"}}. IMPORTANT: body field uses HTML contentType, not plain text. Importance values: 'low', 'normal', 'high'. Status defaults to 'notStarted'. Requires todoTaskList-id — use list-todo-task-lists first."
+    "llmTip": "Body format: {\"title\": \"...\", \"importance\": \"normal\", \"dueDateTime\": {\"dateTime\": \"2026-03-04T00:00:00\", \"timeZone\": \"Europe/Brussels\"}, \"body\": {\"contentType\": \"html\", \"content\": \"<p>Details</p>\"}}. IMPORTANT: body field uses HTML contentType, not plain text. Importance values: 'low', 'normal', 'high'. Status defaults to 'notStarted'. Requires todoTaskList-id — use list-todo-task-lists first. NOTE: checklistItems cannot be set via create — use create-todo-checklist-item separately after task creation."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}",
     "method": "patch",
     "toolName": "update-todo-task",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "Pass only properties to update. Example: {\"status\": \"completed\"} to complete a task. IMPORTANT: body field uses HTML contentType: {\"body\": {\"contentType\": \"html\", \"content\": \"<p>Updated</p>\"}}. Status values: 'notStarted', 'inProgress', 'completed', 'waitingOnOthers', 'deferred'. Importance values: 'low', 'normal', 'high'."
+    "llmTip": "Updates a To Do task. Requires todoTaskList-id and todoTask-id. Pass only properties to update. Example: {\"status\": \"completed\"} to complete a task. IMPORTANT: body field uses HTML contentType: {\"body\": {\"contentType\": \"html\", \"content\": \"<p>Updated</p>\"}}. Status values: 'notStarted', 'inProgress', 'completed', 'waitingOnOthers', 'deferred'. Importance values: 'low', 'normal', 'high'. NOTE: checklistItems cannot be updated via PATCH on task — use create/update/delete-todo-checklist-item separately."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems",
@@ -517,7 +524,7 @@
     "method": "delete",
     "toolName": "delete-todo-task",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "Permanently deletes the task. This cannot be undone."
+    "llmTip": "Permanently deletes a To Do task. Requires todoTaskList-id and todoTask-id. This cannot be undone."
   },
   {
     "pathPattern": "/me/planner/tasks",

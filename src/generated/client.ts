@@ -11238,6 +11238,22 @@ resource.`,
     response: z.void()
   },
   {
+    method: 'patch',
+    path: '/me/todo/lists/:todoTaskListId',
+    alias: 'update-todo-task-list',
+    description: `Update the properties of a todoTaskList object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Properties to update`,
+        type: 'Body',
+        schema: microsoft_graph_todoTaskList,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'delete',
     path: '/me/todo/lists/:todoTaskListId',
     alias: 'delete-todo-task-list',
