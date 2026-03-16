@@ -11375,6 +11375,31 @@ resource.`,
   },
   {
     method: 'delete',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
+    alias: 'delete-todo-checklist-item',
+    description: `Delete a checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
+    alias: 'update-todo-checklist-item',
+    description: `Update the properties of a checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Properties to update`,
+        type: 'Body',
+        schema: microsoft_graph_checklistItem,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId',
     alias: 'delete-todo-task',
     description: `Delete a todoTask object.`,

@@ -489,14 +489,28 @@
     "method": "post",
     "toolName": "create-todo-checklist-item",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "Creates a checklist item on a task. Body: {\"displayName\": \"Item text\"}. Returns the new item including its id. Use isChecked to mark as done. Call multiple times to add multiple items."
+    "llmTip": "Creates a checklist item on a task. Body: {\"displayName\": \"Item text\"}. Requires todoTaskList-id and todoTask-id. Returns the new item including its id. Call multiple times to add multiple items. To check off an item, use update-todo-checklist-item."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems",
     "method": "get",
     "toolName": "list-todo-checklist-items",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Lists all checklist items on a task. Returns id, displayName, isChecked, checkedDateTime."
+    "llmTip": "Lists all checklist items on a task. Requires todoTaskList-id and todoTask-id. Returns id, displayName, isChecked, checkedDateTime. Use the id for update or delete operations."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems/{checklistItem-id}",
+    "method": "delete",
+    "toolName": "delete-todo-checklist-item",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Deletes a checklist item from a task. Requires todoTaskList-id, todoTask-id, and checklistItem-id — use list-todo-checklist-items to find the checklistItem-id."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems/{checklistItem-id}",
+    "method": "patch",
+    "toolName": "update-todo-checklist-item",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Updates a checklist item. Requires todoTaskList-id, todoTask-id, and checklistItem-id. Pass only properties to update. Example: {\"isChecked\": true} to check off, {\"displayName\": \"New text\"} to rename."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}",
