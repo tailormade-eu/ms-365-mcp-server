@@ -15,6 +15,7 @@ interface GraphRequestOptions {
   excludeResponse?: boolean;
   accessToken?: string;
   refreshToken?: string;
+  useBeta?: boolean;
 
   [key: string]: unknown;
 }
@@ -156,7 +157,8 @@ class GraphClient {
     options: GraphRequestOptions
   ): Promise<Response> {
     const cloudEndpoints = getCloudEndpoints(this.secrets.cloudType);
-    const url = `${cloudEndpoints.graphApi}/v1.0${endpoint}`;
+    const apiVersion = options.useBeta ? 'beta' : 'v1.0';
+    const url = `${cloudEndpoints.graphApi}/${apiVersion}${endpoint}`;
 
     logger.info(`[GRAPH CLIENT] Final URL being sent to Microsoft: ${url}`);
 

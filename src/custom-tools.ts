@@ -396,4 +396,51 @@ so the join uses normalized subject matching. Emails in non-standard folders
       }
     }
   );
+
+  // ── beta-get (temporary debug tool) ─────────────────────────────────────────
+  server.tool(
+    'beta-get',
+    `Debug tool: GET any Graph endpoint using the /beta API version instead of v1.0.
+Returns the raw JSON response — useful for discovering undocumented properties.`,
+    {
+      endpoint: z
+        .string()
+        .describe('Graph endpoint path, e.g. /me/todo/lists/{id}/tasks/{id}'),
+      account: z
+        .string()
+        .describe('Account email')
+        .optional(),
+    },
+    async ({ endpoint, account }) => {
+      try {
+        const accessToken = account
+          ? await authManager?.getTokenForAccount(account)
+          : undefined;
+
+        const result = await graphClient.makeRequest(endpoint, {
+          accessToken,
+          useBeta: true,
+        });
+
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify({ error: (error as Error).message }),
+            },
+          ],
+          isError: true,
+        };
+      }
+    }
+  );
 }
