@@ -485,6 +485,20 @@
     "llmTip": "Pass only properties to update. Example: {\"status\": \"completed\"} to complete a task. IMPORTANT: body field uses HTML contentType: {\"body\": {\"contentType\": \"html\", \"content\": \"<p>Updated</p>\"}}. Status values: 'notStarted', 'inProgress', 'completed', 'waitingOnOthers', 'deferred'. Importance values: 'low', 'normal', 'high'."
   },
   {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems",
+    "method": "post",
+    "toolName": "create-todo-checklist-item",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Creates a checklist item on a task. Body: {\"displayName\": \"Item text\"}. Returns the new item including its id. Use isChecked to mark as done. Call multiple times to add multiple items."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems",
+    "method": "get",
+    "toolName": "list-todo-checklist-items",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Lists all checklist items on a task. Returns id, displayName, isChecked, checkedDateTime."
+  },
+  {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}",
     "method": "delete",
     "toolName": "delete-todo-task",

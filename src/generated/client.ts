@@ -11349,6 +11349,31 @@ resource.`,
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
+    alias: 'create-todo-checklist-item',
+    description: `Create a new checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New checklist item`,
+        type: 'Body',
+        schema: microsoft_graph_checklistItem,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
+    alias: 'list-todo-checklist-items',
+    description: `Get the checklistItem resources from a todoTask.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
     method: 'delete',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId',
     alias: 'delete-todo-task',
