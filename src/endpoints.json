@@ -454,7 +454,7 @@
     "method": "get",
     "toolName": "get-todo-task",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Returns a single To Do task. Requires todoTaskList-id and todoTask-id. NOTE: $select is NOT supported — do not pass select parameter, Graph returns RequestBroker--ParseUri (400). Use $expand=linkedResources to include linked email/resource. Returns body content (HTML format) and linked resources. Checklist items are NOT included — use list-todo-checklist-items separately."
+    "llmTip": "Returns a single To Do task. Requires todoTaskList-id and todoTask-id. NOTE: $select is NOT supported — do not pass select parameter, Graph returns RequestBroker--ParseUri (400). Use $expand=linkedResources to include linked email/resource inline, or use list-todo-linked-resources separately. Returns body content (HTML format). Checklist items are NOT included — use list-todo-checklist-items separately."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}",
@@ -525,6 +525,83 @@
     "toolName": "delete-todo-task",
     "scopes": ["Tasks.ReadWrite"],
     "llmTip": "Permanently deletes a To Do task. Requires todoTaskList-id and todoTask-id. This cannot be undone."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}",
+    "method": "get",
+    "toolName": "get-todo-task-list",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns a single To Do task list. Requires todoTaskList-id. Returns displayName, wellknownListName, isOwner, isShared. Rarely needed — list-todo-task-lists returns all lists in one call."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems/{checklistItem-id}",
+    "method": "get",
+    "toolName": "get-todo-checklist-item",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns a single checklist item. Requires todoTaskList-id, todoTask-id, and checklistItem-id. Rarely needed — list-todo-checklist-items returns all items in one call."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources",
+    "method": "get",
+    "toolName": "list-todo-linked-resources",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Lists linked resources on a task (e.g. linked Outlook email). Requires todoTaskList-id and todoTask-id. Returns id, applicationName, displayName, externalId, webUrl. Alternative: use $expand=linkedResources on get-todo-task."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources/{linkedResource-id}",
+    "method": "get",
+    "toolName": "get-todo-linked-resource",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns a single linked resource. Requires todoTaskList-id, todoTask-id, and linkedResource-id. Use list-todo-linked-resources to find the id."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources",
+    "method": "post",
+    "toolName": "create-todo-linked-resource",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Links an external resource to a task. Body: {\"applicationName\": \"Outlook\", \"displayName\": \"Email subject\", \"webUrl\": \"https://...\", \"externalId\": \"optional-external-id\"}. Requires todoTaskList-id and todoTask-id. Use to link emails, URLs, or other resources to a task."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources/{linkedResource-id}",
+    "method": "patch",
+    "toolName": "update-todo-linked-resource",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Updates a linked resource. Requires todoTaskList-id, todoTask-id, and linkedResource-id. Pass only properties to update. Example: {\"displayName\": \"New title\"}."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources/{linkedResource-id}",
+    "method": "delete",
+    "toolName": "delete-todo-linked-resource",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Removes a linked resource from a task. Requires todoTaskList-id, todoTask-id, and linkedResource-id — use list-todo-linked-resources to find the id."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/attachments",
+    "method": "get",
+    "toolName": "list-todo-attachments",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Lists file attachments on a task. Requires todoTaskList-id and todoTask-id. Returns id, name, contentType, size. Small attachments (<3MB) can be created inline; larger ones require an upload session."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/attachments/{attachmentBase-id}",
+    "method": "get",
+    "toolName": "get-todo-attachment",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns a single attachment including its content (base64). Requires todoTaskList-id, todoTask-id, and attachmentBase-id — use list-todo-attachments to find the id."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/attachments",
+    "method": "post",
+    "toolName": "create-todo-attachment",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Creates a file attachment on a task (max 3MB inline). Body: {\"@odata.type\": \"#microsoft.graph.taskFileAttachment\", \"name\": \"file.txt\", \"contentType\": \"text/plain\", \"contentBytes\": \"base64-encoded-content\"}. Requires todoTaskList-id and todoTask-id. For files >3MB use an upload session (not supported via this endpoint)."
+  },
+  {
+    "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/attachments/{attachmentBase-id}",
+    "method": "delete",
+    "toolName": "delete-todo-attachment",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Deletes a file attachment from a task. Requires todoTaskList-id, todoTask-id, and attachmentBase-id — use list-todo-attachments to find the id."
   },
   {
     "pathPattern": "/me/planner/tasks",

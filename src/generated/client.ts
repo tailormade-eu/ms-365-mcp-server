@@ -11431,6 +11431,126 @@ resource.`,
   },
   {
     method: 'get',
+    path: '/me/todo/lists/:todoTaskListId',
+    alias: 'get-todo-task-list',
+    description: `Get a todoTaskList object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
+    alias: 'get-todo-checklist-item',
+    description: `Get a checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources',
+    alias: 'list-todo-linked-resources',
+    description: `Get the linkedResource resources from a todoTask.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources/:linkedResourceId',
+    alias: 'get-todo-linked-resource',
+    description: `Get a linkedResource object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources',
+    alias: 'create-todo-linked-resource',
+    description: `Create a new linkedResource object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New linked resource`,
+        type: 'Body',
+        schema: microsoft_graph_linkedResource,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources/:linkedResourceId',
+    alias: 'update-todo-linked-resource',
+    description: `Update the properties of a linkedResource object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Properties to update`,
+        type: 'Body',
+        schema: microsoft_graph_linkedResource,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources/:linkedResourceId',
+    alias: 'delete-todo-linked-resource',
+    description: `Delete a linkedResource object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
+    alias: 'list-todo-attachments',
+    description: `Get the attachmentBase resources from a todoTask.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
+    alias: 'get-todo-attachment',
+    description: `Get an attachmentBase object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
+    alias: 'create-todo-attachment',
+    description: `Create a new attachmentBase object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New attachment`,
+        type: 'Body',
+        schema: microsoft_graph_attachmentBase,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
+    alias: 'delete-todo-attachment',
+    description: `Delete an attachmentBase object.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/planner/plans/:plannerPlanId',
     alias: 'get-planner-plan',
     description: `Retrieve the properties and relationships of a plannerplan object.`,
