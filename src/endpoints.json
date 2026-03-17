@@ -604,6 +604,20 @@
     "llmTip": "Deletes a file attachment from a task. Requires todoTaskList-id, todoTask-id, and attachmentBase-id — use list-todo-attachments to find the id."
   },
   {
+    "pathPattern": "/me/mailFolders/inbox/messageRules",
+    "method": "get",
+    "toolName": "list-mail-rules",
+    "scopes": ["MailboxSettings.Read"],
+    "llmTip": "Lists all inbox rules. Returns id, displayName, isEnabled, conditions (fromAddresses, subjectContains, etc.), actions (moveToFolder, markAsRead, etc.). Read-only."
+  },
+  {
+    "pathPattern": "/me/outlook/masterCategories",
+    "method": "get",
+    "toolName": "list-outlook-categories",
+    "scopes": ["MailboxSettings.Read"],
+    "llmTip": "Lists all Outlook categories. Returns displayName and color (preset0-preset24). Categories can be assigned to emails, calendar events, and tasks."
+  },
+  {
     "pathPattern": "/me/planner/tasks",
     "method": "get",
     "toolName": "list-planner-tasks",

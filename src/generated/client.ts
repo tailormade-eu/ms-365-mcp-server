@@ -11551,6 +11551,24 @@ resource.`,
   },
   {
     method: 'get',
+    path: '/me/mailFolders/inbox/messageRules',
+    alias: 'list-mail-rules',
+    description: `Get all the messageRule objects defined for the user's inbox.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/outlook/masterCategories',
+    alias: 'list-outlook-categories',
+    description: `Get all the categories that have been defined for the user.`,
+    requestFormat: 'json',
+    parameters: [],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/planner/plans/:plannerPlanId',
     alias: 'get-planner-plan',
     description: `Retrieve the properties and relationships of a plannerplan object.`,
