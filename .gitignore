@@ -144,13 +144,6 @@ dist
 openapi
 
 src/generated/client.ts
-**/.claude/settings.local.json
-
-# CodingMachine runtime files (local only — contains machine-specific paths)
-coding-machine.json
-PROGRESS.md
-.state.json
-.current-prompt.md
 
 # Claude and Serena working directories
 .claude/
@@ -161,11 +154,3 @@ PROGRESS.md
 
 # Finder metadata files
 .DS_Store
-
-# CodingMachine workspace
-tasks/
-PROGRESS.md
-
-CLAUDE.md
-STATUS.md
-BACKLOG.md
