@@ -154,7 +154,7 @@ describe('graph-tools', () => {
       expect(graphClient.graphRequest).toHaveBeenCalledTimes(1);
       const [url] = graphClient.graphRequest.mock.calls[0];
       // $count=true should appear in query string
-      expect(url).toContain('%24count=true');
+      expect(url).toContain('$count=true');
     });
   });
 

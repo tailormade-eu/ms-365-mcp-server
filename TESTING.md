@@ -4,8 +4,8 @@
 
 | # | Test | Command/Action | Expected | Status |
 |---|------|----------------|----------|--------|
-| 1 | Build | `npm run build` | 0 errors | ⬜ |
-| 2 | Unit tests | `npm run test` | All tests pass | ⬜ |
+| 1 | Build | `npm run build` | 0 errors | ✅ |
+| 2 | Unit tests | `npm run test` | All 83 tests pass | ✅ |
 | 3 | Lint | `npm run verify` | 0 lint errors, build + test pass | ⬜ |
 | 4 | MCP stdio | `node dist/index.js` | Server starts, tools registered | ⬜ |
 | 5 | Auth flow | Login via MCP client | Token acquired, account listed | ⬜ |
@@ -15,7 +15,7 @@
 | 9 | Discovery mode | `--discovery` flag | Only search-tools + execute-tool registered | ⬜ |
 | 10 | Pagination | `fetchAllPages=true` on list endpoint | All pages concatenated | ⬜ |
 
-**Score: 0/10**
+**Score: 2/10**
 
 ---
 

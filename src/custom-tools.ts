@@ -84,7 +84,7 @@ Returns: [{id, subject, from, received}]
     {
       account: z
         .string()
-        .describe('Mailbox email address to impersonate (e.g. jara@tailormade.eu).')
+        .describe('Mailbox email address to impersonate (e.g. user@example.com).')
         .optional(),
       search: z
         .string()
@@ -110,7 +110,10 @@ Returns: [{id, subject, from, received}]
           throw new Error('EWS_CLIENT_ID, EWS_CLIENT_SECRET and EWS_TENANT_ID env vars required');
         }
 
-        const userEmail = account ?? 'jara@tailormade.eu';
+        if (!account) {
+          throw new Error('account parameter is required — provide the mailbox email address to impersonate.');
+        }
+        const userEmail = account;
         const limit = top ?? 25;
 
         // EWS token — different scope from Graph
@@ -181,7 +184,7 @@ Returns: [{id, subject, from, received}]
           ? `<m:Restriction>
               <t:Contains ContainmentMode="Substring" ContainmentComparison="IgnoreCase">
                 <t:FieldURI FieldURI="item:Subject"/>
-                <t:Constant Value="${search.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}"/>
+                <t:Constant Value="${search.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}"/>
               </t:Contains>
             </m:Restriction>`
           : '';
@@ -410,6 +413,11 @@ Returns the raw JSON response — useful for discovering undocumented properties
         .string()
         .describe('Account email')
         .optional(),
+    },
+    {
+      title: 'beta-get',
+      readOnlyHint: true,
+      openWorldHint: true,
     },
     async ({ endpoint, account }) => {
       try {
