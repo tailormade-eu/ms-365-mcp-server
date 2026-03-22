@@ -1,6 +1,12 @@
 # Changelog — ms-365-mcp-server
 
-## [Unreleased]
+## [fork-1.1.0] - 2026-03-22
+
+### Added
+- 12 new endpoints: OneNote individual page ops (get/delete/update), group/Teams notebook ops (5), meeting management (create/get/attendance), channel creation
+- `acceptType: "text/html"` for get-onenote-page-content
+- `workScopes` for all 6 existing OneNote endpoints (org-only access)
+- OData param fixes: kebab-case path params, auto-inject missing path params, comma preservation, key encoding
 
 ### Fixed
 - Test assertions: URL encoding expectations aligned with actual Graph API behavior ($expand not %24expand)
@@ -8,6 +14,8 @@
 - XML injection: added missing `&` escape in EWS search parameter
 - beta-get tool: added missing readOnlyHint annotation
 - Removed external URL reference from list-users llmTip (self-containment)
+- list-online-meetings llmTip: warns about Teams-client meetings limitation
+- Removed client name from create-todo-task-list llmTip example (public repo)
 
 ## [fork-1.0.0] - 2026-03-22
 

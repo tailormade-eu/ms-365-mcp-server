@@ -564,7 +564,7 @@
     "method": "post",
     "toolName": "create-todo-task-list",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "Creates a new To Do task list. Body: {\"displayName\": \"Cardoen\"}. Returns the new list including its id — use this id for create-todo-task and other task operations."
+    "llmTip": "Creates a new To Do task list. Body: {\"displayName\": \"My Projects\"}. Returns the new list including its id — use this id for create-todo-task and other task operations."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}",
