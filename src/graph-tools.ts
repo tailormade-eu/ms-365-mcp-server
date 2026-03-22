@@ -505,11 +505,33 @@ export function registerGraphTools(
 
     // Extract path parameters from the path pattern (e.g., :todoTaskListId from /me/todo/lists/:todoTaskListId/tasks)
     // The generated client omits these from tool.parameters, so we add them manually.
+    const pathParamDescriptions: Record<string, string> = {
+      todoTaskListId: 'Todo task list ID. Use list-todo-task-lists to obtain.',
+      todoTaskId: 'Todo task ID. Use list-todo-tasks to obtain.',
+      messageId: 'Mail message ID. Use list-mail-messages to obtain.',
+      mailFolderId: 'Mail folder ID. Use list-mail-folders or list-mail-child-folders to obtain.',
+      eventId: 'Calendar event ID. Use list-calendar-events or get-calendar-view to obtain.',
+      userId: 'User ID or userPrincipalName (email). Use list-users to obtain.',
+      onlineMeetingId: 'Online meeting ID. Use list-online-meetings to obtain.',
+      callTranscriptId: 'Transcript ID. Use list-meeting-transcripts to obtain.',
+      siteId: 'SharePoint site ID. Use list-sharepoint-sites to obtain.',
+      listId: 'SharePoint list ID. Use list-sharepoint-site-lists to obtain.',
+      listItemId: 'SharePoint list item ID. Use list-sharepoint-site-list-items to obtain.',
+      driveItemId: 'OneDrive item ID. Use list-folder-files to obtain.',
+      contactId: 'Contact ID. Use list-outlook-contacts to obtain.',
+      plannerTaskId: 'Planner task ID. Use list-planner-tasks or list-plan-tasks to obtain.',
+      notebookId: 'OneNote notebook ID. Use list-onenote-notebooks to obtain.',
+      sectionId: 'OneNote section ID. Use list-onenote-notebook-sections to obtain.',
+      pageId: 'OneNote page ID. Use list-onenote-section-pages to obtain.',
+    };
     const pathParamMatches = tool.path.matchAll(/:([a-zA-Z]+)/g);
     for (const match of pathParamMatches) {
       const pathParamName = match[1];
       if (!(pathParamName in paramSchema)) {
-        paramSchema[pathParamName] = z.string().describe(`Path parameter: ${pathParamName}`);
+        const description =
+          pathParamDescriptions[pathParamName] ||
+          'ID for this resource. Use the corresponding list-* tool to obtain it.';
+        paramSchema[pathParamName] = z.string().describe(description);
       }
     }
 
@@ -634,7 +656,7 @@ export function registerGraphTools(
     let toolDescription =
       tool.description || `Execute ${tool.method.toUpperCase()} request to ${tool.path}`;
     if (endpointConfig?.llmTip) {
-      toolDescription += `\n\n💡 TIP: ${endpointConfig.llmTip}`;
+      toolDescription += `\n\nTIP: ${endpointConfig.llmTip}`;
     }
 
     try {

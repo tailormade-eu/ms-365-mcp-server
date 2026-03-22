@@ -4,28 +4,28 @@
     "method": "get",
     "toolName": "list-mail-messages",
     "scopes": ["Mail.Read"],
-    "llmTip": "CRITICAL: When searching emails, the $search parameter value MUST be wrapped in double quotes. Format: $search=\"your search query here\". Use KQL syntax: 'from:', 'subject:', 'body:', 'to:', 'cc:', 'bcc:', 'hasAttachments:', 'importance:', 'received:', 'sent:'. Examples: $search=\"from:john@example.com\" | $search=\"subject:meeting AND hasAttachments:true\". CANNOT combine $search and $filter in same query — use one or the other. $orderby is IGNORED when $search is used (results sorted by relevance). IMPORTANT: Always use $select to reduce response size. Recommended: $select=id,subject,from,toRecipients,receivedDateTime,bodyPreview,isRead,hasAttachments,flag. Use bodyPreview instead of body for listings — use get-mail-message for full body. ADVANCED FILTERS: For $filter on flag/flagStatus or sender address, add $count=true to enable advanced query mode. Without $count=true, these filters return InefficientFilter errors. Example: $filter=\"flag/flagStatus eq 'flagged'\" with $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'. WARNING: folderId='flaggedItems' with $search returns unreliable flag status — use $filter with $count=true instead. PAGINATION: Handled automatically via @odata.nextLink. Use $top to control page size. For folder-specific queries, use list-mail-folder-messages with well-known folder names as IDs: inbox, drafts, sentitems, deleteditems, junkemail, archive."
+    "llmTip": "CRITICAL: $search value MUST be wrapped in double quotes. CANNOT combine $search and $filter — use one or the other. ADVANCED FILTERS: InefficientFilter error (400) → $filter on flag/flagStatus or contains() without advanced mode → add $count=true. Example: $filter=\"flag/flagStatus eq 'flagged'\" with $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'. WARNING: folderId='flaggedItems' with $search returns unreliable flag status — use $filter with $count=true instead."
   },
   {
     "pathPattern": "/me/mailFolders",
     "method": "get",
     "toolName": "list-mail-folders",
     "scopes": ["Mail.Read"],
-    "llmTip": "Lists top-level mail folders. Use $select=id,displayName,totalItemCount,unreadItemCount to reduce response size. Well-known folder names can be used as folder IDs in other endpoints: inbox, drafts, sentitems, deleteditems, junkemail, archive, clutter, scheduled. Example: list-mail-folder-messages with mailFolder-id='inbox' — no need to list folders first for standard folders."
+    "llmTip": "Well-known folder names can be used as folder IDs in other endpoints: inbox, drafts, sentitems, deleteditems, junkemail, archive, clutter, scheduled. Example: list-mail-folder-messages with mailFolder-id='inbox' — no need to list folders first for standard folders."
   },
   {
     "pathPattern": "/me/mailFolders/{mailFolder-id}/childFolders",
     "method": "get",
     "toolName": "list-mail-child-folders",
     "scopes": ["Mail.Read"],
-    "llmTip": "Returns child folders of specified parent folder. Use well-known folder names as mailFolder-id: inbox, drafts, sentitems, deleteditems, junkemail, archive. Use $select=id,displayName,totalItemCount,unreadItemCount to reduce response size."
+    "llmTip": "Well-known folder names can be used as mailFolder-id: inbox, drafts, sentitems, deleteditems, junkemail, archive."
   },
   {
     "pathPattern": "/me/mailFolders",
     "method": "post",
     "toolName": "create-mail-folder",
     "scopes": ["Mail.ReadWrite"],
-    "llmTip": "Creates a top-level mail folder. Use create-mail-child-folder to create a subfolder inside an existing folder. Use list-mail-folders to find existing folder IDs."
+    "llmTip": "Creates a top-level mail folder. Use create-mail-child-folder to create a subfolder inside an existing folder."
   },
   {
     "pathPattern": "/me/mailFolders/{mailFolder-id}/childFolders",
@@ -53,7 +53,7 @@
     "method": "get",
     "toolName": "list-mail-folder-messages",
     "scopes": ["Mail.Read"],
-    "llmTip": "CRITICAL: When searching emails in a specific folder, the $search parameter value MUST be wrapped in double quotes. Format: $search=\"your search query here\". Use KQL syntax: 'from:', 'subject:', 'body:', 'to:', 'cc:', 'bcc:', 'hasAttachments:', 'importance:', 'received:', 'sent:'. CANNOT combine $search and $filter in same query — use one or the other. $orderby is IGNORED when $search is used (results sorted by relevance). Well-known folder names can be used as mailFolder-id: inbox, drafts, sentitems, deleteditems, junkemail, archive. IMPORTANT: Always use $select to reduce response size. Recommended: $select=id,subject,from,toRecipients,receivedDateTime,bodyPreview,isRead,hasAttachments,flag. Use bodyPreview instead of body for listings — use get-mail-message for full body. ADVANCED FILTERS: For $filter on flag/flagStatus or sender address, add $count=true to enable advanced query mode. Without $count=true, these filters return InefficientFilter errors. Example: $filter=\"flag/flagStatus eq 'flagged'\" with $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'. WARNING: folderId='flaggedItems' with $search returns unreliable flag status — use $filter with $count=true instead. PAGINATION: Handled automatically via @odata.nextLink. Use $top to control page size."
+    "llmTip": "CRITICAL: $search value MUST be wrapped in double quotes. CANNOT combine $search and $filter — use one or the other. Well-known folder names can be used as folderId: inbox, drafts, sentitems, deleteditems, junkemail, archive. ADVANCED FILTERS: InefficientFilter error (400) → $filter on flag/flagStatus or contains() without advanced mode → add $count=true. Example: $filter=\"flag/flagStatus eq 'flagged'\" with $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'. WARNING: folderId='flaggedItems' with $search returns unreliable flag status — use $filter with $count=true instead."
   },
   {
     "pathPattern": "/me/messages/{message-id}",
@@ -74,14 +74,14 @@
     "method": "get",
     "toolName": "list-shared-mailbox-messages",
     "workScopes": ["Mail.Read.Shared"],
-    "llmTip": "CRITICAL: When searching shared mailbox emails, the $search parameter value MUST be wrapped in double quotes. Format: $search=\"your search query here\". Use KQL syntax: 'from:', 'subject:', 'body:', 'to:', 'cc:', 'bcc:', 'hasAttachments:', 'importance:', 'received:', 'sent:'. CANNOT combine $search and $filter in same query — use one or the other. $orderby is IGNORED when $search is used (results sorted by relevance). IMPORTANT: Always use $select to reduce response size. Recommended: $select=id,subject,from,toRecipients,receivedDateTime,bodyPreview,isRead,hasAttachments,flag. Use bodyPreview instead of body for listings — use get-shared-mailbox-message for full body. ADVANCED FILTERS: For $filter on flag/flagStatus, add $count=true. Without $count=true, these filters return InefficientFilter errors. Flag status values: 'flagged', 'complete', 'notFlagged'. PAGINATION: Handled automatically via @odata.nextLink. Use $top to control page size."
+    "llmTip": "CRITICAL: $search value MUST be wrapped in double quotes. CANNOT combine $search and $filter — use one or the other. ADVANCED FILTERS: InefficientFilter error (400) → $filter on flag/flagStatus or contains() without advanced mode → add $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'."
   },
   {
     "pathPattern": "/users/{user-id}/mailFolders/{mailFolder-id}/messages",
     "method": "get",
     "toolName": "list-shared-mailbox-folder-messages",
     "workScopes": ["Mail.Read.Shared"],
-    "llmTip": "CRITICAL: When searching shared mailbox folder emails, the $search parameter value MUST be wrapped in double quotes. Format: $search=\"your search query here\". Use KQL syntax: 'from:', 'subject:', 'body:', 'to:', 'cc:', 'bcc:', 'hasAttachments:', 'importance:', 'received:', 'sent:'. CANNOT combine $search and $filter in same query — use one or the other. $orderby is IGNORED when $search is used (results sorted by relevance). Well-known folder names can be used as mailFolder-id: inbox, drafts, sentitems, deleteditems, junkemail, archive. IMPORTANT: Always use $select to reduce response size. Recommended: $select=id,subject,from,toRecipients,receivedDateTime,bodyPreview,isRead,hasAttachments,flag. Use bodyPreview instead of body for listings — use get-shared-mailbox-message for full body. ADVANCED FILTERS: For $filter on flag/flagStatus, add $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'. PAGINATION: Handled automatically via @odata.nextLink. Use $top to control page size."
+    "llmTip": "CRITICAL: $search value MUST be wrapped in double quotes. CANNOT combine $search and $filter — use one or the other. Well-known folder names can be used as folderId: inbox, drafts, sentitems, deleteditems, junkemail, archive. ADVANCED FILTERS: InefficientFilter error (400) → $filter on flag/flagStatus or contains() without advanced mode → add $count=true. Flag status values: 'flagged', 'complete', 'notFlagged'."
   },
   {
     "pathPattern": "/users/{user-id}/messages/{message-id}",
@@ -424,21 +424,21 @@
     "method": "get",
     "toolName": "list-onenote-notebooks",
     "scopes": ["Notes.Read"],
-    "llmTip": "Lists all OneNote notebooks. Use $select=id,displayName,createdDateTime,lastModifiedDateTime to reduce response size. Returns notebook-id needed for list-onenote-notebook-sections. Use $orderby=displayName for alphabetical sorting."
+    "llmTip": "Returns notebook-id needed for list-onenote-notebook-sections."
   },
   {
     "pathPattern": "/me/onenote/notebooks/{notebook-id}/sections",
     "method": "get",
     "toolName": "list-onenote-notebook-sections",
     "scopes": ["Notes.Read"],
-    "llmTip": "Lists sections within a notebook. Use $select=id,displayName,createdDateTime,lastModifiedDateTime to reduce response size. Returns onenoteSection-id needed for list-onenote-section-pages and create-onenote-section-page."
+    "llmTip": "Returns onenoteSection-id needed for list-onenote-section-pages and create-onenote-section-page."
   },
   {
     "pathPattern": "/me/onenote/sections/{onenoteSection-id}/pages",
     "method": "get",
     "toolName": "list-onenote-section-pages",
     "scopes": ["Notes.Read"],
-    "llmTip": "Lists pages within a section. Use $select=id,title,createdDateTime,lastModifiedDateTime to reduce response size. Returns onenotePage-id needed for get-onenote-page-content. Pages ordered by lastModifiedDateTime desc by default."
+    "llmTip": "Returns onenotePage-id needed for get-onenote-page-content."
   },
   {
     "pathPattern": "/me/onenote/pages/{onenotePage-id}/content",
@@ -559,14 +559,14 @@
     "method": "get",
     "toolName": "get-todo-task-list",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Returns a single To Do task list. Requires todoTaskList-id. Returns displayName, wellknownListName, isOwner, isShared. Rarely needed — list-todo-task-lists returns all lists in one call."
+    "llmTip": "Returns a single To Do task list. Requires todoTaskList-id. Returns displayName, wellknownListName, isOwner, isShared."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/checklistItems/{checklistItem-id}",
     "method": "get",
     "toolName": "get-todo-checklist-item",
     "scopes": ["Tasks.Read"],
-    "llmTip": "Returns a single checklist item. Requires todoTaskList-id, todoTask-id, and checklistItem-id. Rarely needed — list-todo-checklist-items returns all items in one call."
+    "llmTip": "Returns a single checklist item. Requires todoTaskList-id, todoTask-id, and checklistItem-id."
   },
   {
     "pathPattern": "/me/todo/lists/{todoTaskList-id}/tasks/{todoTask-id}/linkedResources",
@@ -691,7 +691,8 @@
     "pathPattern": "/planner/tasks/{plannerTask-id}/details",
     "method": "get",
     "toolName": "get-planner-task-details",
-    "scopes": ["Tasks.Read"]
+    "scopes": ["Tasks.Read"],
+    "llmTip": "NOTE: Call this with includeHeaders=true before using update-planner-task-details — the ETag from the response header is required for the update (412 Precondition Failed without it)."
   },
   {
     "pathPattern": "/planner/tasks/{plannerTask-id}/details",
@@ -712,7 +713,7 @@
     "method": "get",
     "toolName": "get-outlook-contact",
     "scopes": ["Contacts.Read"],
-    "llmTip": "Returns a single contact by ID. Use $select=id,displayName,givenName,surname,emailAddresses,businessPhones,mobilePhone,companyName,jobTitle,department,officeLocation to limit fields."
+    "llmTip": "Returns a single contact by ID."
   },
   {
     "pathPattern": "/me/contacts",
@@ -740,7 +741,7 @@
     "method": "get",
     "toolName": "get-current-user",
     "scopes": ["User.Read"],
-    "llmTip": "Returns the signed-in user's profile. Use $select=id,displayName,mail,userPrincipalName,jobTitle,department,officeLocation,mobilePhone,businessPhones to limit fields. Returns the user-id needed for shared mailbox and delegation operations."
+    "llmTip": "Returns the signed-in user's profile. Returns the user-id needed for shared mailbox and delegation operations."
   },
   {
     "pathPattern": "/me/chats",
@@ -894,14 +895,14 @@
     "method": "get",
     "toolName": "list-sharepoint-site-items",
     "workScopes": ["Sites.Read.All"],
-    "llmTip": "Lists items in a SharePoint site. Use $select to reduce response size."
+    "llmTip": "Returns site-level items (document libraries, lists). To get items inside a list, use list-sharepoint-site-list-items with the list-id. Use $expand=fields to include column values."
   },
   {
     "pathPattern": "/sites/{site-id}/items/{baseItem-id}",
     "method": "get",
     "toolName": "get-sharepoint-site-item",
     "workScopes": ["Sites.Read.All"],
-    "llmTip": "Returns a specific item from a SharePoint site by its ID."
+    "llmTip": "Returns a single site item by ID. For list item column values, add $expand=fields. Get the item ID from list-sharepoint-site-list-items."
   },
   {
     "pathPattern": "/sites/{site-id}/lists",
