@@ -1074,6 +1074,16 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 | V16 | `graphRequest` log output when options contain `accessToken` | Token replaced with `[REDACTED]` | ⬜ |
 | V17 | `list-followed-sites`, `follow-site`, `unfollow-site` | Each has `"scopes": []` in endpoints.json | ⬜ |
 
+## Code review fixes V20-V24
+
+| # | Test | Expected | Status |
+|---|------|----------|--------|
+| V20 | `src/index.ts` CLI flag handlers (`--login`, `--verify-login`, `--logout`, `--list-accounts`, `--select-account`, `--remove-account`) | No `console.log` calls — all replaced with `process.stdout.write` | ⬜ |
+| V21 | `src/graph-client.ts` line ~106 `let result` declaration | Type is `unknown`, not `any` | ⬜ |
+| V22 | `fetchAllPages()` in `src/custom-tools.ts` when Graph API returns 4xx/5xx | Tool response has `isError: true`, no uncaught protocol error | ⬜ |
+| V23 | `get-archive-messages` without EWS env vars set | Returns `{ isError: true }` directly, no thrown exception | ⬜ |
+| V24 | `update-todo-cache` with `outputPath` using different case (`C:\Users` vs `c:\users`) on Windows | Path traversal check uses case-insensitive comparison | ⬜ |
+
 ---
 
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

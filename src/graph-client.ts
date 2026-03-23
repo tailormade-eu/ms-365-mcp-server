@@ -103,7 +103,7 @@ class GraphClient {
       }
 
       const text = await response.text();
-      let result: any;
+      let result: unknown;
 
       if (text === '') {
         result = { message: 'OK!' };

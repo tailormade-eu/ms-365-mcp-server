@@ -29,20 +29,20 @@ async function main(): Promise<void> {
       await authManager.acquireTokenByDeviceCode();
       logger.info('Login completed, testing connection with Graph API...');
       const result = await authManager.testLogin();
-      console.log(JSON.stringify(result));
+      process.stdout.write(JSON.stringify(result) + '\n');
       process.exit(0);
     }
 
     if (args.verifyLogin) {
       logger.info('Verifying login...');
       const result = await authManager.testLogin();
-      console.log(JSON.stringify(result));
+      process.stdout.write(JSON.stringify(result) + '\n');
       process.exit(0);
     }
 
     if (args.logout) {
       await authManager.logout();
-      console.log(JSON.stringify({ message: 'Logged out successfully' }));
+      process.stdout.write(JSON.stringify({ message: 'Logged out successfully' }) + '\n');
       process.exit(0);
     }
 
@@ -55,16 +55,16 @@ async function main(): Promise<void> {
         name: account.name,
         selected: account.homeAccountId === selectedAccountId,
       }));
-      console.log(JSON.stringify({ accounts: result }));
+      process.stdout.write(JSON.stringify({ accounts: result }) + '\n');
       process.exit(0);
     }
 
     if (args.selectAccount) {
       const success = await authManager.selectAccount(args.selectAccount);
       if (success) {
-        console.log(JSON.stringify({ message: `Selected account: ${args.selectAccount}` }));
+        process.stdout.write(JSON.stringify({ message: `Selected account: ${args.selectAccount}` }) + '\n');
       } else {
-        console.log(JSON.stringify({ error: `Account not found: ${args.selectAccount}` }));
+        process.stdout.write(JSON.stringify({ error: `Account not found: ${args.selectAccount}` }) + '\n');
         process.exit(1);
       }
       process.exit(0);
@@ -73,9 +73,9 @@ async function main(): Promise<void> {
     if (args.removeAccount) {
       const success = await authManager.removeAccount(args.removeAccount);
       if (success) {
-        console.log(JSON.stringify({ message: `Removed account: ${args.removeAccount}` }));
+        process.stdout.write(JSON.stringify({ message: `Removed account: ${args.removeAccount}` }) + '\n');
       } else {
-        console.log(JSON.stringify({ error: `Account not found: ${args.removeAccount}` }));
+        process.stdout.write(JSON.stringify({ error: `Account not found: ${args.removeAccount}` }) + '\n');
         process.exit(1);
       }
       process.exit(0);

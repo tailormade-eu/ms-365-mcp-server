@@ -27,10 +27,18 @@ async function fetchAllPages(
   let nextEndpoint: string | null = endpoint;
 
   while (nextEndpoint) {
-    const result = (await graphClient.makeRequest(nextEndpoint, {
+    const response = await graphClient.graphRequest(nextEndpoint, {
       accessToken,
       headers: extraHeaders,
-    })) as Record<string, unknown>;
+      rawResponse: true,
+    });
+
+    if (response.isError) {
+      const errorText = response.content?.[0]?.text ?? 'Unknown Graph API error';
+      throw new Error(errorText);
+    }
+
+    const result = JSON.parse(response.content[0].text) as Record<string, unknown>;
 
     if (Array.isArray(result.value)) {
       items = items.concat(result.value);
@@ -107,7 +115,10 @@ Returns: [{id, subject, from, received}]
         const tenantId = process.env.EWS_TENANT_ID;
 
         if (!clientId || !clientSecret || !tenantId) {
-          throw new Error('EWS_CLIENT_ID, EWS_CLIENT_SECRET and EWS_TENANT_ID env vars required');
+          return {
+            content: [{ type: 'text' as const, text: 'EWS credentials not configured. Set EWS_CLIENT_ID, EWS_CLIENT_SECRET, EWS_TENANT_ID environment variables.' }],
+            isError: true,
+          };
         }
 
         const userEmail = account.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -369,7 +380,7 @@ so the join uses normalized subject matching. Emails in non-standard folders
 
         const resolvedPath = path.resolve(outputPath);
         const allowedDir = path.resolve(process.cwd());
-        if (!resolvedPath.startsWith(allowedDir) || !resolvedPath.endsWith('.json')) {
+        if (!resolvedPath.toLowerCase().startsWith(allowedDir.toLowerCase()) || !resolvedPath.endsWith('.json')) {
           return {
             content: [{ type: 'text' as const, text: JSON.stringify({ error: 'outputPath must be a .json file within the working directory' }) }],
             isError: true,
