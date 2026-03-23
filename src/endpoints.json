@@ -2321,5 +2321,138 @@
     "toolName": "list-sharepoint-list-views",
     "workScopes": ["Sites.Read.All"],
     "llmTip": "Returns view definitions for a SharePoint list. Each view has id, name, columnNames (fields shown), query (CAML filter/sort). Use list-sharepoint-lists to find list IDs, use-site-id from list-sharepoint-sites. Default view is isDefault: true."
+  },
+  {
+    "pathPattern": "/me/mailFolders/inbox/messageRules",
+    "method": "get",
+    "toolName": "list-message-rules",
+    "scopes": ["MailboxSettings.Read"],
+    "llmTip": "Returns all inbox rules. Each rule has id, displayName, sequence (priority order), conditions (from/subject/body filters), actions (move/forward/delete/markRead). Use id with update-message-rule or delete-message-rule. Rules are evaluated in sequence order (lowest first)."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/members/$ref",
+    "method": "post",
+    "toolName": "add-group-member",
+    "workScopes": ["GroupMember.ReadWrite.All"],
+    "llmTip": "Body: {'@odata.id': 'https://graph.microsoft.com/v1.0/users/{user-id}'}. Adds a user as group member. Returns 204 on success. Max 100 members per request. Use list-group-members to verify. Cannot add owners via this endpoint — use add-group-owner instead."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/members/{user-id}/$ref",
+    "method": "delete",
+    "toolName": "remove-group-member",
+    "workScopes": ["GroupMember.ReadWrite.All"],
+    "llmTip": "user-id from list-group-members. Removes user from group membership. Returns 204 on success. Does not affect ownership — use remove-group-owner separately if needed."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs",
+    "method": "post",
+    "toolName": "add-channel-tab",
+    "workScopes": ["TeamsTab.ReadWrite.All"],
+    "llmTip": "Body: {displayName (required), 'teamsApp@odata.bind': 'https://graph.microsoft.com/v1.0/appCatalogs/teamsApps/{app-id}', configuration: {entityId, contentUrl, websiteUrl, removeUrl}}. Common app IDs: Word='com.microsoft.teamspace.tab.file.staticviewer.word', SharePoint='2a527703-1f6f-4559-a332-d8a7d288cd88'. teamsApp id from list-teams-app-catalog."
+  },
+  {
+    "pathPattern": "/me/outlook/masterCategories/{outlookCategory-id}",
+    "method": "get",
+    "toolName": "get-outlook-category",
+    "scopes": ["MailboxSettings.Read"],
+    "llmTip": "Returns a single Outlook category by id. id from list-outlook-categories. Returns displayName and color (preset0-preset24, none)."
+  },
+  {
+    "pathPattern": "/me/calendarGroups/{calendarGroup-id}",
+    "method": "get",
+    "toolName": "get-calendar-group",
+    "scopes": ["Calendars.Read"],
+    "llmTip": "Returns a single calendar group by id. id from list-calendar-groups. Returns name and classId."
+  },
+  {
+    "pathPattern": "/me/calendarGroups/{calendarGroup-id}",
+    "method": "patch",
+    "toolName": "update-calendar-group",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {name (required)}. Updates the calendar group name. Returns 200 with updated group."
+  },
+  {
+    "pathPattern": "/me/calendarGroups/{calendarGroup-id}",
+    "method": "delete",
+    "toolName": "delete-calendar-group",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Deletes a calendar group and ALL calendars in it. The default 'My Calendars' group cannot be deleted. id from list-calendar-groups. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}",
+    "method": "get",
+    "toolName": "get-channel-tab",
+    "workScopes": ["TeamsTab.Read.All"],
+    "llmTip": "Returns tab details including configuration (contentUrl, websiteUrl). tab-id from list-channel-tabs. Use $expand=teamsApp to include app details."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}",
+    "method": "patch",
+    "toolName": "update-channel-tab",
+    "workScopes": ["TeamsTab.ReadWrite.All"],
+    "llmTip": "Body: {displayName} to rename, or {configuration: {contentUrl, websiteUrl}} to update URLs. Returns 200 on success."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}",
+    "method": "delete",
+    "toolName": "delete-channel-tab",
+    "workScopes": ["TeamsTab.ReadWrite.All"],
+    "llmTip": "Removes the tab from the channel. Does not delete the underlying app or its data. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}",
+    "method": "patch",
+    "toolName": "update-sharepoint-list",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {displayName} to rename. Returns 200 with updated list. list-id from list-sharepoint-site-lists."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}",
+    "method": "delete",
+    "toolName": "delete-sharepoint-list",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Permanently deletes the list and all its items. Cannot be undone. list-id from list-sharepoint-site-lists. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/columns",
+    "method": "post",
+    "toolName": "create-sharepoint-list-column",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {name (required), text: {} for text col, number: {} for number col, boolean: {} for yes/no, dateTime: {} for date, choice: {choices: ['A','B']} for dropdown}. Only one column type field allowed per request. Returns 201 with column id."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/columns/{column-id}",
+    "method": "patch",
+    "toolName": "update-sharepoint-list-column",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Updatable fields: name, description, required, hidden. Column type (text/number/etc.) cannot be changed after creation. column-id from list-sharepoint-list-columns. Returns 200."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/columns/{column-id}",
+    "method": "delete",
+    "toolName": "delete-sharepoint-list-column",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Removes the column definition and all its data from every list item. Cannot delete built-in columns (Title, ID, Created, Modified). Returns 204 on success."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}",
+    "method": "get",
+    "toolName": "get-drive",
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns drive metadata: driveType (personal/business/documentLibrary), owner, quota (used/remaining/total bytes). drive-id from list-drives, get-my-drive, or get-group-drive. Use when you have a drive-id and need its metadata or quota info."
+  },
+  {
+    "pathPattern": "/users",
+    "method": "post",
+    "toolName": "create-user",
+    "workScopes": ["User.ReadWrite.All"],
+    "llmTip": "Body: {accountEnabled (required), displayName (required), mailNickname (required), userPrincipalName (required, format: alias@domain), passwordProfile: {forceChangePasswordNextSignIn: true, password: 'TempPass1!'} (required)}. Returns 201 with new user id. Requires admin consent for User.ReadWrite.All."
+  },
+  {
+    "pathPattern": "/users/{user-id}",
+    "method": "patch",
+    "toolName": "update-user",
+    "workScopes": ["User.ReadWrite.All"],
+    "llmTip": "Updatable fields: displayName, jobTitle, department, officeLocation, mobilePhone, businessPhones, usageLocation, accountEnabled. To change UPN: update userPrincipalName. Returns 204 No Content. user-id can be UPN or Azure AD object ID."
   }
 ]

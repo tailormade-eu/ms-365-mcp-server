@@ -662,4 +662,67 @@
 
 ---
 
+## Task 99 (round 10 gap) — Missing endpoints N90-N108 (19 endpoints)
+
+### N90 — Mail message rules — list (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-message-rules` | GET | `/me/mailFolders/inbox/messageRules` |
+
+### N91-N92 — Group member management (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `add-group-member` | POST | `/groups/{group-id}/members/$ref` |
+| `remove-group-member` | DELETE | `/groups/{group-id}/members/{user-id}/$ref` |
+
+### N93 — Channel tab management (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `add-channel-tab` | POST | `/teams/{team-id}/channels/{channel-id}/tabs` |
+
+### N94 — Outlook category get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-outlook-category` | GET | `/me/outlook/masterCategories/{outlookCategory-id}` |
+
+### N95-N97 — Calendar group CRUD (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-calendar-group` | GET | `/me/calendarGroups/{calendarGroup-id}` |
+| `update-calendar-group` | PATCH | `/me/calendarGroups/{calendarGroup-id}` |
+| `delete-calendar-group` | DELETE | `/me/calendarGroups/{calendarGroup-id}` |
+
+### N98-N100 — Channel tab CRUD (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-channel-tab` | GET | `/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}` |
+| `update-channel-tab` | PATCH | `/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}` |
+| `delete-channel-tab` | DELETE | `/teams/{team-id}/channels/{channel-id}/tabs/{tab-id}` |
+
+### N101-N102 — SharePoint list CRUD (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-sharepoint-list` | PATCH | `/sites/{site-id}/lists/{list-id}` |
+| `delete-sharepoint-list` | DELETE | `/sites/{site-id}/lists/{list-id}` |
+
+### N103-N105 — SharePoint list column management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-sharepoint-list-column` | POST | `/sites/{site-id}/lists/{list-id}/columns` |
+| `update-sharepoint-list-column` | PATCH | `/sites/{site-id}/lists/{list-id}/columns/{column-id}` |
+| `delete-sharepoint-list-column` | DELETE | `/sites/{site-id}/lists/{list-id}/columns/{column-id}` |
+
+### N106 — Get drive by ID (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-drive` | GET | `/drives/{drive-id}` |
+
+### N107-N108 — User admin (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-user` | POST | `/users` |
+| `update-user` | PATCH | `/users/{user-id}` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky
