@@ -870,6 +870,60 @@
 | `follow-site` | POST | `/me/followedSites/add` |
 | `unfollow-site` | POST | `/me/followedSites/remove` |
 
+## Task 99 — Missing endpoints N152-N181 (round 13 gap analysis)
+
+Note: 12 of 30 proposed endpoints already existed under different names (accept-calendar-event, decline-calendar-event, etc.). 18 truly new endpoints added. Total: 396.
+
+### N158 — Event instances without calendar-id (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-event-instances` | GET | `/me/events/{event-id}/instances` |
+
+### N163-N165 — Recurring event exception management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-event-exception` | GET | `/me/events/{event-id}/instances/{instanceId}` |
+| `update-event-exception` | PATCH | `/me/events/{event-id}/instances/{instanceId}` |
+| `delete-event-exception` | DELETE | `/me/events/{event-id}/instances/{instanceId}` |
+
+### N166-N170 — Mail search folders CRUD (5 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-search-folders` | GET | `/me/mailFolders/searchfolders/childFolders` |
+| `create-search-folder` | POST | `/me/mailFolders/searchfolders/childFolders` |
+| `get-search-folder` | GET | `/me/mailFolders/searchfolders/childFolders/{mailFolder-id}` |
+| `update-search-folder` | PATCH | `/me/mailFolders/searchfolders/childFolders/{mailFolder-id}` |
+| `delete-search-folder` | DELETE | `/me/mailFolders/searchfolders/childFolders/{mailFolder-id}` |
+
+### N171 — Team primary channel (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-team-primary-channel` | GET | `/teams/{team-id}/primaryChannel` |
+
+### N174-N176 — Drive item checkout/preview (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `checkout-drive-item` | POST | `/drives/{drive-id}/items/{driveItem-id}/checkout` |
+| `checkin-drive-item` | POST | `/drives/{drive-id}/items/{driveItem-id}/checkin` |
+| `preview-drive-item` | POST | `/drives/{drive-id}/items/{driveItem-id}/preview` |
+
+### N177-N178 — Group lifecycle (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `renew-group` | POST | `/groups/{group-id}/renew` |
+| `list-group-settings` | GET | `/groups/{group-id}/settings` |
+
+### N179-N180 — User presence (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `set-user-presence` | POST | `/users/{user-id}/presence/setPresence` |
+| `clear-user-presence` | POST | `/users/{user-id}/presence/clearPresence` |
+
+### N181 — User manager assignment (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `assign-user-manager` | PUT | `/users/{user-id}/manager/$ref` |
+
 ---
 
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

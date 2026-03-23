@@ -2773,5 +2773,150 @@
     "toolName": "unfollow-site",
     "workScopes": ["Sites.ReadWrite.All"],
     "llmTip": "Body: {value: [{id: 'site-id'}]}. Unfollows one or more SharePoint sites. Returns 204 on success. Can unfollow multiple sites in a single request."
+  },
+
+  {
+    "pathPattern": "/me/events/{event-id}/instances",
+    "method": "get",
+    "toolName": "list-event-instances",
+    "scopes": ["Calendars.Read"],
+    "workScopes": ["Calendars.Read"],
+    "supportsTimezone": true,
+    "llmTip": "Returns all occurrences of a recurring event within a time range. CRITICAL: Requires startDateTime and endDateTime query params (ISO 8601, e.g. 2024-01-01T00:00:00Z). event-id must be a recurring series master (singleInstance events have no instances). Each instance has its own id for get-event-exception, update-event-exception, or delete-event-exception. Simpler than list-calendar-event-instances — no calendar-id needed."
+  },
+
+  {
+    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "method": "get",
+    "toolName": "get-event-exception",
+    "scopes": ["Calendars.Read"],
+    "workScopes": ["Calendars.Read"],
+    "supportsTimezone": true,
+    "llmTip": "Returns a single occurrence of a recurring event. instanceId from list-event-instances. Returns full event details for this specific occurrence."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "method": "patch",
+    "toolName": "update-event-exception",
+    "scopes": ["Calendars.ReadWrite"],
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Updates a single occurrence of a recurring series without affecting other instances. Updatable fields: subject, start, end, body, location, attendees. instanceId from list-event-instances. Returns 200."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "method": "delete",
+    "toolName": "delete-event-exception",
+    "scopes": ["Calendars.ReadWrite"],
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Cancels a single occurrence of a recurring event series without deleting the entire series. instanceId from list-event-instances. Returns 204. To cancel the entire series, delete the series master event."
+  },
+
+  {
+    "pathPattern": "/me/mailFolders/searchfolders/childFolders",
+    "method": "get",
+    "toolName": "list-search-folders",
+    "scopes": ["Mail.Read"],
+    "workScopes": ["Mail.Read"],
+    "llmTip": "Returns all virtual search folders. Each folder has id, displayName, filterQuery (OData filter that defines its contents). Search folders show matching messages dynamically — they are not real folders. Use id with get-search-folder, update-search-folder, or delete-search-folder."
+  },
+  {
+    "pathPattern": "/me/mailFolders/searchfolders/childFolders",
+    "method": "post",
+    "toolName": "create-search-folder",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Body: {@odata.type: 'microsoft.graph.mailSearchFolder', displayName: 'folder name', sourceFolderIds: ['inbox'], filterQuery: 'OData filter'}. Creates a virtual folder that dynamically shows matching emails. Example filterQuery: \"from/emailAddress/address eq 'sender@example.com'\". sourceFolderIds specifies which folders to search. Returns 201 with created folder id."
+  },
+  {
+    "pathPattern": "/me/mailFolders/searchfolders/childFolders/{mailFolder-id}",
+    "method": "get",
+    "toolName": "get-search-folder",
+    "scopes": ["Mail.Read"],
+    "workScopes": ["Mail.Read"],
+    "llmTip": "Returns a single search folder including its filterQuery and sourceFolderIds. mailFolder-id from list-search-folders. Use to inspect the filter before updating."
+  },
+  {
+    "pathPattern": "/me/mailFolders/searchfolders/childFolders/{mailFolder-id}",
+    "method": "patch",
+    "toolName": "update-search-folder",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Body: {displayName: 'new name', filterQuery: 'new OData filter', sourceFolderIds: ['inbox']}. Updates the name, filter, or source folders of a search folder. Returns 200."
+  },
+  {
+    "pathPattern": "/me/mailFolders/searchfolders/childFolders/{mailFolder-id}",
+    "method": "delete",
+    "toolName": "delete-search-folder",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Deletes a search folder. Does not delete the underlying emails — only the virtual folder view. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/primaryChannel",
+    "method": "get",
+    "toolName": "get-team-primary-channel",
+    "workScopes": ["Channel.ReadBasic.All"],
+    "llmTip": "Returns the General channel of a team (the primary/default channel). Returns id, displayName, description, webUrl. Useful when you need the General channel id without listing all channels."
+  },
+
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/checkout",
+    "method": "post",
+    "toolName": "checkout-drive-item",
+    "workScopes": ["Files.ReadWrite.All"],
+    "llmTip": "No request body. Checks out a file to prevent others from editing it while you work. Only applies to files in SharePoint document libraries (not personal OneDrive). Use checkin-drive-item when done. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/checkin",
+    "method": "post",
+    "toolName": "checkin-drive-item",
+    "workScopes": ["Files.ReadWrite.All"],
+    "llmTip": "Body: {checkInAs: 'published'/'unspecified', comment: 'optional comment'}. Checks in a file previously checked out with checkout-drive-item, making it available to others. 'published' = major version, 'unspecified' = minor version. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/preview",
+    "method": "post",
+    "toolName": "preview-drive-item",
+    "workScopes": ["Files.Read.All"],
+    "llmTip": "No request body required. Returns a short-lived embeddable preview URL (getUrl) for the file. The URL works without authentication for the duration of the token (typically 1 hour). Useful for embedding file previews in apps."
+  },
+
+  {
+    "pathPattern": "/groups/{group-id}/renew",
+    "method": "post",
+    "toolName": "renew-group",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "No request body. Renews a Microsoft 365 group's expiration, resetting the expiry clock. Returns 204 on success. Only relevant when group expiry policies are configured in Azure AD. Use before the group expires to prevent automatic deletion."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/settings",
+    "method": "get",
+    "toolName": "list-group-settings",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns group-specific settings (overrides of directory-level settings). Each setting has settingTemplateId, displayName, values array. Common templates: Group.Unified (guest access, content policy). Returns empty array if no group-specific settings are configured."
+  },
+
+  {
+    "pathPattern": "/users/{user-id}/presence/setPresence",
+    "method": "post",
+    "toolName": "set-user-presence",
+    "workScopes": ["Presence.ReadWrite"],
+    "llmTip": "Body: {sessionId: 'unique-session-id', availability: 'Available'/'Busy'/'DoNotDisturb'/'BeRightBack'/'Away'/'Offline', activity: 'Available'/'InACall'/'InAMeeting'/'Busy'/'Away'/'BeRightBack'/'DoNotDisturb'/'Offline' etc., expirationDuration: 'PT1H' (ISO 8601 duration)}. Sets presence for the specified user. sessionId must be consistent per session. Returns 200."
+  },
+  {
+    "pathPattern": "/users/{user-id}/presence/clearPresence",
+    "method": "post",
+    "toolName": "clear-user-presence",
+    "workScopes": ["Presence.ReadWrite"],
+    "llmTip": "Body: {sessionId: 'session-id-used-in-set-user-presence'}. Clears the presence set by set-user-presence for this session. The user's presence reverts to the Teams-managed state. Returns 200 on success."
+  },
+
+  {
+    "pathPattern": "/users/{user-id}/manager/$ref",
+    "method": "put",
+    "toolName": "assign-user-manager",
+    "workScopes": ["User.ReadWrite.All"],
+    "llmTip": "Body: {'@odata.id': 'https://graph.microsoft.com/v1.0/users/{manager-user-id}'}. Sets or updates the user's direct manager in the org chart. Returns 204 on success. Requires User.ReadWrite.All admin consent."
   }
 ]
