@@ -397,7 +397,7 @@ class AuthManager {
         if (hack) {
           hack(text + 'After login run the "verify login" command');
         } else {
-          console.log(text);
+          process.stderr.write(text + '\n');
         }
         logger.info('Device code login initiated');
       },

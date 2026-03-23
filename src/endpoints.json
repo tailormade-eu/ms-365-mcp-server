@@ -2276,5 +2276,36 @@
     "workScopes": [],
     "skipEncoding": ["q"],
     "llmTip": "Searches within a specific folder and all its subfolders. q is the search query (filename or content). driveItem-id must be a folder — use list-folder-files or get-drive-item to find folder IDs. Use search-drive for root-level search."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/root:/{item-path}",
+    "method": "get",
+    "toolName": "get-drive-item-by-path",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "skipEncoding": ["item-path"],
+    "llmTip": "Navigates to a file or folder by path string instead of item ID. item-path is relative from drive root, e.g. 'Documents/Projects/report.xlsx' (no leading slash). URL-encode spaces as %20. Returns same driveItem as get-drive-item. Use when folder structure is known but item ID is not."
+  },
+  {
+    "pathPattern": "/me/drive/special/{name}",
+    "method": "get",
+    "toolName": "get-special-drive-folder",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "llmTip": "Returns a special OneDrive folder by name. Valid names: 'documents', 'photos', 'cameraroll', 'approot', 'music'. Returns driveItem with id — use as driveItem-id for list-folder-files. 'approot' is a per-app private folder created automatically on first access."
+  },
+  {
+    "pathPattern": "/orgContacts",
+    "method": "get",
+    "toolName": "list-org-contacts",
+    "workScopes": ["OrgContact.Read.All"],
+    "llmTip": "Returns organization contacts synced from on-premises Active Directory (Exchange GAL). Different from personal Outlook contacts (/me/contacts). Each contact has displayName, mail, jobTitle, department, officeLocation. Use $filter=mail eq 'user@example.com' or $search for name-based lookup."
+  },
+  {
+    "pathPattern": "/users/{user-id}/teamwork/sendActivityNotification",
+    "method": "post",
+    "toolName": "send-teams-activity-notification",
+    "workScopes": ["TeamsActivity.Send"],
+    "llmTip": "Body: {topic: {source: 'entityUrl'/'text', value: 'url or title'}, activityType (required, must match Teams app manifest), previewText: {content: 'preview text'}, templateParameters: [{name, value}]}. Sends an in-app Teams notification to the specified user. activityType must be declared in the app manifest beforehand."
   }
 ]

@@ -66,14 +66,15 @@ export function registerAuthTools(server: McpServer, authManager: AuthManager): 
           },
         ],
       };
-    } catch {
+    } catch (error) {
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({ error: 'Logout failed' }),
+            text: `Error: ${error instanceof Error ? error.message : String(error)}`,
           },
         ],
+        isError: true,
       };
     }
   });

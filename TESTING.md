@@ -572,6 +572,40 @@
 
 ---
 
+## Task 99 (round 8) — Silent catch fixes B1+B3 + missing endpoints N84-N87
+
+### B1 — Silent catch fix
+| File | Change |
+|------|--------|
+| `src/auth-tools.ts` | logout catch: added error details + `isError: true` |
+
+### B3 — console.log fix
+| File | Change |
+|------|--------|
+| `src/auth.ts` | `console.log` → `process.stderr.write` in device code callback |
+
+### N84 — Drive item by path (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-drive-item-by-path` | GET | `/drives/{drive-id}/root:/{item-path}` |
+
+### N85 — Special drive folder (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-special-drive-folder` | GET | `/me/drive/special/{name}` |
+
+### N86 — Organization contacts (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-org-contacts` | GET | `/orgContacts` |
+
+### N87 — Teams activity notification (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `send-teams-activity-notification` | POST | `/users/{user-id}/teamwork/sendActivityNotification` |
+
+---
+
 **Score: 2/10**
 
 ---
