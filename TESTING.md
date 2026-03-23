@@ -966,4 +966,55 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Task 99 — Missing endpoints N194-N208 (round 15 gap analysis)
+
+### N194-N195 — Mailbox settings (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-mailbox-settings` | GET | `/me/mailboxSettings` |
+| `update-mailbox-settings` | PATCH | `/me/mailboxSettings` |
+
+### N196-N197 — Group membership (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-member-of` | GET | `/me/memberOf` |
+| `check-member-groups` | POST | `/me/getMemberGroups` |
+
+### N198 — Change password (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `change-password` | POST | `/me/changePassword` |
+
+### N199 — Revoke sign-in sessions (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `revoke-sign-in-sessions` | POST | `/me/revokeSignInSessions` |
+
+### N200-N202 — Insights (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-insights-used` | GET | `/me/insights/used` |
+| `get-insights-trending` | GET | `/me/insights/trending` |
+| `get-insights-shared` | GET | `/me/insights/shared` |
+
+### N203-N205 — Presence status message (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `set-status-message` | POST | `/me/presence/setStatusMessage` |
+| `set-preferred-presence` | POST | `/me/presence/setUserPreferredPresence` |
+| `clear-preferred-presence` | POST | `/me/presence/clearUserPreferredPresence` |
+
+### N206-N207 — Personal Teams apps (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-personal-apps` | GET | `/me/teamwork/installedApps` |
+| `install-personal-app` | POST | `/me/teamwork/installedApps` |
+
+### N208 — Create or get online meeting (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-or-get-online-meeting` | POST | `/me/onlineMeetings/createOrGet` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky
