@@ -2000,7 +2000,8 @@
     "pathPattern": "/subscriptions/{subscription-id}",
     "method": "delete",
     "toolName": "delete-subscription",
-    "workScopes": []
+    "workScopes": [],
+    "llmTip": "Permanently removes a change notification subscription. Notifications stop immediately. No request body needed."
   },
   {
     "pathPattern": "/groups",

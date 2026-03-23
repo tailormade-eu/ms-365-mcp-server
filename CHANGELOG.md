@@ -1,5 +1,24 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.5.0] - 2026-03-23
+
+### Added
+- 23 new endpoints across 10 groups (total: 289 endpoints, up from 267)
+  - User presence: get-my-presence, get-user-presence, set-my-presence (3)
+  - Change notifications: create/list/renew/delete-subscription (4)
+  - Group CRUD: create/update/delete-group (3)
+  - Planner: update-planner-plan-details (1)
+  - Mail: get-mail-mime-content (1)
+  - Outlook insights: list-trending-files, list-used-files, list-shared-insights (3)
+  - Calendar permissions: list/update/delete-calendar-permission (3)
+  - Profile photo: get/update-profile-photo (2)
+  - Meeting rooms: list-meeting-rooms, list-room-lists (2)
+  - Mail tips: get-mail-tips (1)
+
+### Fixed
+- Removed duplicate `list-meeting-recordings` entry (B5)
+- 1 endpoint missing llmTip (delete-subscription)
+
 ## [fork-1.4.0] - 2026-03-23
 
 ### Added
