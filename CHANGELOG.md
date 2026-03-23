@@ -1,5 +1,16 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.7.0] - 2026-03-23
+
+### Added
+- 9 new endpoints across 7 groups (total: 312 endpoints, up from 303)
+  - Users: list-user-member-of — group membership lookup (1)
+  - Teams: list-teams-app-catalog, clone-team (2)
+  - Calendar: list-calendar-groups, create-calendar-group (2)
+  - Users: list-user-license-details (1)
+  - Excel: add-excel-table-column (1)
+  - OneDrive: search-drive-folder — search within specific folder (1)
+
 ## [fork-1.6.0] - 2026-03-23
 
 ### Added
