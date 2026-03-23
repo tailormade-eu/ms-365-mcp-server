@@ -1,5 +1,22 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.10.0] - 2026-03-23
+
+### Added
+- 19 new endpoints across 9 groups (total: 335 endpoints, up from 317)
+  - Mail: list-message-rules — list inbox rules with conditions/actions (1)
+  - Groups: add-group-member, remove-group-member — manage group membership (2)
+  - Teams: add-channel-tab, get-channel-tab, update-channel-tab, delete-channel-tab — channel tab CRUD (4)
+  - Outlook: get-outlook-category — get single category by id (1)
+  - Calendar: get-calendar-group, update-calendar-group, delete-calendar-group — calendar group CRUD (3)
+  - SharePoint: update-sharepoint-list, delete-sharepoint-list — list management (2)
+  - SharePoint: create/update/delete-sharepoint-list-column — column management (3)
+  - OneDrive: get-drive — get drive by ID (1)
+  - Users: create-user, update-user — user admin (2)
+
+### Fixed
+- **CRITICAL: Duplicate endpoint `list-mail-rules`** — removed in favor of `list-message-rules` (consistent naming with update-message-rule/delete-message-rule)
+
 ## [fork-1.9.0] - 2026-03-23
 
 ### Added
@@ -167,4 +184,9 @@
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
+
+
+## [0.2.0] - 2026-03-23
+
+---
 

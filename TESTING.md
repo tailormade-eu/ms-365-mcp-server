@@ -662,6 +662,18 @@
 
 ---
 
+## Task 99 (round 11) — Roundup: duplicate fix + 19 new endpoints
+
+### B8 — Duplicate removed
+| Removed | Reason |
+|---------|--------|
+| `list-mail-rules` | Duplicate of `list-message-rules` (same path+method, inconsistent naming) |
+
+### N90-N108 summary
+19 new endpoints added in round 10 gap analysis (see round 10 section above). Total: 335 endpoints.
+
+---
+
 ## Task 99 (round 10 gap) — Missing endpoints N90-N108 (19 endpoints)
 
 ### N90 — Mail message rules — list (1 endpoint)
