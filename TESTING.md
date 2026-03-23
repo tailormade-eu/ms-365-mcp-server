@@ -206,6 +206,98 @@
 
 ---
 
+## Task 99 — Missing endpoints N23-N39 + Excel/category deviations fixed
+
+### N23 — Users (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-user` | GET | `/users/{user-id}` |
+
+### N24 — Calendar event attachments (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-event-attachments` | GET | `/me/events/{event-id}/attachments` |
+| `add-event-attachment` | POST | `/me/events/{event-id}/attachments` |
+
+### N25 — Excel range write (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-excel-range` | PATCH | `/drives/.../range(address='{address}')` |
+
+### N26 — Outlook category CRUD (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-outlook-category` | POST | `/me/outlook/masterCategories` |
+| `update-outlook-category` | PATCH | `/me/outlook/masterCategories/{outlookCategory-id}` |
+| `delete-outlook-category` | DELETE | `/me/outlook/masterCategories/{outlookCategory-id}` |
+
+### N27 — Update team (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-team` | PATCH | `/teams/{team-id}` |
+
+### N28 — Group planner plans (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-group-planner-plans` | GET | `/groups/{group-id}/planner/plans` |
+
+### N29-N30 — SharePoint list schema + create list (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-sharepoint-list-columns` | GET | `/sites/{site-id}/lists/{list-id}/columns` |
+| `create-sharepoint-list` | POST | `/sites/{site-id}/lists` |
+
+### N31 — Group calendar events (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-group-events` | GET | `/groups/{group-id}/events` |
+
+### N32 — Excel tables (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-excel-tables` | GET | `/drives/.../worksheets/{id}/tables` |
+| `list-excel-table-rows` | GET | `/drives/.../tables/{table-id}/rows` |
+
+### N33 — Drive item versions (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-drive-item-versions` | GET | `/drives/{drive-id}/items/{driveItem-id}/versions` |
+
+### N34 — Drive item permissions (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-drive-item-permissions` | GET | `/drives/{drive-id}/items/{driveItem-id}/permissions` |
+
+### N35 — Team tags (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-team-tags` | GET | `/teams/{team-id}/tags` |
+| `create-team-tag` | POST | `/teams/{team-id}/tags` |
+
+### N36 — Channel tabs (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-channel-tabs` | GET | `/teams/{team-id}/channels/{channel-id}/tabs` |
+
+### N37 — SharePoint pages (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-sharepoint-site-pages` | GET | `/sites/{site-id}/pages` |
+
+### N38 — Team archive (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `archive-team` | POST | `/teams/{team-id}/archive` |
+| `unarchive-team` | POST | `/teams/{team-id}/unarchive` |
+
+### N39 — Excel worksheet CRUD (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-excel-worksheet` | POST | `/drives/.../workbook/worksheets` |
+| `delete-excel-worksheet` | DELETE | `/drives/.../workbook/worksheets/{id}` |
+
+---
+
 **Score: 2/10**
 
 ---

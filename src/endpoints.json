@@ -1577,5 +1577,177 @@
     "toolName": "remove-channel-member",
     "workScopes": ["ChannelMember.ReadWrite.All"],
     "llmTip": "conversationMember-id is from list-channel-members. Cannot remove members from standard channels (inherits from team)."
+  },
+  {
+    "pathPattern": "/users/{user-id}",
+    "method": "get",
+    "toolName": "get-user",
+    "workScopes": ["User.Read.All"],
+    "llmTip": "Returns user profile: displayName, mail, jobTitle, department, officeLocation. Use list-users to find user IDs, or pass UPN (email address) as user-id directly."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/attachments",
+    "method": "get",
+    "toolName": "list-event-attachments",
+    "scopes": ["Calendars.Read"],
+    "llmTip": "Returns attachments on a calendar event. Each attachment has name, contentType, size. Use $expand=microsoft.graph.fileAttachment/contentBytes to get base64 content."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/attachments",
+    "method": "post",
+    "toolName": "add-event-attachment",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {'@odata.type': '#microsoft.graph.fileAttachment', name (required), contentBytes (required, base64), contentType}. Max 3MB per attachment. For larger files, attach via OneDrive link using #microsoft.graph.itemAttachment."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}/range(address='{address}')",
+    "method": "patch",
+    "toolName": "update-excel-range",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "skipEncoding": ["address"],
+    "llmTip": "Writes data to Excel cells. Body: {values: [['row1col1', 'row1col2'], ['row2col1', 'row2col2']]} for data, or {formulas: [['=SUM(A1:A5)']]} for formulas. address format: 'A1', 'A1:C3', 'Sheet1!A1:B2'. Use get-excel-range first to verify address."
+  },
+  {
+    "pathPattern": "/me/outlook/masterCategories",
+    "method": "post",
+    "toolName": "create-outlook-category",
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Body: {displayName (required), color: 'preset0'-'preset24' or 'none'}. Color presets: preset0=red, preset1=orange, preset2=brown, preset3=yellow, preset4=green, preset5=teal, preset6=olive, preset7=blue, preset8=purple, preset9=cranberry."
+  },
+  {
+    "pathPattern": "/me/outlook/masterCategories/{outlookCategory-id}",
+    "method": "patch",
+    "toolName": "update-outlook-category",
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Only color can be updated (displayName is immutable after creation). Body: {color: 'preset0'-'preset24' or 'none'}."
+  },
+  {
+    "pathPattern": "/me/outlook/masterCategories/{outlookCategory-id}",
+    "method": "delete",
+    "toolName": "delete-outlook-category",
+    "scopes": ["MailboxSettings.ReadWrite"]
+  },
+  {
+    "pathPattern": "/teams/{team-id}",
+    "method": "patch",
+    "toolName": "update-team",
+    "workScopes": ["Team.ReadWrite.All"],
+    "llmTip": "Updatable fields: displayName, description, memberSettings, messagingSettings, funSettings, guestSettings, discoverySettings. Body example: {displayName: 'New Name', description: 'Updated description'}."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/planner/plans",
+    "method": "get",
+    "toolName": "list-group-planner-plans",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns all Planner plans in a Microsoft 365 Group (Team). group-id is the same as team-id from list-joined-teams. Alternative to list-planner-plans when you know the team but not the plan."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/columns",
+    "method": "get",
+    "toolName": "list-sharepoint-list-columns",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns column definitions with name (internal name), displayName, type. CRITICAL: Use the name field (not displayName) as the key in create/update-sharepoint-site-list-item body fields object."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists",
+    "method": "post",
+    "toolName": "create-sharepoint-list",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {displayName (required), columns: [{name, text: {}} or {name, number: {}} or {name, dateTime: {}}], list: {template: 'genericList'}}. template options: genericList, documentLibrary, survey, links, announcements, contacts."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/events",
+    "method": "get",
+    "toolName": "list-group-events",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns calendar events for a Microsoft 365 Group (shared team calendar). group-id is the same as team-id. Supports $filter, $orderby, $top. For recurring events use $expand=instances."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}/tables",
+    "method": "get",
+    "toolName": "list-excel-tables",
+    "isExcelOp": true,
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns tables in a worksheet with name, showHeaders, style. Use table name or id for list-excel-table-rows."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows",
+    "method": "get",
+    "toolName": "list-excel-table-rows",
+    "isExcelOp": true,
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns all rows in an Excel table. Each row has index and values (array). Use $top and $skip for pagination on large tables."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/versions",
+    "method": "get",
+    "toolName": "list-drive-item-versions",
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns version history for a file. Each version has id, lastModifiedDateTime, size. Use version id to restore: PATCH /drives/{id}/items/{id}/versions/{versionId}/restoreVersion."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/permissions",
+    "method": "get",
+    "toolName": "list-drive-item-permissions",
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns sharing permissions. Each permission has roles (read/write/owner), grantedTo (user/group), link (sharing link). Use to audit who has access to a file."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags",
+    "method": "get",
+    "toolName": "list-team-tags",
+    "workScopes": ["TeamworkTag.Read"],
+    "llmTip": "Returns tags (subgroups) in a team. Tags can be @mentioned in channel messages to notify a subset of team members. Each tag has id, displayName, memberCount."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags",
+    "method": "post",
+    "toolName": "create-team-tag",
+    "workScopes": ["TeamworkTag.ReadWrite"],
+    "llmTip": "Body: {displayName (required), members: [{userId}]}. Creates a tag for @mentioning a subgroup. Max 25 tags per team, max 100 members per tag."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs",
+    "method": "get",
+    "toolName": "list-channel-tabs",
+    "workScopes": ["TeamsTab.Read.All"],
+    "llmTip": "Returns pinned tabs in a channel. Each tab has displayName, webUrl, configuration (entityId, contentUrl). Common tabs: Word, Excel, PDF files, SharePoint pages, websites."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages",
+    "method": "get",
+    "toolName": "list-sharepoint-site-pages",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns SharePoint modern pages. Each page has name, title, webUrl, lastModifiedDateTime. Use $filter=pageLayoutType eq 'Article' for news articles only."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/archive",
+    "method": "post",
+    "toolName": "archive-team",
+    "workScopes": ["Team.ReadWrite.All"],
+    "llmTip": "Archives a team — makes it read-only. Body: {shouldSetSpoSiteReadOnlyForMembers: true/false}. Archived teams still appear in Teams but cannot be posted to. Use unarchive-team to reactivate."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/unarchive",
+    "method": "post",
+    "toolName": "unarchive-team",
+    "workScopes": ["Team.ReadWrite.All"]
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets",
+    "method": "post",
+    "toolName": "create-excel-worksheet",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {name (optional, auto-generated if omitted)}. Returns new worksheet with id and name. Use update-excel-range to populate data."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}",
+    "method": "delete",
+    "toolName": "delete-excel-worksheet",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Cannot delete the last remaining worksheet in a workbook. Returns 400 if only one sheet exists."
   }
 ]
