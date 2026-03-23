@@ -11,6 +11,47 @@ vi.mock('../src/logger.js', () => ({
   },
 }));
 
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs')>();
+  return {
+    ...actual,
+    readFileSync: (filePath: string, encoding?: string) => {
+      if (typeof filePath === 'string' && filePath.includes('endpoints.json')) {
+        return JSON.stringify([
+          {
+            toolName: 'get-calendar-view',
+            pathPattern: '/me/calendarView',
+            method: 'get',
+            scopes: ['Calendars.Read'],
+            supportsTimezone: true,
+            supportsExpandExtendedProperties: true,
+            llmTip: 'CRITICAL: list-calendar-events returns seriesMasters — use get-calendar-view for recurring event instances.',
+          },
+          {
+            toolName: 'get-specific-calendar-view',
+            pathPattern: '/me/calendars/{calendar-id}/calendarView',
+            method: 'get',
+            scopes: ['Calendars.Read'],
+            supportsTimezone: true,
+            supportsExpandExtendedProperties: true,
+            llmTip: 'Same as get-calendar-view but for a specific calendar. Use for recurring event instances.',
+          },
+          {
+            toolName: 'list-calendar-event-instances',
+            pathPattern: '/me/calendars/{calendar-id}/events/{event-id}/instances',
+            method: 'get',
+            scopes: ['Calendars.Read'],
+            supportsTimezone: true,
+            supportsExpandExtendedProperties: true,
+            llmTip: 'CRITICAL: startDateTime and endDateTime are required query params. Returns individual occurrences of a recurring event.',
+          },
+        ]);
+      }
+      return actual.readFileSync(filePath, encoding as any);
+    },
+  };
+});
+
 vi.mock('../src/generated/client.js', () => ({
   api: {
     endpoints: [

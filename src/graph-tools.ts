@@ -476,36 +476,8 @@ export function registerGraphTools(
   let skippedCount = 0;
   let failedCount = 0;
 
-  for (const tool of api.endpoints) {
-    const endpointConfig = endpointsData.find((e) => e.toolName === tool.alias);
-    if (!orgMode && endpointConfig && !endpointConfig.scopes && endpointConfig.workScopes) {
-      logger.info(`Skipping work account tool ${tool.alias} - not in org mode`);
-      skippedCount++;
-      continue;
-    }
-
-    if (readOnly && tool.method.toUpperCase() !== 'GET') {
-      logger.info(`Skipping write operation ${tool.alias} in read-only mode`);
-      skippedCount++;
-      continue;
-    }
-
-    if (enabledToolsRegex && !enabledToolsRegex.test(tool.alias)) {
-      logger.info(`Skipping tool ${tool.alias} - doesn't match filter pattern`);
-      skippedCount++;
-      continue;
-    }
-
-    const paramSchema: Record<string, z.ZodTypeAny> = {};
-    if (tool.parameters && tool.parameters.length > 0) {
-      for (const param of tool.parameters) {
-        paramSchema[param.name] = param.schema || z.any();
-      }
-    }
-
-    // Extract path parameters from the path pattern (e.g., :todoTaskListId from /me/todo/lists/:todoTaskListId/tasks)
-    // The generated client omits these from tool.parameters, so we add them manually.
-    const pathParamDescriptions: Record<string, string> = {
+  // Path parameter descriptions — shared between generated and synthetic endpoint loops
+  const pathParamDescriptions: Record<string, string> = {
       todoTaskListId: 'Todo task list ID. Use list-todo-task-lists to obtain.',
       todoTaskId: 'Todo task ID. Use list-todo-tasks to obtain.',
       messageId: 'Mail message ID. Use list-mail-messages to obtain.',
@@ -539,8 +511,37 @@ export function registerGraphTools(
       onenoteSectionId:
         'OneNote section ID. Use list-onenote-notebook-sections to find it.',
       plannerBucketId: 'Planner bucket ID. Use list-planner-buckets to find it.',
-      plannerPlanId: 'Planner plan ID. Use list-planner-plans to find it.',
-    };
+    plannerPlanId: 'Planner plan ID. Use list-planner-plans to find it.',
+  };
+
+  for (const tool of api.endpoints) {
+    const endpointConfig = endpointsData.find((e) => e.toolName === tool.alias);
+    if (!orgMode && endpointConfig && !endpointConfig.scopes && endpointConfig.workScopes) {
+      logger.info(`Skipping work account tool ${tool.alias} - not in org mode`);
+      skippedCount++;
+      continue;
+    }
+
+    if (readOnly && tool.method.toUpperCase() !== 'GET') {
+      logger.info(`Skipping write operation ${tool.alias} in read-only mode`);
+      skippedCount++;
+      continue;
+    }
+
+    if (enabledToolsRegex && !enabledToolsRegex.test(tool.alias)) {
+      logger.info(`Skipping tool ${tool.alias} - doesn't match filter pattern`);
+      skippedCount++;
+      continue;
+    }
+
+    const paramSchema: Record<string, z.ZodTypeAny> = {};
+    if (tool.parameters && tool.parameters.length > 0) {
+      for (const param of tool.parameters) {
+        paramSchema[param.name] = param.schema || z.any();
+      }
+    }
+
+    // Extract path parameters from the path pattern
     const pathParamMatches = tool.path.matchAll(/:([a-zA-Z]+)/g);
     for (const match of pathParamMatches) {
       const pathParamName = match[1];
@@ -696,6 +697,176 @@ export function registerGraphTools(
     }
   }
 
+  // Register endpoints from endpoints.json that are NOT in the generated client.
+  // The generated client only covers ~130 endpoints from the OpenAPI spec; endpoints.json
+  // may define additional tools that need registration with minimal param schemas.
+  const generatedAliases = new Set(api.endpoints.map((e) => e.alias));
+  for (const endpointConfig of endpointsData) {
+    if (generatedAliases.has(endpointConfig.toolName)) continue; // already registered above
+
+    if (!orgMode && !endpointConfig.scopes && endpointConfig.workScopes) {
+      skippedCount++;
+      continue;
+    }
+    if (readOnly && endpointConfig.method.toUpperCase() !== 'GET') {
+      skippedCount++;
+      continue;
+    }
+    if (enabledToolsRegex && !enabledToolsRegex.test(endpointConfig.toolName)) {
+      skippedCount++;
+      continue;
+    }
+
+    // Convert {param-name} to :paramName for path replacement compatibility
+    const toolPath = endpointConfig.pathPattern.replace(
+      /\{([^}]+)\}/g,
+      (_, p: string) => ':' + p.replace(/-([a-z])/g, (_2: string, c: string) => c.toUpperCase())
+    );
+
+    // Build a minimal tool object compatible with executeGraphTool
+    const syntheticTool = {
+      method: endpointConfig.method,
+      path: toolPath,
+      alias: endpointConfig.toolName,
+      description: `Execute ${endpointConfig.method.toUpperCase()} request to ${endpointConfig.pathPattern}`,
+      requestFormat: 'json' as const,
+      parameters: [] as Array<{ name: string; type: string; schema: z.ZodTypeAny }>,
+      response: z.void(),
+    };
+
+    // Build param schema — path params + body + OData are handled the same as above
+    const paramSchema: Record<string, z.ZodTypeAny> = {};
+
+    // Add body parameter for write operations
+    if (['post', 'patch', 'put'].includes(endpointConfig.method.toLowerCase())) {
+      paramSchema['body'] = z.any().describe('Request body (JSON object)').optional();
+    }
+
+    // Extract path parameters
+    const pathParamMatches = toolPath.matchAll(/:([a-zA-Z]+)/g);
+    for (const match of pathParamMatches) {
+      const pathParamName = match[1];
+      if (!(pathParamName in paramSchema)) {
+        const description =
+          pathParamDescriptions[pathParamName] ||
+          'ID for this resource. Use the corresponding list-* tool to obtain it.';
+        paramSchema[pathParamName] = z.string().describe(description);
+      }
+    }
+
+    // Add fetchAllPages for GET endpoints
+    if (syntheticTool.method.toUpperCase() === 'GET' && toolPath.includes('/')) {
+      paramSchema['fetchAllPages'] = z
+        .boolean()
+        .describe('Automatically fetch all pages of results')
+        .optional();
+    }
+
+    // Add OData parameters for GET endpoints
+    if (syntheticTool.method.toUpperCase() === 'GET') {
+      paramSchema['$filter'] = z
+        .string()
+        .describe(
+          'OData filter expression. Add $count=true for advanced filters (flag/flagStatus, contains()). Cannot combine with $search.'
+        )
+        .optional();
+      paramSchema['$select'] = z
+        .string()
+        .describe(
+          'Comma-separated fields to return. Always use to reduce response size. Example: id,subject,from,receivedDateTime'
+        )
+        .optional();
+      paramSchema['$top'] = z
+        .number()
+        .describe(
+          'Max items per page (default varies, max 999 for mail). Server auto-paginates via nextLink.'
+        )
+        .optional();
+      paramSchema['$orderby'] = z
+        .string()
+        .describe('Sort expression. Example: receivedDateTime desc')
+        .optional();
+      paramSchema['$expand'] = z
+        .string()
+        .describe('Expand related entities. Example: members')
+        .optional();
+    }
+
+    // Multi-account support
+    if (multiAccount) {
+      const accountHint =
+        accountNames.length > 0 ? `Known accounts: ${accountNames.join(', ')}. ` : '';
+      paramSchema['account'] = z
+        .string()
+        .describe(
+          `${accountHint}Microsoft account email to use for this request. ` +
+            `Required when multiple accounts are configured. ` +
+            `Use the list-accounts tool to discover all currently available accounts.`
+        )
+        .optional();
+    }
+
+    paramSchema['includeHeaders'] = z
+      .boolean()
+      .describe('Include response headers (including ETag) in the response metadata')
+      .optional();
+    paramSchema['excludeResponse'] = z
+      .boolean()
+      .describe('Exclude the full response body and only return success or failure indication')
+      .optional();
+
+    if (endpointConfig.supportsTimezone) {
+      paramSchema['timezone'] = z
+        .string()
+        .describe(
+          'IANA timezone name (e.g., "America/New_York", "Europe/London", "Asia/Tokyo") for calendar event times. If not specified, times are returned in UTC.'
+        )
+        .optional();
+    }
+
+    if (endpointConfig.supportsExpandExtendedProperties) {
+      paramSchema['expandExtendedProperties'] = z
+        .boolean()
+        .describe(
+          'When true, expands singleValueExtendedProperties on each event. Use this to retrieve custom extended properties (e.g., sync metadata) stored on calendar events.'
+        )
+        .optional();
+    }
+
+    let toolDescription = syntheticTool.description;
+    if (endpointConfig.llmTip) {
+      toolDescription += `\n\nTIP: ${endpointConfig.llmTip}`;
+    }
+
+    try {
+      server.tool(
+        syntheticTool.alias,
+        toolDescription,
+        paramSchema,
+        {
+          title: syntheticTool.alias,
+          readOnlyHint: syntheticTool.method.toUpperCase() === 'GET',
+          destructiveHint: ['POST', 'PATCH', 'DELETE'].includes(syntheticTool.method.toUpperCase()),
+          openWorldHint: true,
+        },
+        async (params) =>
+          executeGraphTool(
+            syntheticTool as (typeof api.endpoints)[0],
+            endpointConfig,
+            graphClient,
+            params,
+            authManager
+          )
+      );
+      registeredCount++;
+    } catch (error) {
+      logger.error(
+        `Failed to register tool ${syntheticTool.alias}: ${(error as Error).message}`
+      );
+      failedCount++;
+    }
+  }
+
   if (multiAccount) {
     logger.info('Multi-account mode: "account" parameter injected into all tool schemas');
   }
@@ -730,6 +901,32 @@ function buildToolsRegistry(
     }
 
     toolsMap.set(tool.alias, { tool, config: endpointConfig });
+  }
+
+  // Also include endpoints from endpoints.json not in generated client
+  const generatedAliases = new Set(api.endpoints.map((e) => e.alias));
+  for (const endpointConfig of endpointsData) {
+    if (generatedAliases.has(endpointConfig.toolName)) continue;
+    if (!orgMode && !endpointConfig.scopes && endpointConfig.workScopes) continue;
+    if (readOnly && endpointConfig.method.toUpperCase() !== 'GET') continue;
+
+    const toolPath = endpointConfig.pathPattern.replace(
+      /\{([^}]+)\}/g,
+      (_, p: string) => ':' + p.replace(/-([a-z])/g, (_2: string, c: string) => c.toUpperCase())
+    );
+    const syntheticTool = {
+      method: endpointConfig.method,
+      path: toolPath,
+      alias: endpointConfig.toolName,
+      description: `Execute ${endpointConfig.method.toUpperCase()} request to ${endpointConfig.pathPattern}`,
+      requestFormat: 'json' as const,
+      parameters: [] as Array<{ name: string; type: string; schema: z.ZodTypeAny }>,
+      response: z.void(),
+    };
+    toolsMap.set(syntheticTool.alias, {
+      tool: syntheticTool as (typeof api.endpoints)[0],
+      config: endpointConfig,
+    });
   }
 
   return toolsMap;

@@ -10,6 +10,19 @@ vi.mock('../src/cli.js', () => {
   };
 });
 
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs')>();
+  return {
+    ...actual,
+    readFileSync: (filePath: string, encoding?: string) => {
+      if (typeof filePath === 'string' && filePath.includes('endpoints.json')) {
+        return '[]';
+      }
+      return actual.readFileSync(filePath, encoding as any);
+    },
+  };
+});
+
 vi.mock('../src/generated/client.js', () => {
   return {
     api: {
