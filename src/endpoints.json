@@ -2786,29 +2786,29 @@
   },
 
   {
-    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "pathPattern": "/me/events/{event-id}/instances/{instance-id}",
     "method": "get",
     "toolName": "get-event-exception",
     "scopes": ["Calendars.Read"],
     "workScopes": ["Calendars.Read"],
     "supportsTimezone": true,
-    "llmTip": "Returns a single occurrence of a recurring event. instanceId from list-event-instances. Returns full event details for this specific occurrence."
+    "llmTip": "Returns a single occurrence of a recurring event. instance-id from list-event-instances. Returns full event details for this specific occurrence."
   },
   {
-    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "pathPattern": "/me/events/{event-id}/instances/{instance-id}",
     "method": "patch",
     "toolName": "update-event-exception",
     "scopes": ["Calendars.ReadWrite"],
     "workScopes": ["Calendars.ReadWrite"],
-    "llmTip": "Updates a single occurrence of a recurring series without affecting other instances. Updatable fields: subject, start, end, body, location, attendees. instanceId from list-event-instances. Returns 200."
+    "llmTip": "Updates a single occurrence of a recurring series without affecting other instances. Updatable fields: subject, start, end, body, location, attendees. instance-id from list-event-instances. Returns 200."
   },
   {
-    "pathPattern": "/me/events/{event-id}/instances/{instanceId}",
+    "pathPattern": "/me/events/{event-id}/instances/{instance-id}",
     "method": "delete",
     "toolName": "delete-event-exception",
     "scopes": ["Calendars.ReadWrite"],
     "workScopes": ["Calendars.ReadWrite"],
-    "llmTip": "Cancels a single occurrence of a recurring event series without deleting the entire series. instanceId from list-event-instances. Returns 204. To cancel the entire series, delete the series master event."
+    "llmTip": "Cancels a single occurrence of a recurring event series without deleting the entire series. instance-id from list-event-instances. Returns 204. To cancel the entire series, delete the series master event."
   },
 
   {
@@ -2902,7 +2902,7 @@
     "method": "post",
     "toolName": "set-user-presence",
     "workScopes": ["Presence.ReadWrite"],
-    "llmTip": "Body: {sessionId: 'unique-session-id', availability: 'Available'/'Busy'/'DoNotDisturb'/'BeRightBack'/'Away'/'Offline', activity: 'Available'/'InACall'/'InAMeeting'/'Busy'/'Away'/'BeRightBack'/'DoNotDisturb'/'Offline' etc., expirationDuration: 'PT1H' (ISO 8601 duration)}. Sets presence for the specified user. sessionId must be consistent per session. Returns 200."
+    "llmTip": "Body: {sessionId: 'unique-session-id', availability: 'Available'/'Busy'/'DoNotDisturb'/'BeRightBack'/'Away', activity: 'Available'/'InACall'/'InAMeeting'/'Busy'/'Away'/'BeRightBack'/'DoNotDisturb' etc., expirationDuration: 'PT1H' (ISO 8601 duration)}. Sets presence for the specified user. sessionId must be consistent per session. Returns 200."
   },
   {
     "pathPattern": "/users/{user-id}/presence/clearPresence",

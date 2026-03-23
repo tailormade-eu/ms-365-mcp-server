@@ -1,5 +1,24 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.13.0] - 2026-03-23
+
+### Added
+- 18 new endpoints across 7 groups (total: 396 endpoints, up from 378)
+  - Calendar: list-event-instances, get/update/delete-event-exception — recurring event instance management (4)
+  - Mail: list/create/get/update/delete-search-folder — virtual search folder CRUD (5)
+  - Teams: get-team-primary-channel — direct primary channel access (1)
+  - OneDrive: checkout/checkin/preview-drive-item — file lock and preview (3)
+  - Groups: renew-group, list-group-settings — group lifecycle management (2)
+  - Presence: set-user-presence, clear-user-presence — admin presence control (2)
+  - Directory: assign-user-manager — set user's manager (1)
+
+### Fixed
+- **CRITICAL: `{instanceId}` path param** — changed to `{instance-id}` for kebab-case consistency with all other path params
+- `set-user-presence` llmTip listed `Offline` as valid availability — removed (Graph API returns 400 for Offline)
+- Winston `stderrLevels` now includes all levels (verbose, silly) — prevents stdout leakage at any LOG_LEVEL
+- `get-subscription` path param fixed: `{subscriptionId}` → `{subscription-id}`
+- `follow-site` expected status code corrected: 204 → 200
+
 ## [fork-1.12.0] - 2026-03-23
 
 ### Added
@@ -233,4 +252,5 @@
 ## [0.4.0] - 2026-03-23
 
 ---
+
 
