@@ -737,4 +737,72 @@
 
 ---
 
+## Task 99 — Missing endpoints N109-N128 (round 11 gap analysis)
+
+### N109 — People suggestions (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-people` | GET | `/me/people` |
+
+### N110 — Drive item sharing link (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-link` | POST | `/drives/{drive-id}/items/{driveItem-id}/createLink` |
+
+### N111-N112 — Group calendar events (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-group-calendar-event` | POST | `/groups/{group-id}/calendar/events` |
+| `get-group-calendar-event` | GET | `/groups/{group-id}/calendar/events/{event-id}` |
+
+### N113 — Group calendars list (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-group-calendars` | GET | `/groups/{group-id}/calendars` |
+
+### N114-N115 — Drive item version and permission get (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-drive-item-version` | GET | `/drives/{drive-id}/items/{driveItem-id}/versions/{version-id}` |
+| `get-drive-item-permission` | GET | `/drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}` |
+
+### N116-N118 — Team member and app management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-team-member` | GET | `/teams/{team-id}/members/{membership-id}` |
+| `update-team-member` | PATCH | `/teams/{team-id}/members/{membership-id}` |
+| `upgrade-team-app` | POST | `/teams/{team-id}/installedApps/{teamsAppInstallation-id}/upgrade` |
+
+### N119 — SharePoint list column get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-sharepoint-list-column` | GET | `/sites/{site-id}/lists/{list-id}/columns/{column-id}` |
+
+### N120-N124 — SharePoint site pages CRUD (5 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-sharepoint-site-page` | GET | `/sites/{site-id}/pages/{page-id}` |
+| `create-sharepoint-site-page` | POST | `/sites/{site-id}/pages` |
+| `update-sharepoint-site-page` | PATCH | `/sites/{site-id}/pages/{page-id}` |
+| `delete-sharepoint-site-page` | DELETE | `/sites/{site-id}/pages/{page-id}` |
+| `publish-sharepoint-site-page` | POST | `/sites/{site-id}/pages/{page-id}/publish` |
+
+### N125-N126 — User settings (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-user-settings` | GET | `/users/{user-id}/settings` |
+| `update-user-settings` | PATCH | `/users/{user-id}/settings` |
+
+### N127 — Excel table get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-excel-table` | GET | `/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}` |
+
+### N128 — Chat update (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-chat` | PATCH | `/chats/{chat-id}` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

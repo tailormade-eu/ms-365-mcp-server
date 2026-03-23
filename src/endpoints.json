@@ -2447,5 +2447,145 @@
     "toolName": "update-user",
     "workScopes": ["User.ReadWrite.All"],
     "llmTip": "Updatable fields: displayName, jobTitle, department, officeLocation, mobilePhone, businessPhones, usageLocation, accountEnabled. To change UPN: update userPrincipalName. Returns 204 No Content. user-id can be UPN or Azure AD object ID."
+  },
+  {
+    "pathPattern": "/me/people",
+    "method": "get",
+    "toolName": "list-people",
+    "workScopes": ["People.Read"],
+    "llmTip": "Returns people relevant to the user based on communication patterns, collaboration, and org relationships. Each person has displayName, scoredEmailAddresses, jobTitle, department, officeLocation, phones. Use $search='name' for name-based filtering. Use $top to limit results (default 10, max 1000). More relevant than /users for 'who do I work with' queries."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/createLink",
+    "method": "post",
+    "toolName": "create-link",
+    "workScopes": [],
+    "llmTip": "Body: {type: 'view'/'edit'/'embed', scope: 'anonymous'/'organization', expirationDateTime (ISO 8601, optional), password (optional)}. Returns a sharing link with webUrl. 'anonymous' = anyone with link, 'organization' = org members only. Different from share-drive-item which sends email invitations. Use when you need a shareable URL."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/calendar/events",
+    "method": "post",
+    "toolName": "create-group-calendar-event",
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: same as create-calendar-event (subject, start, end, body, attendees, location). Creates an event on the group's shared calendar. group-id from list-groups or list-joined-teams. Returns the created event with id."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/calendar/events/{event-id}",
+    "method": "get",
+    "toolName": "get-group-calendar-event",
+    "workScopes": ["Calendars.Read"],
+    "llmTip": "Returns a specific event from the group's shared calendar. event-id from list-group-events. Use $select to limit fields returned."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/calendars",
+    "method": "get",
+    "toolName": "list-group-calendars",
+    "workScopes": ["Calendars.Read"],
+    "llmTip": "Returns all calendars belonging to a Microsoft 365 group. Each calendar has id, name, canEdit, canShare. Use calendar id with get-group-calendar-event or create-group-calendar-event."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/versions/{version-id}",
+    "method": "get",
+    "toolName": "get-drive-item-version",
+    "workScopes": [],
+    "llmTip": "Returns a specific version of a file. version-id from list-drive-item-versions (e.g. '1.0', '2.0'). Includes lastModifiedDateTime, size. Use restore-drive-item-version to restore this version."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}",
+    "method": "get",
+    "toolName": "get-drive-item-permission",
+    "workScopes": [],
+    "llmTip": "Returns a single sharing permission by id. permission-id from list-drive-item-permissions. Includes grantedTo (user/group), roles (read/write/owner), link (if sharing link), expirationDateTime."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members/{membership-id}",
+    "method": "get",
+    "toolName": "get-team-member",
+    "workScopes": ["TeamMember.Read.All"],
+    "llmTip": "Returns a single team member by membership id (NOT user id). membership-id from list-team-members. Returns displayName, userId, email, roles (owner/member)."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members/{membership-id}",
+    "method": "patch",
+    "toolName": "update-team-member",
+    "workScopes": ["TeamMember.ReadWrite.All"],
+    "llmTip": "Body: {roles: ['owner']} to promote to owner, {roles: []} to demote to member. membership-id from list-team-members (not the user id). Returns 200 with updated member."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/installedApps/{teamsAppInstallation-id}/upgrade",
+    "method": "post",
+    "toolName": "upgrade-team-app",
+    "workScopes": ["TeamsAppInstallation.ReadWriteForTeam"],
+    "llmTip": "Upgrades an installed app to the latest version. teamsAppInstallation-id from list-team-apps (the installation id, not the app catalog id). No request body needed. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/columns/{column-id}",
+    "method": "get",
+    "toolName": "get-sharepoint-list-column",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns a single column definition. column-id from list-sharepoint-list-columns. Includes name, columnGroup, required, hidden, and the column type object (text/number/choice/etc.)."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages/{page-id}",
+    "method": "get",
+    "toolName": "get-sharepoint-site-page",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns a site page. page-id from list-sharepoint-site-pages. Includes title, webUrl, publishingState (draft/published), createdDateTime, lastModifiedDateTime. Use $expand=canvasLayout to include page content sections."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages",
+    "method": "post",
+    "toolName": "create-sharepoint-site-page",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {name (required, URL-safe filename without .aspx), title (required), promotionKind: 'page'/'newsPost'}. Creates a draft page. Call publish-sharepoint-site-page to make it live. Returns page id."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages/{page-id}",
+    "method": "patch",
+    "toolName": "update-sharepoint-site-page",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Updatable fields: title, description, promotionKind, showComments, showRecommendedPages. Page must be in draft state to update — published pages must be checked out first via the SharePoint UI. Returns 200."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages/{page-id}",
+    "method": "delete",
+    "toolName": "delete-sharepoint-site-page",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Deletes a site page. Cannot delete pages that are set as the site home page. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/pages/{page-id}/publish",
+    "method": "post",
+    "toolName": "publish-sharepoint-site-page",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Publishes a draft page, making it visible to site visitors. No request body needed. Returns 204 on success. Use after create-sharepoint-site-page or update-sharepoint-site-page."
+  },
+  {
+    "pathPattern": "/users/{user-id}/settings",
+    "method": "get",
+    "toolName": "get-user-settings",
+    "workScopes": ["User.Read.All"],
+    "llmTip": "Returns user settings: contributionToContentDiscoveryDisabled (people insights opt-out), contributionToContentDiscoveryAsOrganizationDisabled. Use 'me' as user-id for current user (no workScope needed)."
+  },
+  {
+    "pathPattern": "/users/{user-id}/settings",
+    "method": "patch",
+    "toolName": "update-user-settings",
+    "workScopes": ["User.ReadWrite"],
+    "llmTip": "Body: {contributionToContentDiscoveryDisabled: true/false}. Controls whether the user appears in other users' people suggestions and insights. Returns 204 No Content."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}",
+    "method": "get",
+    "toolName": "get-excel-table",
+    "workScopes": [],
+    "llmTip": "Returns a single table definition: name, showHeaders, showTotals, style, highlightFirstColumn, highlightLastColumn. table-id or table name from list-excel-tables. Requires an active workbook session — use create-excel-session first."
+  },
+  {
+    "pathPattern": "/chats/{chat-id}",
+    "method": "patch",
+    "toolName": "update-chat",
+    "workScopes": ["Chat.ReadWrite"],
+    "llmTip": "Body: {topic: 'New chat name'}. Only group chats (chatType: 'group') support topic rename — oneOnOne and meeting chats cannot be renamed. chat-id from list-chats or get-chat. Returns 200."
   }
 ]
