@@ -471,6 +471,65 @@
 
 ---
 
+## Task 99 (round 6) — AcceptType fix B6 + missing endpoints N68-N76
+
+### B6 — Fix
+| Tool | Change |
+|------|--------|
+| `get-mail-mime-content` | acceptType: `text/plain` → `message/rfc822` |
+
+### N68 — Free/busy schedule (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-schedule` | POST | `/me/calendar/getSchedule` |
+
+### N69 — Org chart navigation (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-user-manager` | GET | `/users/{user-id}/manager` |
+| `list-user-direct-reports` | GET | `/users/{user-id}/directReports` |
+
+### N70 — Add Excel table row (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `add-excel-table-row` | POST | `/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows` |
+
+### N71 — Group owner management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-group-owners` | GET | `/groups/{group-id}/owners` |
+| `add-group-owner` | POST | `/groups/{group-id}/owners/$ref` |
+| `remove-group-owner` | DELETE | `/groups/{group-id}/owners/{user-id}/$ref` |
+
+### N72 — Drive item thumbnails (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-drive-item-thumbnails` | GET | `/drives/{drive-id}/items/{driveItem-id}/thumbnails` |
+
+### N73 — Drive item activities (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-drive-item-activities` | GET | `/drives/{drive-id}/items/{driveItem-id}/activities` |
+
+### N74 — Guest user invitation (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-guest-invitation` | POST | `/invitations` |
+
+### N75 — Deleted items recovery (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-deleted-items` | GET | `/directory/deletedItems/microsoft.graph.group` |
+| `restore-deleted-item` | POST | `/directory/deletedItems/{directory-object-id}/restore` |
+
+### N76 — Excel named items (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-excel-named-items` | GET | `/drives/{drive-id}/items/{driveItem-id}/workbook/names` |
+| `get-excel-named-item` | GET | `/drives/{drive-id}/items/{driveItem-id}/workbook/names/{name}` |
+
+---
+
 **Score: 2/10**
 
 ---

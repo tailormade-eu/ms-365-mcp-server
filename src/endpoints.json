@@ -2036,8 +2036,8 @@
     "method": "get",
     "toolName": "get-mail-mime-content",
     "scopes": ["Mail.Read"],
-    "acceptType": "text/plain",
-    "llmTip": "Returns raw MIME content of an email as plain text. Useful for archiving or parsing email headers/body outside Graph. Response is raw MIME string (not JSON). message-id from list-mail-messages or get-mail-message."
+    "acceptType": "message/rfc822",
+    "llmTip": "Returns raw RFC 2822 MIME content of an email. Useful for archiving or parsing full email headers/body outside Graph. Response is raw MIME string (not JSON). message-id from list-mail-messages or get-mail-message."
   },
   {
     "pathPattern": "/me/insights/trending",
@@ -2117,5 +2117,103 @@
     "toolName": "get-mail-tips",
     "scopes": ["Mail.Read"],
     "llmTip": "Body: {emailAddresses: ['recipient@example.com'], mailTipsOptions: 'automaticReplies,mailboxFullStatus,outOfOffice,deliveryRestriction,maxMessageSize'}. Returns OOF status and auto-reply message per recipient. Use before send-mail to check if recipients are out of office."
+  },
+  {
+    "pathPattern": "/me/calendar/getSchedule",
+    "method": "post",
+    "toolName": "get-schedule",
+    "workScopes": ["Calendars.Read"],
+    "llmTip": "Body: {schedules: ['user@example.com', 'room@example.com'], startTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, endTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, availabilityViewInterval: 30}. Returns free/busy blocks per schedule. scheduleItems show busy slots with subject if permission allows. Use for meeting scheduling and room availability checks."
+  },
+  {
+    "pathPattern": "/users/{user-id}/manager",
+    "method": "get",
+    "toolName": "get-user-manager",
+    "workScopes": ["User.Read.All"],
+    "llmTip": "Returns the user's direct manager as a directoryObject. Use $select=displayName,mail,jobTitle to get user fields. Returns 404 if user has no manager. user-id can be UPN (email) or Azure AD ID."
+  },
+  {
+    "pathPattern": "/users/{user-id}/directReports",
+    "method": "get",
+    "toolName": "list-user-direct-reports",
+    "workScopes": ["User.Read.All"],
+    "llmTip": "Returns direct reports of the user. Each item is a directoryObject — use $select=displayName,mail,jobTitle to get user fields. Returns empty array if user has no direct reports."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows",
+    "method": "post",
+    "toolName": "add-excel-table-row",
+    "workScopes": [],
+    "llmTip": "Body: {values: [['col1', 'col2', ...]]} to append a row, or {index: 0, values: [...]} to insert at specific position (0-based). Omit index to append at end. Column count must match the table's column count exactly."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/owners",
+    "method": "get",
+    "toolName": "list-group-owners",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns owners of the group as directoryObjects. Use $select=displayName,mail,jobTitle to get user fields. Owners can manage the group (add/remove members, update settings)."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/owners/$ref",
+    "method": "post",
+    "toolName": "add-group-owner",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Body: {'@odata.id': 'https://graph.microsoft.com/v1.0/users/{user-id}'}. Adds a user as group owner. Returns 204 on success. Max 100 owners per group."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/owners/{user-id}/$ref",
+    "method": "delete",
+    "toolName": "remove-group-owner",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "user-id from list-group-owners. Cannot remove the last owner — group must have at least 1 owner at all times. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/thumbnails",
+    "method": "get",
+    "toolName": "list-drive-item-thumbnails",
+    "workScopes": [],
+    "llmTip": "Returns available thumbnail sizes: small (48px), medium (176px), large (800px), source (original). Each size has url (expires ~1h), width, height. Use $select=large to get only the large thumbnail. url can be used directly in img tags."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/activities",
+    "method": "get",
+    "toolName": "list-drive-item-activities",
+    "workScopes": [],
+    "llmTip": "Returns activity history for a file. Each activity has action (create/edit/delete/move/rename/share/restore/version), actor (user displayName + id), activityDateTime. Use $top to limit results."
+  },
+  {
+    "pathPattern": "/invitations",
+    "method": "post",
+    "toolName": "create-guest-invitation",
+    "workScopes": ["User.Invite.All"],
+    "llmTip": "Body: {invitedUserEmailAddress (required), inviteRedirectUrl (required), invitedUserDisplayName (optional), sendInvitationMessage: true/false, invitedUserMessageInfo: {messageBody: 'Custom message'}}. Returns invitedUser with id. Guest account is created in Azure AD — use id for further Graph operations."
+  },
+  {
+    "pathPattern": "/directory/deletedItems/microsoft.graph.group",
+    "method": "get",
+    "toolName": "list-deleted-items",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Returns soft-deleted M365 groups within 30-day retention window. Each item has id, displayName, deletedDateTime. Change path suffix to microsoft.graph.user for deleted users (requires User.ReadWrite.All). Use restore-deleted-item to recover."
+  },
+  {
+    "pathPattern": "/directory/deletedItems/{directory-object-id}/restore",
+    "method": "post",
+    "toolName": "restore-deleted-item",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Restores a soft-deleted M365 group or user. directory-object-id from list-deleted-items. Returns the restored object. Cannot restore after 30-day retention window."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/names",
+    "method": "get",
+    "toolName": "list-excel-named-items",
+    "workScopes": [],
+    "llmTip": "Returns named ranges and formulas in the workbook. Each item has name, type (Range/Formula), value (range address like 'Sheet1!A1:B10' or formula result). Use name as address in get-excel-range/update-excel-range."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/names/{name}",
+    "method": "get",
+    "toolName": "get-excel-named-item",
+    "workScopes": [],
+    "llmTip": "Returns a specific named range or formula by name (case-sensitive). type: 'Range' returns range address; 'Formula' returns calculated value."
   }
 ]
