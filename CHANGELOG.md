@@ -1,5 +1,17 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.16.1] - 2026-03-23
+
+### Fixed
+- **B2: Prefer header case-insensitive merge** — `graph-client.ts` now checks both `Prefer` and `prefer` keys when merging headers
+- **B4: CORS wildcard warning** — `server.ts` logs `logger.warn` when wildcard `*` origin is used in HTTP mode
+- **B7: `list-drive-item-activities` beta-only** — added `useBeta: true` flag + WARNING prefix in llmTip (endpoint only exists in `/beta/`)
+- **V13: `update-todo-cache` path traversal** — output path now validated with `path.resolve()` + `.json` extension check
+- **V14: `forEach` → `for...of`** — `removeODataProps` in graph-client.ts now uses `for...of` per coding guidelines
+- **V15: Client ID logging** — `server.ts` now logs `SET` / `NOT SET` only, no partial client ID
+- **V16: AccessToken redaction** — `graph-client.ts` request logging now redacts accessToken as `[REDACTED]`
+- **V17: Missing scopes on site-following tools** — `list-followed-sites`, `follow-site`, `unfollow-site` now have `scopes: []` (work-only endpoints)
+
 ## [fork-1.16.0] - 2026-03-23
 
 ### Added
@@ -280,30 +292,3 @@
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
-
-
-## [0.2.0] - 2026-03-23
-
----
-
-
-## [0.3.0] - 2026-03-23
-
----
-
-
-## [0.4.0] - 2026-03-23
-
----
-
-
-
-## [0.7.0] - 2026-03-23
-
----
-
-
-## [0.8.0] - 2026-03-23
-
----
-
