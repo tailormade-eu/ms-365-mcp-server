@@ -3099,7 +3099,8 @@
     "pathPattern": "/me/calendar",
     "method": "get",
     "toolName": "get-default-calendar",
-    "workScopes": [],
+    "scopes": ["Calendars.Read"],
+    "workScopes": ["Calendars.Read"],
     "llmTip": "Returns metadata for the user's default calendar: id, name, color, isDefaultCalendar, canEdit, canShare, canViewPrivateItems, isRemovable, owner (name + address). Use to get the default calendar id for use with other calendar endpoints. Different from list-calendars which lists all calendars."
   },
 

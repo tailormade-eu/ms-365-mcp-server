@@ -1,5 +1,20 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.16.0] - 2026-03-23
+
+### Added
+- 13 new endpoints across 7 groups (total: 429 endpoints, up from 416)
+  - Presence: clear-me-presence — revert to automatic presence detection (1)
+  - Calendar: get-default-calendar — default calendar metadata (1)
+  - User Settings: get/update-item-insights-settings, get/update-work-hours — privacy + work schedule (4)
+  - Directory: list-transitive-member-of — nested/transitive group memberships (1)
+  - Teams: list-associated-teams, send-me-activity-notification — cross-org teams + activity feed (2)
+  - Bookings: list-booking-businesses, create-booking-business, list-booking-currencies — Microsoft Bookings management (3)
+  - Places: list-buildings — organization building directory (1)
+
+### Fixed
+- **CRITICAL: `get-default-calendar` missing scopes** — had empty `workScopes: []` and no `scopes`, making it unreachable. Added `scopes: ["Calendars.Read"]` and `workScopes: ["Calendars.Read"]`
+
 ## [fork-1.15.0] - 2026-03-23
 
 ### Added
@@ -284,6 +299,11 @@
 
 
 ## [0.7.0] - 2026-03-23
+
+---
+
+
+## [0.8.0] - 2026-03-23
 
 ---
 
