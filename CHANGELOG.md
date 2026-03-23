@@ -1,5 +1,20 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.4.0] - 2026-03-23
+
+### Added
+- 29 new endpoints across 18 groups (total: 267 endpoints, up from 238)
+  - OneDrive: share-drive-item, remove-drive-item-permission, get-folder-delta, restore-drive-item-version (4)
+  - Mail: copy-mail-message, list-shared-mailbox-folders, create-mail-attachment-upload-session (3)
+  - Calendar: get/delete-event-attachment, snooze/dismiss-reminder (4)
+  - Excel: get-excel-worksheet, create/update/delete-excel-table, create/close-excel-session (6)
+  - Teams: update/delete-team-tag, team tag members CRUD, install/uninstall-team-app, list-chat-tabs (8)
+  - Meetings: list/get-meeting-recording (2)
+  - SharePoint: list/get-site-content-type (2)
+
+### Fixed
+- 4 endpoints missing llmTip (delete-event-attachment, delete-team-tag, get-meeting-recording, get-site-content-type)
+
 ## [fork-1.3.0] - 2026-03-23
 
 ### Added
