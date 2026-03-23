@@ -2592,5 +2592,186 @@
     "toolName": "update-chat",
     "workScopes": ["Chat.ReadWrite"],
     "llmTip": "Body: {topic: 'New chat name'}. Only group chats (chatType: 'group') support topic rename — oneOnOne and meeting chats cannot be renamed. chat-id from list-chats or get-chat. Returns 200."
+  },
+
+  {
+    "pathPattern": "/groups/{group-id}/calendar/events/{event-id}",
+    "method": "patch",
+    "toolName": "update-group-calendar-event",
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Updates an event on the group's shared calendar. Updatable fields: subject, start, end, body, attendees, location, isAllDay, showAs. event-id from list-group-events or create-group-calendar-event. Returns 200 with updated event."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/calendar/events/{event-id}",
+    "method": "delete",
+    "toolName": "delete-group-calendar-event",
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Deletes an event from the group's shared calendar. event-id from list-group-events or create-group-calendar-event. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/me/inferenceClassification/overrides",
+    "method": "get",
+    "toolName": "list-focused-inbox-overrides",
+    "scopes": ["Mail.Read"],
+    "workScopes": [],
+    "llmTip": "Returns all Focused Inbox sender overrides. Each override has id, classifyAs ('focused' or 'other'), senderEmailAddress. Use to see which senders are pinned to Focused or Other inbox. Use id with update-focused-inbox-override or delete-focused-inbox-override."
+  },
+  {
+    "pathPattern": "/me/inferenceClassification/overrides",
+    "method": "post",
+    "toolName": "create-focused-inbox-override",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Body: {classifyAs: 'focused'/'other', senderEmailAddress: {name: 'Sender Name', address: 'sender@example.com'}}. Creates a rule to always move emails from this sender to Focused or Other inbox. Returns 201 with created override id."
+  },
+  {
+    "pathPattern": "/me/inferenceClassification/overrides/{overrideId}",
+    "method": "patch",
+    "toolName": "update-focused-inbox-override",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Body: {classifyAs: 'focused'/'other'}. Updates the classification for an existing sender override. overrideId from list-focused-inbox-overrides. Returns 200."
+  },
+  {
+    "pathPattern": "/me/inferenceClassification/overrides/{overrideId}",
+    "method": "delete",
+    "toolName": "delete-focused-inbox-override",
+    "scopes": ["Mail.ReadWrite"],
+    "workScopes": ["Mail.ReadWrite"],
+    "llmTip": "Removes a sender override rule. overrideId from list-focused-inbox-overrides. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/subscriptions/{subscriptionId}",
+    "method": "get",
+    "toolName": "get-subscription",
+    "scopes": ["Mail.Read"],
+    "llmTip": "Returns a single change notification subscription by id. subscriptionId from list-subscriptions. Includes resource, changeType, expirationDateTime, notificationUrl. Use to check expiry before renewing with renew-subscription."
+  },
+
+  {
+    "pathPattern": "/me/contactFolders/{contactFolderId}/contacts/{contactId}",
+    "method": "get",
+    "toolName": "get-contact-in-folder",
+    "scopes": ["Contacts.Read"],
+    "workScopes": [],
+    "llmTip": "Returns a single contact from a specific contact folder. contactId from list-contact-folder-contacts. Returns all standard contact fields: displayName, emailAddresses, phones, jobTitle, companyName."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolderId}/contacts",
+    "method": "post",
+    "toolName": "create-contact-in-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "workScopes": ["Contacts.ReadWrite"],
+    "llmTip": "Creates a contact in a specific folder. Body: {givenName, surname, emailAddresses: [{address, name}], businessPhones, jobTitle, companyName}. contactFolderId from list-contact-folders. Returns 201 with new contact id."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolderId}/contacts/{contactId}",
+    "method": "patch",
+    "toolName": "update-contact-in-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "workScopes": ["Contacts.ReadWrite"],
+    "llmTip": "Updates a contact in a specific folder. Same fields as update-outlook-contact. contactId from list-contact-folder-contacts. Returns 200 with updated contact."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolderId}/contacts/{contactId}",
+    "method": "delete",
+    "toolName": "delete-contact-in-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "workScopes": ["Contacts.ReadWrite"],
+    "llmTip": "Deletes a contact from a specific folder. contactId from list-contact-folder-contacts. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/installedApps/{teamsAppInstallationId}",
+    "method": "get",
+    "toolName": "get-team-app",
+    "workScopes": ["TeamsAppInstallation.Read.All"],
+    "llmTip": "Returns a single installed app in a team by installation id (not the app catalog id). teamsAppInstallationId from list-team-apps. Use $expand=teamsAppDefinition to include version and display name details."
+  },
+
+  {
+    "pathPattern": "/chats/{chat-id}/installedApps",
+    "method": "get",
+    "toolName": "list-chat-apps",
+    "workScopes": ["TeamsAppInstallation.ReadForChat"],
+    "llmTip": "Returns all apps installed in a chat. chat-id from list-chats or get-chat. Use $expand=teamsAppDefinition to include app name and version. Each entry has teamsAppInstallation id (not app catalog id) needed for uninstall-chat-app."
+  },
+  {
+    "pathPattern": "/chats/{chat-id}/installedApps",
+    "method": "post",
+    "toolName": "install-chat-app",
+    "workScopes": ["TeamsAppInstallation.ReadWriteForChat"],
+    "llmTip": "Body: {'teamsApp@odata.bind': 'https://graph.microsoft.com/v1.0/appCatalogs/teamsApps/{app-catalog-id}'}. Installs an app in a chat. app-catalog-id from list-teams-app-catalog. Returns 201 on success."
+  },
+  {
+    "pathPattern": "/chats/{chat-id}/installedApps/{teamsAppInstallationId}",
+    "method": "delete",
+    "toolName": "uninstall-chat-app",
+    "workScopes": ["TeamsAppInstallation.ReadWriteForChat"],
+    "llmTip": "Removes an installed app from a chat. teamsAppInstallationId from list-chat-apps (the installation id, not the app catalog id). Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/groups/{group-id}/conversations/{conversationId}",
+    "method": "get",
+    "toolName": "get-group-conversation",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns a single group conversation by id. conversationId from list-group-conversations. Includes topic, lastDeliveredDateTime, hasAttachments, uniqueSenders. Use list-group-threads to get threads within the conversation."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/threads/{threadId}",
+    "method": "get",
+    "toolName": "get-group-thread",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns a single conversation thread by id. threadId from list-group-threads. Includes topic, hasAttachments, lastDeliveredDateTime, uniqueSenders, isLocked."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/messages/delta",
+    "method": "get",
+    "toolName": "list-channel-messages-delta",
+    "workScopes": ["ChannelMessage.Read.All"],
+    "llmTip": "Returns channel messages since last sync using delta query. First call returns all messages + a @odata.deltaLink. Use the deltaLink in the next call to get only new/changed messages since then. Store the deltaLink for incremental sync. More efficient than list-channel-messages for polling scenarios."
+  },
+
+  {
+    "pathPattern": "/me/onenote/pages/{pageId}/copyToSection",
+    "method": "post",
+    "toolName": "copy-onenote-page",
+    "scopes": ["Notes.ReadWrite"],
+    "workScopes": ["Notes.ReadWrite"],
+    "llmTip": "Body: {id: 'target-section-id', groupId: 'group-id (optional)'}. Copies a page to another section. Returns 202 Accepted with an operation location header — the copy is async. Use the operation URL to check completion status. pageId from list-onenote-section-pages."
+  },
+  {
+    "pathPattern": "/me/onenote/sections/{sectionId}/copyToNotebook",
+    "method": "post",
+    "toolName": "copy-onenote-section",
+    "scopes": ["Notes.ReadWrite"],
+    "workScopes": ["Notes.ReadWrite"],
+    "llmTip": "Body: {id: 'target-notebook-id', groupId: 'group-id (optional)'}. Copies a section to another notebook. Returns 202 Accepted — async operation. sectionId from list-onenote-notebook-sections. Can also use copyToSectionGroup: POST /onenote/sections/{id}/copyToSectionGroup."
+  },
+
+  {
+    "pathPattern": "/me/followedSites",
+    "method": "get",
+    "toolName": "list-followed-sites",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns SharePoint sites the current user is following. Each site has id, displayName, webUrl. Use site id with get-sharepoint-site or list-sharepoint-site-lists."
+  },
+  {
+    "pathPattern": "/me/followedSites/add",
+    "method": "post",
+    "toolName": "follow-site",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {value: [{id: 'site-id'}]}. Follows one or more SharePoint sites. Returns 204 on success. site-id from list-sharepoint-sites or get-sharepoint-site. Can follow multiple sites in a single request by adding multiple objects to the value array."
+  },
+  {
+    "pathPattern": "/me/followedSites/remove",
+    "method": "post",
+    "toolName": "unfollow-site",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {value: [{id: 'site-id'}]}. Unfollows one or more SharePoint sites. Returns 204 on success. Can unfollow multiple sites in a single request."
   }
 ]

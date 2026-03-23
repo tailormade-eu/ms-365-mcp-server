@@ -805,4 +805,71 @@
 
 ---
 
+## Task 99 round 12 — Missing endpoints N129-N151 (23 endpoints)
+
+### N129-N130 — Group calendar event update/delete (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-group-calendar-event` | PATCH | `/groups/{group-id}/calendar/events/{event-id}` |
+| `delete-group-calendar-event` | DELETE | `/groups/{group-id}/calendar/events/{event-id}` |
+
+### N131-N134 — Focused Inbox overrides CRUD (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-focused-inbox-overrides` | GET | `/me/inferenceClassification/overrides` |
+| `create-focused-inbox-override` | POST | `/me/inferenceClassification/overrides` |
+| `update-focused-inbox-override` | PATCH | `/me/inferenceClassification/overrides/{overrideId}` |
+| `delete-focused-inbox-override` | DELETE | `/me/inferenceClassification/overrides/{overrideId}` |
+
+### N135 — Subscription get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-subscription` | GET | `/subscriptions/{subscriptionId}` |
+
+### N136-N139 — Contact in folder CRUD (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-contact-in-folder` | GET | `/me/contactFolders/{contactFolderId}/contacts/{contactId}` |
+| `create-contact-in-folder` | POST | `/me/contactFolders/{contactFolderId}/contacts` |
+| `update-contact-in-folder` | PATCH | `/me/contactFolders/{contactFolderId}/contacts/{contactId}` |
+| `delete-contact-in-folder` | DELETE | `/me/contactFolders/{contactFolderId}/contacts/{contactId}` |
+
+### N140 — Team app get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-team-app` | GET | `/teams/{team-id}/installedApps/{teamsAppInstallationId}` |
+
+### N141-N143 — Chat app management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-chat-apps` | GET | `/chats/{chat-id}/installedApps` |
+| `install-chat-app` | POST | `/chats/{chat-id}/installedApps` |
+| `uninstall-chat-app` | DELETE | `/chats/{chat-id}/installedApps/{teamsAppInstallationId}` |
+
+### N144-N145 — Group conversation/thread get (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-group-conversation` | GET | `/groups/{group-id}/conversations/{conversationId}` |
+| `get-group-thread` | GET | `/groups/{group-id}/threads/{threadId}` |
+
+### N146 — Channel messages delta (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-channel-messages-delta` | GET | `/teams/{team-id}/channels/{channel-id}/messages/delta` |
+
+### N147-N148 — OneNote copy operations (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `copy-onenote-page` | POST | `/me/onenote/pages/{pageId}/copyToSection` |
+| `copy-onenote-section` | POST | `/me/onenote/sections/{sectionId}/copyToNotebook` |
+
+### N149-N151 — Followed sites (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-followed-sites` | GET | `/me/followedSites` |
+| `follow-site` | POST | `/me/followedSites/add` |
+| `unfollow-site` | POST | `/me/followedSites/remove` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky
