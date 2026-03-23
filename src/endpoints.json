@@ -2122,7 +2122,7 @@
     "pathPattern": "/me/calendar/getSchedule",
     "method": "post",
     "toolName": "get-schedule",
-    "workScopes": ["Calendars.Read"],
+    "scopes": ["Calendars.Read"],
     "llmTip": "Body: {schedules: ['user@example.com', 'room@example.com'], startTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, endTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, availabilityViewInterval: 30}. Returns free/busy blocks per schedule. scheduleItems show busy slots with subject if permission allows. Use for meeting scheduling and room availability checks."
   },
   {
@@ -2143,7 +2143,7 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows",
     "method": "post",
     "toolName": "add-excel-table-row",
-    "workScopes": [],
+    "scopes": ["Files.ReadWrite"],
     "llmTip": "Body: {values: [['col1', 'col2', ...]]} to append a row, or {index: 0, values: [...]} to insert at specific position (0-based). Omit index to append at end. Column count must match the table's column count exactly."
   },
   {
@@ -2171,14 +2171,14 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/thumbnails",
     "method": "get",
     "toolName": "list-drive-item-thumbnails",
-    "workScopes": [],
+    "scopes": ["Files.Read"],
     "llmTip": "Returns available thumbnail sizes: small (48px), medium (176px), large (800px), source (original). Each size has url (expires ~1h), width, height. Use $select=large to get only the large thumbnail. url can be used directly in img tags."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/activities",
     "method": "get",
     "toolName": "list-drive-item-activities",
-    "workScopes": [],
+    "scopes": ["Files.Read"],
     "llmTip": "Returns activity history for a file. Each activity has action (create/edit/delete/move/rename/share/restore/version), actor (user displayName + id), activityDateTime. Use $top to limit results."
   },
   {
@@ -2206,14 +2206,14 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/names",
     "method": "get",
     "toolName": "list-excel-named-items",
-    "workScopes": [],
+    "scopes": ["Files.Read"],
     "llmTip": "Returns named ranges and formulas in the workbook. Each item has name, type (Range/Formula), value (range address like 'Sheet1!A1:B10' or formula result). Use name as address in get-excel-range/update-excel-range."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/names/{name}",
     "method": "get",
     "toolName": "get-excel-named-item",
-    "workScopes": [],
+    "scopes": ["Files.Read"],
     "llmTip": "Returns a specific named range or formula by name (case-sensitive). type: 'Range' returns range address; 'Formula' returns calculated value."
   }
 ]

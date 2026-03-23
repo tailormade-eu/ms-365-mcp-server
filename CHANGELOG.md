@@ -1,5 +1,22 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.6.0] - 2026-03-23
+
+### Added
+- 14 new endpoints across 9 groups (total: 303 endpoints, up from 289)
+  - Calendar: get-schedule — free/busy schedule lookup (1)
+  - Org chart: get-user-manager, list-user-direct-reports (2)
+  - Excel: add-excel-table-row, list-excel-named-items, get-excel-named-item (3)
+  - Groups: list/add/remove-group-owner (3)
+  - OneDrive: list-drive-item-thumbnails, list-drive-item-activities (2)
+  - Directory: create-guest-invitation, list-deleted-items, restore-deleted-item (3)
+
+### Fixed
+- B6: `get-mail-mime-content` acceptType corrected from `text/plain` to `message/rfc822`
+- 5 endpoints with empty `workScopes: []` now have proper `scopes` (add-excel-table-row, list-drive-item-thumbnails, list-drive-item-activities, list-excel-named-items, get-excel-named-item)
+- `get-schedule` changed from `workScopes` to `scopes` (is a `/me/` endpoint, works with personal accounts)
+- 15 endpoints with empty `workScopes` fixed in prior commit (proper scopes added)
+
 ## [fork-1.5.0] - 2026-03-23
 
 ### Added
@@ -106,3 +123,8 @@
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
+
+## [0.1.0] - 2026-03-23
+
+---
+
