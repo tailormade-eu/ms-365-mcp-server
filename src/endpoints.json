@@ -2938,11 +2938,12 @@
   },
 
   {
-    "pathPattern": "/places/roomlists/{roomList-id}/rooms",
+    "pathPattern": "/places/{roomList-emailAddress}/microsoft.graph.roomList/rooms",
     "method": "get",
     "toolName": "list-rooms-in-list",
     "workScopes": ["Place.Read.All"],
-    "llmTip": "Returns all meeting rooms within a specific room list. roomList-id from list-room-lists (use the emailAddress or id). Each room has id, displayName, emailAddress, capacity, building, floorNumber, isWheelchairAccessible. More targeted than list-meeting-rooms when you know the building/campus."
+    "skipEncoding": ["roomList-emailAddress"],
+    "llmTip": "Returns all meeting rooms within a specific room list. roomList-emailAddress is the email address of the room list from list-room-lists. Each room has id, displayName, emailAddress, capacity, building, floorNumber, isWheelchairAccessible. More targeted than list-meeting-rooms when you know the building/campus."
   },
 
   {

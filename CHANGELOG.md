@@ -1,5 +1,19 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.14.0] - 2026-03-23
+
+### Added
+- 8 new endpoints across 6 groups (total: 404 endpoints, up from 396)
+  - Calendar: get-calendar-permission, create-calendar-permission — calendar sharing management (2)
+  - Rooms: list-rooms-in-list — rooms within a specific room list (1)
+  - Teams: send-team-activity-notification, update-channel-member — notifications + member role changes (2)
+  - Teams Apps: get-teams-app-catalog-app — single app catalog lookup (1)
+  - SharePoint: get-sharepoint-site-analytics — site activity stats (1)
+  - Directory: assign-user-license — license assignment for users (1)
+
+### Fixed
+- **CRITICAL: `list-rooms-in-list` pathPattern** — corrected from `/places/roomlists/{roomList-id}/rooms` to `/places/{roomList-emailAddress}/microsoft.graph.roomList/rooms` (Graph API v1.0 correct path)
+
 ## [fork-1.13.0] - 2026-03-23
 
 ### Added
