@@ -399,6 +399,78 @@
 
 ---
 
+## Task — Duplicate fix B5 + missing endpoints N58-N67 (round 5 gap analysis)
+
+### B5 — Duplicate removed
+| Removed | Reason |
+|---------|--------|
+| `list-meeting-recordings` (first entry) | Duplicate — kept newer entry with better llmTip |
+
+### N58 — User presence (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-my-presence` | GET | `/me/presence` |
+| `get-user-presence` | GET | `/users/{user-id}/presence` |
+| `set-my-presence` | POST | `/me/presence/setPresence` |
+
+### N59 — Change notifications / subscriptions (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-subscription` | POST | `/subscriptions` |
+| `list-subscriptions` | GET | `/subscriptions` |
+| `renew-subscription` | PATCH | `/subscriptions/{subscription-id}` |
+| `delete-subscription` | DELETE | `/subscriptions/{subscription-id}` |
+
+### N60 — Group CRUD (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-group` | POST | `/groups` |
+| `update-group` | PATCH | `/groups/{group-id}` |
+| `delete-group` | DELETE | `/groups/{group-id}` |
+
+### N61 — Update planner plan details (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-planner-plan-details` | PATCH | `/planner/plans/{plannerPlan-id}/details` |
+
+### N62 — Mail MIME content (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-mail-mime-content` | GET | `/me/messages/{message-id}/$value` |
+
+### N63 — Outlook insights (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-trending-files` | GET | `/me/insights/trending` |
+| `list-used-files` | GET | `/me/insights/used` |
+| `list-shared-insights` | GET | `/me/insights/shared` |
+
+### N64 — Calendar permissions (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-calendar-permissions` | GET | `/me/calendars/{calendar-id}/calendarPermissions` |
+| `update-calendar-permission` | PATCH | `/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}` |
+| `delete-calendar-permission` | DELETE | `/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}` |
+
+### N65 — Profile photo (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-profile-photo` | GET | `/me/photo/$value` |
+| `update-profile-photo` | PUT | `/me/photo/$value` |
+
+### N66 — Meeting rooms (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-meeting-rooms` | GET | `/places/microsoft.graph.room` |
+| `list-room-lists` | GET | `/places/microsoft.graph.roomList` |
+
+### N67 — Mail tips (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-mail-tips` | POST | `/me/getMailTips` |
+
+---
+
 **Score: 2/10**
 
 ---

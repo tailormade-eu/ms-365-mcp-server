@@ -1041,13 +1041,6 @@
     "llmTip": "Returns the transcript content in WebVTT format with speaker identification and timestamps."
   },
   {
-    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings",
-    "method": "get",
-    "toolName": "list-meeting-recordings",
-    "workScopes": ["OnlineMeetingRecording.Read.All"],
-    "llmTip": "Lists recordings for a meeting. Each recording has createdDateTime, endDateTime, meetingOrganizer, contentCorrelationId (links to corresponding transcript). For recurring meetings, there is one recording per occurrence."
-  },
-  {
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}/content",
     "method": "get",
     "toolName": "get-meeting-recording-content",
@@ -1960,5 +1953,168 @@
     "toolName": "create-mail-attachment-upload-session",
     "scopes": ["Mail.ReadWrite"],
     "llmTip": "For mail attachments > 3MB. Body: {AttachmentItem: {attachmentType: 'file', name: 'filename.ext', size: [byte size as integer]}}. Returns uploadUrl and expirationDateTime. Upload in chunks via PUT to uploadUrl with Content-Range header (e.g. 'bytes 0-25214/26000'). Max chunk size: 60MB. Session expires in 2 days."
+  },
+  {
+    "pathPattern": "/me/presence",
+    "method": "get",
+    "toolName": "get-my-presence",
+    "workScopes": ["Presence.Read"],
+    "llmTip": "Returns current presence: availability (Available/Busy/Away/BeRightBack/DoNotDisturb/Offline/PresenceUnknown), activity (Available/InACall/InAMeeting/Presenting/etc). Use get-user-presence for other users."
+  },
+  {
+    "pathPattern": "/users/{user-id}/presence",
+    "method": "get",
+    "toolName": "get-user-presence",
+    "workScopes": ["Presence.Read.All"],
+    "llmTip": "Returns presence for any user. user-id can be UPN (email) or Azure AD user ID. availability and activity fields same as get-my-presence."
+  },
+  {
+    "pathPattern": "/me/presence/setPresence",
+    "method": "post",
+    "toolName": "set-my-presence",
+    "workScopes": ["Presence.ReadWrite"],
+    "llmTip": "Body: {sessionId (required, any unique string per app instance), availability (required: Available/Busy/DoNotDisturb/BeRightBack/Away), activity (required: matches availability), expirationDuration (ISO 8601, e.g. PT1H)}. Use consistent sessionId per app instance — multiple sessions override each other."
+  },
+  {
+    "pathPattern": "/subscriptions",
+    "method": "post",
+    "toolName": "create-subscription",
+    "workScopes": [],
+    "llmTip": "Body: {changeType: 'created,updated,deleted', notificationUrl (public HTTPS), resource: '/me/messages', expirationDateTime, clientState (optional secret)}. notificationUrl must respond to Graph validation request (echo validationToken). Max expiry: mail/calendar/contacts 4230min, driveRoot 4230min."
+  },
+  {
+    "pathPattern": "/subscriptions",
+    "method": "get",
+    "toolName": "list-subscriptions",
+    "workScopes": [],
+    "llmTip": "Returns all active subscriptions. Use subscription id for renew-subscription or delete-subscription."
+  },
+  {
+    "pathPattern": "/subscriptions/{subscription-id}",
+    "method": "patch",
+    "toolName": "renew-subscription",
+    "workScopes": [],
+    "llmTip": "Body: {expirationDateTime (new expiry — must not exceed resource max)}. Renew before expiry to keep receiving change notifications. Returns 200 with updated subscription."
+  },
+  {
+    "pathPattern": "/subscriptions/{subscription-id}",
+    "method": "delete",
+    "toolName": "delete-subscription",
+    "workScopes": []
+  },
+  {
+    "pathPattern": "/groups",
+    "method": "post",
+    "toolName": "create-group",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Body: {displayName (required), mailNickname (required, no spaces), mailEnabled (required), securityEnabled (required), groupTypes: ['Unified'] for M365/Teams group or [] for security group}. M365: mailEnabled=true, securityEnabled=false, groupTypes=['Unified']. Security: mailEnabled=false, securityEnabled=true, groupTypes=[]."
+  },
+  {
+    "pathPattern": "/groups/{group-id}",
+    "method": "patch",
+    "toolName": "update-group",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Updatable fields: displayName, description, visibility (Private/Public/HiddenMembership). mailNickname cannot be changed. Returns 204 No Content."
+  },
+  {
+    "pathPattern": "/groups/{group-id}",
+    "method": "delete",
+    "toolName": "delete-group",
+    "workScopes": ["Group.ReadWrite.All"],
+    "llmTip": "Soft-deletes — recoverable for 30 days via Azure AD deleted items restore. M365 groups only. Security groups require different permission flow."
+  },
+  {
+    "pathPattern": "/planner/plans/{plannerPlan-id}/details",
+    "method": "patch",
+    "toolName": "update-planner-plan-details",
+    "workScopes": [],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-plan-details. Body: {categoryDescriptions: {category1: 'LabelName', category2: 'LabelName', ...category6: 'LabelName'}} to set task label names. sharedWith: {'{userId}': true} to add plan member, {'{userId}': false} to remove."
+  },
+  {
+    "pathPattern": "/me/messages/{message-id}/$value",
+    "method": "get",
+    "toolName": "get-mail-mime-content",
+    "workScopes": [],
+    "acceptType": "text/plain",
+    "llmTip": "Returns raw MIME content of an email as plain text. Useful for archiving or parsing email headers/body outside Graph. Response is raw MIME string (not JSON). message-id from list-mail-messages or get-mail-message."
+  },
+  {
+    "pathPattern": "/me/insights/trending",
+    "method": "get",
+    "toolName": "list-trending-files",
+    "workScopes": [],
+    "llmTip": "Returns files trending around the user based on network activity. Each item has resource (driveItem with id/name/webUrl), resourceVisualization (title, previewImageUrl), lastModifiedDateTime. Use to surface relevant files without searching."
+  },
+  {
+    "pathPattern": "/me/insights/used",
+    "method": "get",
+    "toolName": "list-used-files",
+    "workScopes": [],
+    "llmTip": "Returns files recently viewed or modified by the user. Sorted by lastUsed.lastAccessedDateTime desc. Each item has resource (driveItem) and resourceVisualization. Use to find recently worked-on files."
+  },
+  {
+    "pathPattern": "/me/insights/shared",
+    "method": "get",
+    "toolName": "list-shared-insights",
+    "workScopes": [],
+    "llmTip": "Returns files shared with or by the user. Each item has resourceVisualization, sharingHistory (who shared, when). Filter with $filter=sharing/sharedBy/user/id eq '{user-id}' to filter by specific sharer."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions",
+    "method": "get",
+    "toolName": "list-calendar-permissions",
+    "workScopes": [],
+    "llmTip": "Returns sharing permissions for a calendar. Each permission has emailAddress, role (read/write/freeBusyRead/custom/owner/delegate), isRemovable, isInsideOrganization. Use to audit who has access to a calendar."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}",
+    "method": "patch",
+    "toolName": "update-calendar-permission",
+    "workScopes": [],
+    "llmTip": "Body: {role: 'read'/'write'/'freeBusyRead'/'custom'/'owner'/'delegate'}. calendarPermission-id from list-calendar-permissions."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}",
+    "method": "delete",
+    "toolName": "delete-calendar-permission",
+    "workScopes": [],
+    "llmTip": "Removes sharing access. Only removable permissions (isRemovable=true) can be deleted — owner permission cannot be removed."
+  },
+  {
+    "pathPattern": "/me/photo/$value",
+    "method": "get",
+    "toolName": "get-profile-photo",
+    "workScopes": [],
+    "acceptType": "image/jpeg",
+    "llmTip": "Returns profile photo as binary JPEG. Returns 404 if no photo set. Use GET /me/photo (without $value) to get metadata (width, height, id) first."
+  },
+  {
+    "pathPattern": "/me/photo/$value",
+    "method": "put",
+    "toolName": "update-profile-photo",
+    "workScopes": [],
+    "contentType": "image/jpeg",
+    "llmTip": "Body: binary JPEG image data. Content-Type must be image/jpeg. Max 4MB. Minimum 48x48px. Returns 200 on success. Only JPEG format is supported."
+  },
+  {
+    "pathPattern": "/places/microsoft.graph.room",
+    "method": "get",
+    "toolName": "list-meeting-rooms",
+    "workScopes": ["Place.Read.All"],
+    "llmTip": "Returns all meeting rooms in the organization. Each room has displayName, emailAddress, capacity, building, floorNumber, isWheelChairAccessible. Use emailAddress as attendee address when booking a room via create-calendar-event."
+  },
+  {
+    "pathPattern": "/places/microsoft.graph.roomList",
+    "method": "get",
+    "toolName": "list-room-lists",
+    "workScopes": ["Place.Read.All"],
+    "llmTip": "Returns room lists (building/floor groupings). Each roomList has displayName, emailAddress. Use with $filter=displayName eq 'Building A' to find rooms in a specific building."
+  },
+  {
+    "pathPattern": "/me/getMailTips",
+    "method": "post",
+    "toolName": "get-mail-tips",
+    "workScopes": [],
+    "llmTip": "Body: {emailAddresses: ['recipient@example.com'], mailTipsOptions: 'automaticReplies,mailboxFullStatus,outOfOffice,deliveryRestriction,maxMessageSize'}. Returns OOF status and auto-reply message per recipient. Use before send-mail to check if recipients are out of office."
   }
 ]
