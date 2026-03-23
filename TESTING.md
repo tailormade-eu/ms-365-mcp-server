@@ -1061,4 +1061,19 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Bug fixes B2+B4+B7 and code quality V13-V17
+
+| # | Test | Expected | Status |
+|---|------|----------|--------|
+| B2 | `options.headers['prefer']` (lowercase) passed to `performRequest` | Prefer header merges both casings, neither silently discarded | ⬜ |
+| B4 | Start HTTP mode without `MS365_MCP_CORS_ORIGIN` | `logger.warn` fires about wildcard CORS + credential exposure | ⬜ |
+| B7 | `list-drive-item-activities` in endpoints.json | Has `"useBeta": true` + llmTip starts with WARNING prefix | ⬜ |
+| V13 | `update-todo-cache` with `outputPath: "../../.env"` | Returns `isError: true`, no file written | ⬜ |
+| V14 | `removeODataProps` in graph-client.ts | Uses `for...of` loop, not `forEach` | ⬜ |
+| V15 | `CLIENT_ID` in startup log | Shows `SET` or `NOT SET` only — no substring | ⬜ |
+| V16 | `graphRequest` log output when options contain `accessToken` | Token replaced with `[REDACTED]` | ⬜ |
+| V17 | `list-followed-sites`, `follow-site`, `unfollow-site` | Each has `"scopes": []` in endpoints.json | ⬜ |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

@@ -141,7 +141,7 @@ class MicrosoftGraphServer {
 
     // Debug: Check if secrets are loaded
     logger.info('Secrets Check:', {
-      CLIENT_ID: this.secrets?.clientId ? `${this.secrets.clientId.substring(0, 8)}...` : 'NOT SET',
+      CLIENT_ID: this.secrets?.clientId ? 'SET' : 'NOT SET',
       CLIENT_SECRET: this.secrets?.clientSecret ? 'SET' : 'NOT SET',
       TENANT_ID: this.secrets?.tenantId || 'NOT SET',
       NODE_ENV: process.env.NODE_ENV || 'NOT SET',
@@ -161,6 +161,9 @@ class MicrosoftGraphServer {
 
       // Add CORS headers for all routes
       const corsOrigin = process.env.MS365_MCP_CORS_ORIGIN || '*';
+      if (corsOrigin === '*') {
+        logger.warn('MS365_MCP_CORS_ORIGIN not set — using wildcard "*". Credentials may be exposed to any origin.');
+      }
       app.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', corsOrigin);
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

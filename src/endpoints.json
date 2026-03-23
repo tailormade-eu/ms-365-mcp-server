@@ -2172,7 +2172,8 @@
     "method": "get",
     "toolName": "list-drive-item-activities",
     "scopes": ["Files.Read"],
-    "llmTip": "Returns activity history for a file. Each activity has action (create/edit/delete/move/rename/share/restore/version), actor (user displayName + id), activityDateTime. Use $top to limit results."
+    "useBeta": true,
+    "llmTip": "WARNING: This endpoint uses the Graph API beta path which may change without notice. Returns activity history for a file. Each activity has action (create/edit/delete/move/rename/share/restore/version), actor (user displayName + id), activityDateTime. Use $top to limit results."
   },
   {
     "pathPattern": "/invitations",
@@ -2757,6 +2758,7 @@
     "pathPattern": "/me/followedSites",
     "method": "get",
     "toolName": "list-followed-sites",
+    "scopes": [],
     "workScopes": ["Sites.Read.All"],
     "llmTip": "Returns SharePoint sites the current user is following. Each site has id, displayName, webUrl. Use site id with get-sharepoint-site or list-sharepoint-site-lists."
   },
@@ -2764,6 +2766,7 @@
     "pathPattern": "/me/followedSites/add",
     "method": "post",
     "toolName": "follow-site",
+    "scopes": [],
     "workScopes": ["Sites.ReadWrite.All"],
     "llmTip": "Body: {value: [{id: 'site-id'}]}. Follows one or more SharePoint sites. Returns 200 with array of followed sites. site-id from list-sharepoint-sites or get-sharepoint-site. Can follow multiple sites in a single request by adding multiple objects to the value array."
   },
@@ -2771,6 +2774,7 @@
     "pathPattern": "/me/followedSites/remove",
     "method": "post",
     "toolName": "unfollow-site",
+    "scopes": [],
     "workScopes": ["Sites.ReadWrite.All"],
     "llmTip": "Body: {value: [{id: 'site-id'}]}. Unfollows one or more SharePoint sites. Returns 204 on success. Can unfollow multiple sites in a single request."
   },

@@ -8,13 +8,13 @@ import { getRequestTokens } from './request-context.js';
 
 function removeODataProps(obj: Record<string, unknown>): void {
   if (typeof obj === 'object' && obj !== null) {
-    Object.keys(obj).forEach((key) => {
+    for (const key of Object.keys(obj)) {
       if (key.startsWith('@odata.')) {
         delete obj[key];
       } else if (typeof obj[key] === 'object') {
         removeODataProps(obj[key] as Record<string, unknown>);
       }
-    });
+    }
   }
 }
 
@@ -178,7 +178,7 @@ class GraphClient {
     // Standard EWS IDs can contain '/' which Microsoft Graph decodes server-side
     // in path segments, causing RequestBroker--ParseUri (400) errors.
     // Immutable IDs use base64url encoding (no '/' or '+'), preventing this.
-    const callerPrefer = options.headers?.['Prefer'];
+    const callerPrefer = options.headers?.['Prefer'] ?? options.headers?.['prefer'];
     const preferValue = callerPrefer
       ? `IdType="ImmutableId", ${callerPrefer}`
       : 'IdType="ImmutableId"';
@@ -210,7 +210,8 @@ class GraphClient {
 
   async graphRequest(endpoint: string, options: GraphRequestOptions = {}): Promise<McpResponse> {
     try {
-      logger.info(`Calling ${endpoint} with options: ${JSON.stringify(options)}`);
+      const safeOptions = { ...options, accessToken: options.accessToken ? '[REDACTED]' : undefined };
+      logger.info(`Calling ${endpoint} with options: ${JSON.stringify(safeOptions)}`);
 
       // Use new OAuth-aware request method
       const result = await this.makeRequest(endpoint, options);

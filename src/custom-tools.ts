@@ -10,6 +10,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { writeFileSync } from 'fs';
+import path from 'path';
 import GraphClient from './graph-client.js';
 import AuthManager from './auth.js';
 import logger from './logger.js';
@@ -366,7 +367,14 @@ so the join uses normalized subject matching. Emails in non-standard folders
           flaggedEmails: items,
         };
 
-        writeFileSync(outputPath, JSON.stringify(cache, null, 2), 'utf8');
+        const resolvedPath = path.resolve(outputPath);
+        if (!resolvedPath.endsWith('.json')) {
+          return {
+            content: [{ type: 'text' as const, text: JSON.stringify({ error: 'outputPath must end in .json' }) }],
+            isError: true,
+          };
+        }
+        writeFileSync(resolvedPath, JSON.stringify(cache, null, 2), 'utf8');
         logger.info(`update-todo-cache: cache written to ${outputPath}`);
 
         return {
