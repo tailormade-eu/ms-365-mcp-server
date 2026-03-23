@@ -2643,11 +2643,11 @@
   },
 
   {
-    "pathPattern": "/subscriptions/{subscriptionId}",
+    "pathPattern": "/subscriptions/{subscription-id}",
     "method": "get",
     "toolName": "get-subscription",
     "scopes": ["Mail.Read"],
-    "llmTip": "Returns a single change notification subscription by id. subscriptionId from list-subscriptions. Includes resource, changeType, expirationDateTime, notificationUrl. Use to check expiry before renewing with renew-subscription."
+    "llmTip": "Returns a single change notification subscription by id. subscription-id from list-subscriptions. Includes resource, changeType, expirationDateTime, notificationUrl. Use to check expiry before renewing with renew-subscription."
   },
 
   {
@@ -2765,7 +2765,7 @@
     "method": "post",
     "toolName": "follow-site",
     "workScopes": ["Sites.ReadWrite.All"],
-    "llmTip": "Body: {value: [{id: 'site-id'}]}. Follows one or more SharePoint sites. Returns 204 on success. site-id from list-sharepoint-sites or get-sharepoint-site. Can follow multiple sites in a single request by adding multiple objects to the value array."
+    "llmTip": "Body: {value: [{id: 'site-id'}]}. Follows one or more SharePoint sites. Returns 200 with array of followed sites. site-id from list-sharepoint-sites or get-sharepoint-site. Can follow multiple sites in a single request by adding multiple objects to the value array."
   },
   {
     "pathPattern": "/me/followedSites/remove",
