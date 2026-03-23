@@ -2918,5 +2918,71 @@
     "toolName": "assign-user-manager",
     "workScopes": ["User.ReadWrite.All"],
     "llmTip": "Body: {'@odata.id': 'https://graph.microsoft.com/v1.0/users/{manager-user-id}'}. Sets or updates the user's direct manager in the org chart. Returns 204 on success. Requires User.ReadWrite.All admin consent."
+  },
+
+  {
+    "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}",
+    "method": "get",
+    "toolName": "get-calendar-permission",
+    "scopes": ["Calendars.Read"],
+    "workScopes": [],
+    "llmTip": "Returns a single calendar sharing permission by id. calendarPermission-id from list-calendar-permissions. Includes emailAddress (of the person shared with), role (freeBusyRead/limitedRead/read/write/delegateWithoutPrivateEventAccess/delegateWithPrivateEventAccess/custom/owner/none), isInsideOrganization, isRemovable."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions",
+    "method": "post",
+    "toolName": "create-calendar-permission",
+    "scopes": ["Calendars.ReadWrite"],
+    "workScopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {emailAddress: {address: 'user@example.com', name: 'User Name'}, role: 'read'/'write'/'delegateWithoutPrivateEventAccess'/'delegateWithPrivateEventAccess'}. Shares a calendar with another user. Returns 201 with created permission id. Use list-calendars to get calendar-id. Use delete-calendar-permission to revoke."
+  },
+
+  {
+    "pathPattern": "/places/roomlists/{roomList-id}/rooms",
+    "method": "get",
+    "toolName": "list-rooms-in-list",
+    "workScopes": ["Place.Read.All"],
+    "llmTip": "Returns all meeting rooms within a specific room list. roomList-id from list-room-lists (use the emailAddress or id). Each room has id, displayName, emailAddress, capacity, building, floorNumber, isWheelchairAccessible. More targeted than list-meeting-rooms when you know the building/campus."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/sendActivityNotification",
+    "method": "post",
+    "toolName": "send-team-activity-notification",
+    "workScopes": ["TeamsActivity.Send"],
+    "llmTip": "Body: {topic: {source: 'entityUrl', value: 'https://graph.microsoft.com/v1.0/teams/{team-id}'}, activityType: 'taskCreated' (must match app manifest), previewText: {content: 'notification text'}, recipient: {'@odata.type': 'microsoft.graph.aadUserNotificationRecipient', userId: 'user-id'}}. Sends a Teams activity feed notification to a user in a team context. activityType must be declared in the app's manifest. See also send-teams-activity-notification for user-level notifications."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/members/{conversationMember-id}",
+    "method": "patch",
+    "toolName": "update-channel-member",
+    "workScopes": ["ChannelMember.ReadWrite.All"],
+    "llmTip": "Body: {'@odata.type': '#microsoft.graph.aadUserConversationMember', roles: ['owner']} to promote to owner, {roles: []} to demote to member. conversationMember-id from list-channel-members (not the user id). Returns 200 with updated member."
+  },
+
+  {
+    "pathPattern": "/appCatalogs/teamsApps/{teamsApp-id}",
+    "method": "get",
+    "toolName": "get-teams-app-catalog-app",
+    "scopes": ["AppCatalog.Read.All"],
+    "workScopes": [],
+    "llmTip": "Returns a single Teams app from the app catalog by id. teamsApp-id from list-teams-app-catalog. Use $expand=appDefinitions to include version details and permission requirements. Different from get-team-app which returns an app installed in a specific team."
+  },
+
+  {
+    "pathPattern": "/sites/{site-id}/analytics",
+    "method": "get",
+    "toolName": "get-sharepoint-site-analytics",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns activity statistics for a SharePoint site. By default returns lastSevenDays stats: visitCount, anonymousVisitCount. Use $select=allTime for all-time totals. site-id from list-sharepoint-sites or get-sharepoint-site."
+  },
+
+  {
+    "pathPattern": "/users/{user-id}/assignLicense",
+    "method": "post",
+    "toolName": "assign-user-license",
+    "workScopes": ["User.ReadWrite.All"],
+    "llmTip": "Body: {addLicenses: [{skuId: 'license-sku-id', disabledPlans: []}], removeLicenses: ['sku-id-to-remove']}. Assigns or removes Microsoft 365 licenses for a user. skuId from list-subscribed-skus (tenant-level). Can add and remove licenses in a single call. Returns 200 with updated user. Requires admin consent."
   }
 ]

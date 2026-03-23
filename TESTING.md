@@ -926,4 +926,44 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Task 99 — Missing endpoints N182-N193 (round 14 gap analysis)
+
+### N184-N185 — Calendar permissions (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-calendar-permission` | GET | `/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}` |
+| `create-calendar-permission` | POST | `/me/calendars/{calendar-id}/calendarPermissions` |
+
+### N186 — Rooms in room list (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-rooms-in-list` | GET | `/places/roomlists/{roomList-id}/rooms` |
+
+### N187 — Teams activity notification (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `send-team-activity-notification` | POST | `/teams/{team-id}/sendActivityNotification` |
+
+### N188 — Channel member role update (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-channel-member` | PATCH | `/teams/{team-id}/channels/{channel-id}/members/{conversationMember-id}` |
+
+### N189 — Teams app catalog single get (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-teams-app-catalog-app` | GET | `/appCatalogs/teamsApps/{teamsApp-id}` |
+
+### N190 — SharePoint site analytics (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-sharepoint-site-analytics` | GET | `/sites/{site-id}/analytics` |
+
+### N191 — User license management (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `assign-user-license` | POST | `/users/{user-id}/assignLicense` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky
