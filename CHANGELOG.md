@@ -1,5 +1,19 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.12.0] - 2026-03-23
+
+### Added
+- 23 new endpoints across 10 groups (total: 378 endpoints, up from 355)
+  - Group calendar: update-group-calendar-event, delete-group-calendar-event — complete group calendar CRUD (2)
+  - Focused Inbox: list/create/update/delete-focused-inbox-override — sender classification rules (4)
+  - Subscriptions: get-subscription — single subscription lookup (1)
+  - Contacts: get/create/update/delete-contact-in-folder — full contact-in-folder CRUD (4)
+  - Teams apps: get-team-app, list/install/uninstall-chat-app — app management for teams and chats (4)
+  - Groups: get-group-conversation, get-group-thread — single conversation/thread lookup (2)
+  - Teams: list-channel-messages-delta — delta sync for channel messages (1)
+  - OneNote: copy-onenote-page, copy-onenote-section — copy operations (2)
+  - SharePoint: list-followed-sites, follow-site, unfollow-site — site following (3)
+
 ## [fork-1.11.0] - 2026-03-23
 
 ### Added
@@ -212,6 +226,11 @@
 
 
 ## [0.3.0] - 2026-03-23
+
+---
+
+
+## [0.4.0] - 2026-03-23
 
 ---
 
