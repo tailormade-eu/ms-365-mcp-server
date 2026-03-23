@@ -32,7 +32,15 @@ function createMockServer() {
 }
 
 function createMockGraphClient(makeRequestFn: Function = vi.fn()) {
-  return { makeRequest: makeRequestFn } as any;
+  return {
+    makeRequest: makeRequestFn,
+    graphRequest: vi.fn(async (endpoint: string, options: Record<string, unknown> = {}) => {
+      const result = await makeRequestFn(endpoint, options);
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result) }],
+      };
+    }),
+  } as any;
 }
 
 function createMockAuthManager(opts?: {

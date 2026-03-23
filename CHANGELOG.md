@@ -1,5 +1,13 @@
 # Changelog — ms-365-mcp-server
 
+## [0.8.2] - 2026-03-23
+
+### Fixed
+- **V20-V24: Code review fixes** — `console.log` → `process.stdout.write` in CLI paths, `any` → `unknown` types, `isError: true` on EWS env var error, path traversal case-insensitive on Windows
+- **fetchAllPages refactor** — switched from `makeRequest` to `graphRequest` with proper error propagation (`isError` check + throw)
+- **403 error message** — removed obsolete `--org-mode` reference
+- **Test mock updated** — `createMockGraphClient` now includes `graphRequest` method matching the refactored `fetchAllPages`
+
 ## [fork-1.16.1] - 2026-03-23
 
 ### Fixed
@@ -292,3 +300,8 @@
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
+
+## [0.8.2] - 2026-03-23
+
+---
+
