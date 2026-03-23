@@ -15,6 +15,7 @@
   - OneDrive search: search-drive (1)
 
 ### Fixed
+- **CRITICAL: 108 endpoints were dead config** — registration loop only iterated over generated client (130 entries), silently ignoring all endpoints.json-only entries. Added second registration loop for synthetic tool objects.
 - 2 endpoints missing llmTip (delete-outlook-category, unarchive-team)
 
 ## [fork-1.2.0] - 2026-03-23
