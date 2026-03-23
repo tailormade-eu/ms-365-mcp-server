@@ -368,9 +368,10 @@ so the join uses normalized subject matching. Emails in non-standard folders
         };
 
         const resolvedPath = path.resolve(outputPath);
-        if (!resolvedPath.endsWith('.json')) {
+        const allowedDir = path.resolve(process.cwd());
+        if (!resolvedPath.startsWith(allowedDir) || !resolvedPath.endsWith('.json')) {
           return {
-            content: [{ type: 'text' as const, text: JSON.stringify({ error: 'outputPath must end in .json' }) }],
+            content: [{ type: 'text' as const, text: JSON.stringify({ error: 'outputPath must be a .json file within the working directory' }) }],
             isError: true,
           };
         }

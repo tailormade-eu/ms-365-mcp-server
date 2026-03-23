@@ -194,7 +194,7 @@ describe('update-todo-cache', () => {
 
   it('flaggedEmails list not found → isError', async () => {
     makeRequestMock.mockResolvedValue({ value: [] });
-    const result = await handler({ outputPath: '/tmp/cache.json' });
+    const result = await handler({ outputPath: './todo-cache.json' });
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Flagged Emails todo list not found');
   });
@@ -239,7 +239,7 @@ describe('update-todo-cache', () => {
       return { value: [] };
     });
 
-    const result = await handler({ outputPath: '/tmp/cache.json' });
+    const result = await handler({ outputPath: './todo-cache.json' });
     expect(result.isError).toBeUndefined();
     expect(writeFileSync).toHaveBeenCalledOnce();
 
