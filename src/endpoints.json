@@ -2452,13 +2452,15 @@
     "pathPattern": "/me/people",
     "method": "get",
     "toolName": "list-people",
+    "scopes": ["People.Read"],
     "workScopes": ["People.Read"],
     "llmTip": "Returns people relevant to the user based on communication patterns, collaboration, and org relationships. Each person has displayName, scoredEmailAddresses, jobTitle, department, officeLocation, phones. Use $search='name' for name-based filtering. Use $top to limit results (default 10, max 1000). More relevant than /users for 'who do I work with' queries."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/createLink",
     "method": "post",
-    "toolName": "create-link",
+    "toolName": "create-drive-item-link",
+    "scopes": ["Files.ReadWrite"],
     "workScopes": [],
     "llmTip": "Body: {type: 'view'/'edit'/'embed', scope: 'anonymous'/'organization', expirationDateTime (ISO 8601, optional), password (optional)}. Returns a sharing link with webUrl. 'anonymous' = anyone with link, 'organization' = org members only. Different from share-drive-item which sends email invitations. Use when you need a shareable URL."
   },
@@ -2487,6 +2489,7 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/versions/{version-id}",
     "method": "get",
     "toolName": "get-drive-item-version",
+    "scopes": ["Files.Read"],
     "workScopes": [],
     "llmTip": "Returns a specific version of a file. version-id from list-drive-item-versions (e.g. '1.0', '2.0'). Includes lastModifiedDateTime, size. Use restore-drive-item-version to restore this version."
   },
@@ -2494,6 +2497,7 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}",
     "method": "get",
     "toolName": "get-drive-item-permission",
+    "scopes": ["Files.Read"],
     "workScopes": [],
     "llmTip": "Returns a single sharing permission by id. permission-id from list-drive-item-permissions. Includes grantedTo (user/group), roles (read/write/owner), link (if sharing link), expirationDateTime."
   },
@@ -2578,6 +2582,7 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}",
     "method": "get",
     "toolName": "get-excel-table",
+    "scopes": ["Files.Read"],
     "workScopes": [],
     "llmTip": "Returns a single table definition: name, showHeaders, showTotals, style, highlightFirstColumn, highlightLastColumn. table-id or table name from list-excel-tables. Requires an active workbook session — use create-excel-session first."
   },

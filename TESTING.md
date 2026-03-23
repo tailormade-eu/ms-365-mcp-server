@@ -747,7 +747,7 @@
 ### N110 — Drive item sharing link (1 endpoint)
 | Tool | Method | Path |
 |------|--------|------|
-| `create-link` | POST | `/drives/{drive-id}/items/{driveItem-id}/createLink` |
+| `create-drive-item-link` | POST | `/drives/{drive-id}/items/{driveItem-id}/createLink` |
 
 ### N111-N112 — Group calendar events (2 endpoints)
 | Tool | Method | Path |

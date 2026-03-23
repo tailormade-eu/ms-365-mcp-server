@@ -1,5 +1,25 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.11.0] - 2026-03-23
+
+### Added
+- 20 new endpoints across 11 groups (total: 355 endpoints, up from 335)
+  - People: list-people — relevant people suggestions based on collaboration patterns (1)
+  - OneDrive: create-drive-item-link — create shareable links (view/edit/embed) (1)
+  - OneDrive: get-drive-item-version, get-drive-item-permission — single version/permission lookup (2)
+  - Group calendar: create-group-calendar-event, get-group-calendar-event, list-group-calendars (3)
+  - Teams: get-team-member, update-team-member, upgrade-team-app — member management + app upgrade (3)
+  - SharePoint: get-sharepoint-list-column — single column definition (1)
+  - SharePoint: get/create/update/delete/publish-sharepoint-site-page — full site pages CRUD (5)
+  - User settings: get-user-settings, update-user-settings — people insights config (2)
+  - Excel: get-excel-table — single table definition (1)
+  - Chat: update-chat — rename group chat topic (1)
+
+### Fixed
+- **4 endpoints missing scopes** — create-drive-item-link (Files.ReadWrite), get-drive-item-version (Files.Read), get-drive-item-permission (Files.Read), get-excel-table (Files.Read) all had empty scopes
+- **list-people missing scopes** — added People.Read scope alongside workScopes (is /me endpoint)
+- **create-link renamed** to `create-drive-item-link` for consistency with drive-item naming convention
+
 ## [fork-1.10.0] - 2026-03-23
 
 ### Added
@@ -187,6 +207,11 @@
 
 
 ## [0.2.0] - 2026-03-23
+
+---
+
+
+## [0.3.0] - 2026-03-23
 
 ---
 
