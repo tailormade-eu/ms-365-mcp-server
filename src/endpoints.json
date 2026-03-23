@@ -1626,7 +1626,8 @@
     "pathPattern": "/me/outlook/masterCategories/{outlookCategory-id}",
     "method": "delete",
     "toolName": "delete-outlook-category",
-    "scopes": ["MailboxSettings.ReadWrite"]
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Permanently deletes a custom Outlook color category. Use list-outlook-categories to get the category ID. Built-in preset categories cannot be deleted."
   },
   {
     "pathPattern": "/teams/{team-id}",
@@ -1732,7 +1733,8 @@
     "pathPattern": "/teams/{team-id}/unarchive",
     "method": "post",
     "toolName": "unarchive-team",
-    "workScopes": ["Team.ReadWrite.All"]
+    "workScopes": ["Team.ReadWrite.All"],
+    "llmTip": "Restores an archived team to active status. After unarchiving, members can post messages and edit the team again. Use archive-team to archive."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets",

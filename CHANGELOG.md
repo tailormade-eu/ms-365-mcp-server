@@ -1,5 +1,22 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.3.0] - 2026-03-23
+
+### Added
+- 25 new endpoints across 17 groups (total: 238 endpoints, up from 214)
+  - Users: get-user by ID (1)
+  - Calendar event attachments: list + add (2)
+  - Excel: update-excel-range, list tables + table rows, create/delete worksheets (5)
+  - Outlook categories: create/update/delete (3)
+  - Teams: update-team, team tags, channel tabs, archive/unarchive (6)
+  - Groups: list-group-planner-plans, list-group-events (2)
+  - SharePoint: list columns, create list, list site pages (3)
+  - OneDrive: drive item versions + permissions (2)
+  - OneDrive search: search-drive (1)
+
+### Fixed
+- 2 endpoints missing llmTip (delete-outlook-category, unarchive-team)
+
 ## [fork-1.2.0] - 2026-03-23
 
 ### Added
