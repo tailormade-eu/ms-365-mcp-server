@@ -88,7 +88,7 @@ class GraphClient {
         const errorText = await response.text();
         if (errorText.includes('scope') || errorText.includes('permission')) {
           throw new Error(
-            `Microsoft Graph API scope error: ${response.status} ${response.statusText} - ${errorText}. This tool requires organization mode. Please restart with --org-mode flag.`
+            `Microsoft Graph API scope error: ${response.status} ${response.statusText} - ${errorText}. This tool requires work/organization account permissions (workScopes). Ensure the signed-in account has the required permissions.`
           );
         }
         throw new Error(
