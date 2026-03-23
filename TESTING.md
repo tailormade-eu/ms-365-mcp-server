@@ -530,6 +530,48 @@
 
 ---
 
+---
+
+## Task 99 (round 7) — Missing endpoints N77-N83
+
+### N77 — User group membership (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-user-member-of` | GET | `/users/{user-id}/memberOf` |
+
+### N78 — Teams app catalog (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-teams-app-catalog` | GET | `/appCatalogs/teamsApps` |
+
+### N79 — Calendar groups (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-calendar-groups` | GET | `/me/calendarGroups` |
+| `create-calendar-group` | POST | `/me/calendarGroups` |
+
+### N80 — Clone team (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `clone-team` | POST | `/teams/{team-id}/clone` |
+
+### N81 — User license details (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-user-license-details` | GET | `/users/{user-id}/licenseDetails` |
+
+### N82 — Add Excel table column (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `add-excel-table-column` | POST | `/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/columns` |
+
+### N83 — Search within drive folder (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `search-drive-folder` | GET | `/drives/{drive-id}/items/{driveItem-id}/search(q='{q}')` |
+
+---
+
 **Score: 2/10**
 
 ---

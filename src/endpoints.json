@@ -2215,5 +2215,66 @@
     "toolName": "get-excel-named-item",
     "scopes": ["Files.Read"],
     "llmTip": "Returns a specific named range or formula by name (case-sensitive). type: 'Range' returns range address; 'Formula' returns calculated value."
+  },
+  {
+    "pathPattern": "/users/{user-id}/memberOf",
+    "method": "get",
+    "toolName": "list-user-member-of",
+    "workScopes": ["GroupMember.Read.All"],
+    "llmTip": "Returns groups, directory roles, and admin units the user is a member of. Use $select=displayName,id,groupTypes to get group fields. Add /microsoft.graph.group suffix to path to filter groups only. user-id can be UPN (email) or Azure AD ID."
+  },
+  {
+    "pathPattern": "/appCatalogs/teamsApps",
+    "method": "get",
+    "toolName": "list-teams-app-catalog",
+    "workScopes": ["AppCatalog.Read.All"],
+    "llmTip": "Returns all Teams apps (org catalog + Microsoft store). Each app has id (use for install-team-app body), displayName, distributionMethod. Use $filter=distributionMethod eq 'organization' for org apps only, or $filter=displayName eq 'AppName' to find a specific app's id."
+  },
+  {
+    "pathPattern": "/me/calendarGroups",
+    "method": "get",
+    "toolName": "list-calendar-groups",
+    "scopes": ["Calendars.Read"],
+    "workScopes": [],
+    "llmTip": "Returns calendar groups (folders for organizing calendars). Default groups: 'My Calendars', 'Other Calendars'. Each group has id, name. Use group id with list-calendars to see calendars in a specific group."
+  },
+  {
+    "pathPattern": "/me/calendarGroups",
+    "method": "post",
+    "toolName": "create-calendar-group",
+    "scopes": ["Calendars.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "Body: {name (required)}. Creates a new calendar group. Use create-calendar with calendarGroupId to add calendars to this group."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/clone",
+    "method": "post",
+    "toolName": "clone-team",
+    "workScopes": ["Team.Create"],
+    "llmTip": "Body: {displayName (required), mailNickname (required, no spaces), description (optional), partsToClone: 'apps,tabs,settings,channels,members' (comma-separated), visibility: 'public'/'private'}. Returns 202 Accepted — async. Check Location header for provisioning status. partsToClone controls what gets copied from source team."
+  },
+  {
+    "pathPattern": "/users/{user-id}/licenseDetails",
+    "method": "get",
+    "toolName": "list-user-license-details",
+    "workScopes": ["User.Read.All"],
+    "llmTip": "Returns assigned Microsoft 365 licenses. Each license has skuId, skuPartNumber (e.g. 'ENTERPRISEPREMIUM'=E5, 'SPE_E3'=E3), servicePlans (per-service on/off). Use to check if a user has Teams, Exchange, or SharePoint license assigned."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/columns",
+    "method": "post",
+    "toolName": "add-excel-table-column",
+    "scopes": ["Files.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "Body: {name (required), index (optional, 0-based), values: [['Header'], ['row1value'], ['row2value']]}. Omit index to append at end. values array length must match existing row count + 1 (header). Complement to add-excel-table-row."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/search(q='{q}')",
+    "method": "get",
+    "toolName": "search-drive-folder",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "skipEncoding": ["q"],
+    "llmTip": "Searches within a specific folder and all its subfolders. q is the search query (filename or content). driveItem-id must be a folder — use list-folder-files or get-drive-item to find folder IDs. Use search-drive for root-level search."
   }
 ]
