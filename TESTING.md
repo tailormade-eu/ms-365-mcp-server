@@ -127,6 +127,85 @@
 
 ---
 
+## Task 12 — Missing endpoints N11-N22
+
+### N11 — OneDrive discovery (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-my-drive` | GET | `/me/drive` |
+
+### N12 — SharePoint list item write ops (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-sharepoint-site-list-item` | POST | `/sites/{site-id}/lists/{list-id}/items` |
+| `update-sharepoint-site-list-item` | PATCH | `/sites/{site-id}/lists/{list-id}/items/{listItem-id}` |
+| `delete-sharepoint-site-list-item` | DELETE | `/sites/{site-id}/lists/{list-id}/items/{listItem-id}` |
+
+### N13 — Planner bucket CRUD (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-planner-bucket` | GET | `/planner/buckets/{plannerBucket-id}` |
+| `update-planner-bucket` | PATCH | `/planner/buckets/{plannerBucket-id}` |
+| `delete-planner-bucket` | DELETE | `/planner/buckets/{plannerBucket-id}` |
+| `list-bucket-tasks` | GET | `/planner/buckets/{plannerBucket-id}/tasks` |
+
+### N14 — Teams chat management (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-chat` | POST | `/chats` |
+| `list-chat-members` | GET | `/chats/{chat-id}/members` |
+
+### N15 — Group member and drive access (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-group-members` | GET | `/groups/{group-id}/members` |
+| `get-group-drive` | GET | `/groups/{group-id}/drive` |
+
+### N16 — OneDrive file discovery (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-recent-files` | GET | `/me/drive/recent` |
+| `list-shared-with-me` | GET | `/me/drive/sharedWithMe` |
+
+### N17 — Contact folder CRUD (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-contact-folder` | GET | `/me/contactFolders/{contactFolder-id}` |
+| `update-contact-folder` | PATCH | `/me/contactFolders/{contactFolder-id}` |
+| `delete-contact-folder` | DELETE | `/me/contactFolders/{contactFolder-id}` |
+| `list-contact-folder-contacts` | GET | `/me/contactFolders/{contactFolder-id}/contacts` |
+
+### N18 — Planner plan details (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-planner-plan-details` | GET | `/planner/plans/{plannerPlan-id}/details` |
+
+### N19 — Large file upload session (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-upload-session` | POST | `/drives/{drive-id}/items/{driveItem-id}/createUploadSession` |
+
+### N20 — Calendar event forward (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `forward-calendar-event` | POST | `/me/events/{event-id}/forward` |
+
+### N21 — Meeting attendance report (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-meeting-attendance-report` | GET | `/me/onlineMeetings/{onlineMeeting-id}/attendanceReports/{callAttendanceReport-id}` |
+
+### N22 — Teams: create team + apps + channel members (5 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-team` | POST | `/teams` |
+| `list-team-apps` | GET | `/teams/{team-id}/apps` |
+| `list-channel-members` | GET | `/teams/{team-id}/channels/{channel-id}/members` |
+| `add-channel-member` | POST | `/teams/{team-id}/channels/{channel-id}/members` |
+| `remove-channel-member` | DELETE | `/teams/{team-id}/channels/{channel-id}/members/{conversationMember-id}` |
+
+---
+
 **Score: 2/10**
 
 ---

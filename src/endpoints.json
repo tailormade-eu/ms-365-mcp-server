@@ -1362,5 +1362,216 @@
     "toolName": "create-contact-folder",
     "scopes": ["Contacts.ReadWrite"],
     "llmTip": "Body: {displayName (required), parentFolderId (optional, defaults to root contacts folder)}."
+  },
+
+  {
+    "pathPattern": "/me/drive",
+    "method": "get",
+    "toolName": "get-my-drive",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "llmTip": "Returns the user's personal OneDrive. Use the returned id as drive-id for all /drives/{drive-id}/... operations. This is the primary way to discover your own drive-id."
+  },
+
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/items",
+    "method": "post",
+    "toolName": "create-sharepoint-site-list-item",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {fields: {ColumnName: value, ...}}. Column names are internal names (not display names) — use list-sharepoint-site-list to discover columns via $expand=columns."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/items/{listItem-id}",
+    "method": "patch",
+    "toolName": "update-sharepoint-site-list-item",
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Body: {fields: {ColumnName: value}}. Only include fields to update. CRITICAL: Requires If-Match header with ETag from get-sharepoint-site-list-item. Returns 412 without it."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/items/{listItem-id}",
+    "method": "delete",
+    "toolName": "delete-sharepoint-site-list-item",
+    "workScopes": ["Sites.ReadWrite.All"]
+  },
+
+  {
+    "pathPattern": "/planner/buckets/{plannerBucket-id}",
+    "method": "get",
+    "toolName": "get-planner-bucket",
+    "scopes": ["Tasks.Read"],
+    "workScopes": []
+  },
+  {
+    "pathPattern": "/planner/buckets/{plannerBucket-id}",
+    "method": "patch",
+    "toolName": "update-planner-bucket",
+    "scopes": ["Tasks.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-bucket. Body: {name} to rename bucket."
+  },
+  {
+    "pathPattern": "/planner/buckets/{plannerBucket-id}",
+    "method": "delete",
+    "toolName": "delete-planner-bucket",
+    "scopes": ["Tasks.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-bucket. Returns 412 without it."
+  },
+  {
+    "pathPattern": "/planner/buckets/{plannerBucket-id}/tasks",
+    "method": "get",
+    "toolName": "list-bucket-tasks",
+    "scopes": ["Tasks.Read"],
+    "workScopes": [],
+    "llmTip": "Returns all tasks in a specific bucket. Use list-planner-buckets to get bucket IDs for a plan."
+  },
+
+  {
+    "pathPattern": "/chats",
+    "method": "post",
+    "toolName": "create-chat",
+    "workScopes": ["Chat.ReadWrite"],
+    "llmTip": "Body: {chatType: 'oneOnOne'/'group', members: [{'@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users/{user-id}', roles: ['owner']}]}. For oneOnOne, include exactly 2 members (you + other)."
+  },
+  {
+    "pathPattern": "/chats/{chat-id}/members",
+    "method": "get",
+    "toolName": "list-chat-members",
+    "workScopes": ["ChatMember.Read"],
+    "llmTip": "Returns conversationMember objects with userId, displayName, roles. Use userId for further user lookups."
+  },
+
+  {
+    "pathPattern": "/groups/{group-id}/members",
+    "method": "get",
+    "toolName": "list-group-members",
+    "workScopes": ["GroupMember.Read.All"],
+    "llmTip": "Returns members of a Microsoft 365 Group or Team. Each member includes id (user-id), displayName, mail. Use list-groups to find group-id."
+  },
+  {
+    "pathPattern": "/groups/{group-id}/drive",
+    "method": "get",
+    "toolName": "get-group-drive",
+    "workScopes": ["Files.Read.All"],
+    "llmTip": "Returns the SharePoint document library (drive) associated with a Microsoft 365 Group or Team. Use the returned id as drive-id for file operations on Teams/SharePoint files."
+  },
+
+  {
+    "pathPattern": "/me/drive/recent",
+    "method": "get",
+    "toolName": "list-recent-files",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "llmTip": "Returns recently accessed files from the user's OneDrive and SharePoint. Includes files opened from any device. Each item has id and parentReference.driveId for further operations."
+  },
+  {
+    "pathPattern": "/me/drive/sharedWithMe",
+    "method": "get",
+    "toolName": "list-shared-with-me",
+    "scopes": ["Files.Read"],
+    "workScopes": [],
+    "llmTip": "Returns files and folders shared with the user. Each item has remoteItem.id and remoteItem.parentReference.driveId — use these (not the top-level id) for accessing the actual item."
+  },
+
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}",
+    "method": "get",
+    "toolName": "get-contact-folder",
+    "scopes": ["Contacts.Read"],
+    "workScopes": []
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}",
+    "method": "patch",
+    "toolName": "update-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "Body: {displayName} to rename folder."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}",
+    "method": "delete",
+    "toolName": "delete-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "workScopes": []
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}/contacts",
+    "method": "get",
+    "toolName": "list-contact-folder-contacts",
+    "scopes": ["Contacts.Read"],
+    "workScopes": [],
+    "llmTip": "Returns contacts in a specific folder. Use list-contact-folders to get folder IDs."
+  },
+
+  {
+    "pathPattern": "/planner/plans/{plannerPlan-id}/details",
+    "method": "get",
+    "toolName": "get-planner-plan-details",
+    "scopes": ["Tasks.Read"],
+    "workScopes": [],
+    "llmTip": "Returns plan details: categoryDescriptions (labels 1-6 used in task categories), sharedWith (who can access the plan). Use get-planner-plan for the plan title and other metadata."
+  },
+
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/createUploadSession",
+    "method": "post",
+    "toolName": "create-upload-session",
+    "scopes": ["Files.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "Creates an upload session for files >4MB. Body: {item: {'@microsoft.graph.conflictBehavior': 'rename'/'replace', name: 'filename'}}. Returns uploadUrl (valid 48h) and expirationDateTime. Upload file in chunks via PUT to uploadUrl with Content-Range header. Final chunk returns driveItem."
+  },
+
+  {
+    "pathPattern": "/me/events/{event-id}/forward",
+    "method": "post",
+    "toolName": "forward-calendar-event",
+    "scopes": ["Calendars.ReadWrite"],
+    "workScopes": [],
+    "llmTip": "Body: {toRecipients: [{emailAddress: {address, name}}], comment (optional)}. Forwards the meeting invitation to additional recipients. They receive the same meeting details as the original invite."
+  },
+
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/attendanceReports/{callAttendanceReport-id}",
+    "method": "get",
+    "toolName": "get-meeting-attendance-report",
+    "workScopes": ["OnlineMeetingArtifact.Read.All"],
+    "llmTip": "Returns report metadata: totalParticipantCount, meetingStartDateTime, meetingEndDateTime. Use list-attendance-report-participants for individual attendee records."
+  },
+
+  {
+    "pathPattern": "/teams",
+    "method": "post",
+    "toolName": "create-team",
+    "workScopes": ["Team.Create"],
+    "llmTip": "Body: {displayName (required), description (optional), members: [{'@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': '...', roles: ['owner']}]}. Returns 202 Accepted — async. Check Location header for team provisioning status."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/apps",
+    "method": "get",
+    "toolName": "list-team-apps",
+    "workScopes": ["TeamsAppInstallation.ReadForTeam"],
+    "llmTip": "Returns installed apps in a team. Each app has teamsApp.id and teamsAppDefinition.displayName."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/members",
+    "method": "get",
+    "toolName": "list-channel-members",
+    "workScopes": ["ChannelMember.Read.All"],
+    "llmTip": "Returns members of a specific channel. For standard channels, returns all team members. For private/shared channels, returns only channel-specific members."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/members",
+    "method": "post",
+    "toolName": "add-channel-member",
+    "workScopes": ["ChannelMember.ReadWrite.All"],
+    "llmTip": "Required for private/shared channels — standard channels inherit team membership. Body: {'@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users/{user-id}', roles: ['owner'] or []}."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/members/{conversationMember-id}",
+    "method": "delete",
+    "toolName": "remove-channel-member",
+    "workScopes": ["ChannelMember.ReadWrite.All"],
+    "llmTip": "conversationMember-id is from list-channel-members. Cannot remove members from standard channels (inherits from team)."
   }
 ]
