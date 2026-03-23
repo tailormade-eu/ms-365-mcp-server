@@ -5,7 +5,7 @@
 | # | Test | Command/Action | Expected | Status |
 |---|------|----------------|----------|--------|
 | 1 | Build | `npm run build` | 0 errors | ✅ |
-| 2 | Unit tests | `npm run test` | All tests pass | ✅ 83/83 |
+| 2 | Unit tests | `npm run test` | All tests pass | ✅ 102/102 |
 | 3 | Lint | `npm run verify` | 0 lint errors, build + test pass | ⬜ |
 | 4 | MCP stdio | `node dist/index.js` | Server starts, tools registered | ⬜ |
 | 5 | Auth flow | Login via MCP client | Token acquired, account listed | ⬜ |
@@ -603,6 +603,38 @@
 | Tool | Method | Path |
 |------|--------|------|
 | `send-teams-activity-notification` | POST | `/users/{user-id}/teamwork/sendActivityNotification` |
+
+---
+
+## Task 99 (round 9) — Tests custom-tools.ts + code fixes + N88-N89
+
+### V1 — New test file: test/custom-tools.test.ts (19 tests)
+| Suite | Tests |
+|-------|-------|
+| `normalizeSubject` | 10 parameterized cases (empty, undefined, Re/FW/Fwd/TR/AW prefixes, whitespace, case) |
+| `get-archive-messages` | 5 tests (missing env, missing account, token fail, no folders, success flow) |
+| `update-todo-cache` | 2 tests (list not found, successful cache write with counts verification) |
+| `beta-get` | 2 tests (success, error) |
+
+### V6 — removeODataProps extracted to module-level in graph-client.ts
+| File | Change |
+|------|--------|
+| `src/graph-client.ts` | Duplicate local `removeODataProps` → single module-level function |
+
+### V9 — unhandledRejection handler in index.ts
+| File | Change |
+|------|--------|
+| `src/index.ts` | `process.on('unhandledRejection', ...)` added before `main()` |
+
+### N88 — Update channel message (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-channel-message` | PATCH | `/teams/{team-id}/channels/{channel-id}/messages/{message-id}` |
+
+### N89 — List SharePoint list views (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-sharepoint-list-views` | GET | `/sites/{site-id}/lists/{list-id}/views` |
 
 ---
 

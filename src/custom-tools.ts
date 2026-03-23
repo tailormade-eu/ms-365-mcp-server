@@ -47,7 +47,7 @@ async function fetchAllPages(
   return items;
 }
 
-function normalizeSubject(s: string | undefined): string {
+export function normalizeSubject(s: string | undefined): string {
   if (!s) return '';
   return s
     .replace(/^(Re|FW|Fwd|TR|AW):\s*/i, '')

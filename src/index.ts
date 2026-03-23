@@ -7,6 +7,11 @@ import AuthManager, { buildScopesFromEndpoints } from './auth.js';
 import MicrosoftGraphServer from './server.js';
 import { version } from './version.js';
 
+process.on('unhandledRejection', (err) => {
+  process.stderr.write(`[ERROR] Unhandled rejection: ${err}\n`);
+  process.exit(1);
+});
+
 async function main(): Promise<void> {
   try {
     const args = parseArgs();

@@ -2307,5 +2307,19 @@
     "toolName": "send-teams-activity-notification",
     "workScopes": ["TeamsActivity.Send"],
     "llmTip": "Body: {topic: {source: 'entityUrl'/'text', value: 'url or title'}, activityType (required, must match Teams app manifest), previewText: {content: 'preview text'}, templateParameters: [{name, value}]}. Sends an in-app Teams notification to the specified user. activityType must be declared in the app manifest beforehand."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/messages/{message-id}",
+    "method": "patch",
+    "toolName": "update-channel-message",
+    "workScopes": ["ChannelMessage.Send"],
+    "llmTip": "Soft-delete: body {deletedDateTime: 'ISO8601'} marks the message as deleted. To restore, PATCH with {deletedDateTime: null}. Body must include {body: {contentType: 'html', content: '...'}} for content updates. Bot-authored messages can be updated by the bot; user messages can only be soft-deleted. Returns 204 on success."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/lists/{list-id}/views",
+    "method": "get",
+    "toolName": "list-sharepoint-list-views",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns view definitions for a SharePoint list. Each view has id, name, columnNames (fields shown), query (CAML filter/sort). Use list-sharepoint-lists to find list IDs, use-site-id from list-sharepoint-sites. Default view is isDefault: true."
   }
 ]

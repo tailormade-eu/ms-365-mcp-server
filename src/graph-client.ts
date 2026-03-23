@@ -6,6 +6,18 @@ import type { AppSecrets } from './secrets.js';
 import { getCloudEndpoints } from './cloud-config.js';
 import { getRequestTokens } from './request-context.js';
 
+function removeODataProps(obj: Record<string, unknown>): void {
+  if (typeof obj === 'object' && obj !== null) {
+    Object.keys(obj).forEach((key) => {
+      if (key.startsWith('@odata.')) {
+        delete obj[key];
+      } else if (typeof obj[key] === 'object') {
+        removeODataProps(obj[key] as Record<string, unknown>);
+      }
+    });
+  }
+}
+
 interface GraphRequestOptions {
   headers?: Record<string, string>;
   method?: string;
@@ -256,18 +268,6 @@ class GraphClient {
       }
 
       // Remove OData properties
-      const removeODataProps = (obj: Record<string, unknown>): void => {
-        if (typeof obj === 'object' && obj !== null) {
-          Object.keys(obj).forEach((key) => {
-            if (key.startsWith('@odata.')) {
-              delete obj[key];
-            } else if (typeof obj[key] === 'object') {
-              removeODataProps(obj[key] as Record<string, unknown>);
-            }
-          });
-        }
-      };
-
       removeODataProps(responseData.data as Record<string, unknown>);
 
       return {
