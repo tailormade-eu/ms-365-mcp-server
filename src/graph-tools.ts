@@ -523,6 +523,23 @@ export function registerGraphTools(
       notebookId: 'OneNote notebook ID. Use list-onenote-notebooks to obtain.',
       sectionId: 'OneNote section ID. Use list-onenote-notebook-sections to obtain.',
       pageId: 'OneNote page ID. Use list-onenote-section-pages to obtain.',
+      callAttendanceReportId:
+        'Attendance report ID. Use list-meeting-attendance-reports to find it.',
+      calendarId:
+        'Calendar ID. Use list-calendars to find it. The default calendar does not need an ID.',
+      channelId: 'Teams channel ID. Use list-team-channels to find it.',
+      chatId: 'Chat ID. Use list-chats or search to find it.',
+      contactFolderId: 'Contact folder ID. Use list-contact-folders to find it.',
+      conversationMemberId:
+        'Conversation member ID (NOT the same as userId). Use the list-*-members tool for the relevant resource.',
+      groupId:
+        'Microsoft 365 group ID. Use list-groups to find it. Note: for Teams, group-id = team-id.',
+      messageRuleId: 'Mail rule ID. Use list-mail-rules to find it.',
+      onenotePageId: 'OneNote page ID. Use list-onenote-section-pages to find it.',
+      onenoteSectionId:
+        'OneNote section ID. Use list-onenote-notebook-sections to find it.',
+      plannerBucketId: 'Planner bucket ID. Use list-planner-buckets to find it.',
+      plannerPlanId: 'Planner plan ID. Use list-planner-plans to find it.',
     };
     const pathParamMatches = tool.path.matchAll(/:([a-zA-Z]+)/g);
     for (const match of pathParamMatches) {

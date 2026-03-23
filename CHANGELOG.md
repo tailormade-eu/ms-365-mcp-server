@@ -1,5 +1,26 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.2.0] - 2026-03-23
+
+### Added
+- 62 new endpoints across 22 categories (total: 214 endpoints, up from 153)
+  - Planner: full CRUD for plans, buckets, tasks + plan details (12 endpoints)
+  - Calendar: accept/decline/tentative/cancel/forward event + calendar CRUD (9 endpoints)
+  - OneDrive: get-my-drive, get/move/copy/search drive items, create folder, upload session, recent files, shared-with-me (10 endpoints)
+  - Teams: create team, chat management, channel members CRUD, team apps (9 endpoints)
+  - SharePoint: list item CRUD (create/update/delete) (3 endpoints)
+  - Groups: list/get groups, list members, get group drive (4 endpoints)
+  - Mail: get-mail-folder, message rules CRUD (4 endpoints)
+  - Contacts: full contact folder CRUD + list contacts in folder (6 endpoints)
+  - Online meetings: update/delete meeting, attendance reports + participants (4 endpoints)
+- 12 new pathParamDescriptions with actionable guidance (groupId, channelId, plannerPlanId, etc.)
+- Removed duplicate `get-root-folder` endpoint (kept `get-drive-root-item` as canonical)
+
+### Fixed
+- 4 endpoints missing llmTip (delete-sharepoint-site-list-item, get-planner-bucket, get/delete-contact-folder)
+- update-sharepoint-site-list-item llmTip referenced non-existent tool
+- update-planner-plan llmTip referenced non-existent GET endpoint
+
 ## [fork-1.1.0] - 2026-03-22
 
 ### Added

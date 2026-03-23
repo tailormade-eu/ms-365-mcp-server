@@ -1126,7 +1126,7 @@
     "method": "patch",
     "toolName": "update-planner-plan",
     "scopes": ["Tasks.ReadWrite"],
-    "llmTip": "CRITICAL: Requires If-Match header with ETag from GET /planner/plans/{id}. Returns 412 without it. Only title can be updated."
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from list-planner-plans. Returns 412 without it. Only title can be updated."
   },
   {
     "pathPattern": "/planner/plans/{plannerPlan-id}",
@@ -1385,13 +1385,14 @@
     "method": "patch",
     "toolName": "update-sharepoint-site-list-item",
     "workScopes": ["Sites.ReadWrite.All"],
-    "llmTip": "Body: {fields: {ColumnName: value}}. Only include fields to update. CRITICAL: Requires If-Match header with ETag from get-sharepoint-site-list-item. Returns 412 without it."
+    "llmTip": "Body: {fields: {ColumnName: value}}. Only include fields to update. CRITICAL: Requires If-Match header with ETag from list-sharepoint-site-list-items. Returns 412 without it."
   },
   {
     "pathPattern": "/sites/{site-id}/lists/{list-id}/items/{listItem-id}",
     "method": "delete",
     "toolName": "delete-sharepoint-site-list-item",
-    "workScopes": ["Sites.ReadWrite.All"]
+    "workScopes": ["Sites.ReadWrite.All"],
+    "llmTip": "Permanently deletes a SharePoint list item. Use list-sharepoint-site-list-items to find item IDs. Requires Sites.ReadWrite.All scope."
   },
 
   {
@@ -1399,7 +1400,8 @@
     "method": "get",
     "toolName": "get-planner-bucket",
     "scopes": ["Tasks.Read"],
-    "workScopes": []
+    "workScopes": [],
+    "llmTip": "Returns a single Planner bucket by ID. Use list-planner-buckets to find bucket IDs. Response includes @odata.etag needed for update/delete operations."
   },
   {
     "pathPattern": "/planner/buckets/{plannerBucket-id}",
@@ -1478,7 +1480,8 @@
     "method": "get",
     "toolName": "get-contact-folder",
     "scopes": ["Contacts.Read"],
-    "workScopes": []
+    "workScopes": [],
+    "llmTip": "Returns a single contact folder by ID. Use list-contact-folders to find folder IDs."
   },
   {
     "pathPattern": "/me/contactFolders/{contactFolder-id}",
@@ -1493,7 +1496,8 @@
     "method": "delete",
     "toolName": "delete-contact-folder",
     "scopes": ["Contacts.ReadWrite"],
-    "workScopes": []
+    "workScopes": [],
+    "llmTip": "Permanently deletes a contact folder and all contacts within it. Use list-contact-folders to find folder IDs."
   },
   {
     "pathPattern": "/me/contactFolders/{contactFolder-id}/contacts",
