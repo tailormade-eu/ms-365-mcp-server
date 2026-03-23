@@ -47,6 +47,86 @@
 
 ---
 
+## Task 11 — Missing endpoints N2-N10 + B3 duplicate fix
+
+### B3 — Duplicate removed
+| Removed | Reason |
+|---------|--------|
+| `get-root-folder` | Duplicate of `get-drive-root-item` |
+
+### N2 — Planner (7 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-planner-plans` | GET | `/me/planner/plans` |
+| `create-planner-plan` | POST | `/planner/plans` |
+| `update-planner-plan` | PATCH | `/planner/plans/{plannerPlan-id}` |
+| `delete-planner-plan` | DELETE | `/planner/plans/{plannerPlan-id}` |
+| `list-planner-buckets` | GET | `/planner/plans/{plannerPlan-id}/buckets` |
+| `create-planner-bucket` | POST | `/planner/buckets` |
+| `delete-planner-task` | DELETE | `/planner/tasks/{plannerTask-id}` |
+
+### N3 — Calendar event responses (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `accept-calendar-event` | POST | `/me/events/{event-id}/accept` |
+| `decline-calendar-event` | POST | `/me/events/{event-id}/decline` |
+| `tentatively-accept-calendar-event` | POST | `/me/events/{event-id}/tentativelyAccept` |
+| `cancel-calendar-event` | POST | `/me/events/{event-id}/cancel` |
+
+### N4 — OneDrive file management (5 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-drive-item` | GET | `/drives/{drive-id}/items/{driveItem-id}` |
+| `create-folder` | POST | `/drives/{drive-id}/items/{driveItem-id}/children` |
+| `move-drive-item` | PATCH | `/drives/{drive-id}/items/{driveItem-id}` |
+| `copy-drive-item` | POST | `/drives/{drive-id}/items/{driveItem-id}/copy` |
+| `search-drive` | GET | `/drives/{drive-id}/root/search(q='{q}')` |
+
+### N5 — Calendar management (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-calendar` | GET | `/me/calendars/{calendar-id}` |
+| `create-calendar` | POST | `/me/calendars` |
+| `update-calendar` | PATCH | `/me/calendars/{calendar-id}` |
+| `delete-calendar` | DELETE | `/me/calendars/{calendar-id}` |
+
+### N6 — Online meeting management (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-online-meeting` | PATCH | `/me/onlineMeetings/{onlineMeeting-id}` |
+| `delete-online-meeting` | DELETE | `/me/onlineMeetings/{onlineMeeting-id}` |
+| `list-attendance-report-participants` | GET | `.../attendanceReports/{id}/attendanceRecords` |
+
+### N7 — Teams channel + member management (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-team-channel` | PATCH | `/teams/{team-id}/channels/{channel-id}` |
+| `delete-team-channel` | DELETE | `/teams/{team-id}/channels/{channel-id}` |
+| `add-team-member` | POST | `/teams/{team-id}/members` |
+| `remove-team-member` | DELETE | `/teams/{team-id}/members/{conversationMember-id}` |
+
+### N8 — Groups (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-groups` | GET | `/groups` |
+| `get-group` | GET | `/groups/{group-id}` |
+
+### N9 — Mail: folder by id + message rules CRUD (4 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-mail-folder` | GET | `/me/mailFolders/{mailFolder-id}` |
+| `create-message-rule` | POST | `/me/mailFolders/inbox/messageRules` |
+| `update-message-rule` | PATCH | `/me/mailFolders/inbox/messageRules/{messageRule-id}` |
+| `delete-message-rule` | DELETE | `/me/mailFolders/inbox/messageRules/{messageRule-id}` |
+
+### N10 — Contact folders (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-contact-folders` | GET | `/me/contactFolders` |
+| `create-contact-folder` | POST | `/me/contactFolders` |
+
+---
+
 **Score: 2/10**
 
 ---

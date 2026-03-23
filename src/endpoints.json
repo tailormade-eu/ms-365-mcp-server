@@ -343,13 +343,6 @@
     "llmTip": "Returns the root folder metadata of a drive. Use this to get the root driveItem-id for listing children with list-folder-files. Prefer item IDs over paths for reliability in subsequent operations."
   },
   {
-    "pathPattern": "/drives/{drive-id}/root",
-    "method": "get",
-    "toolName": "get-root-folder",
-    "scopes": ["Files.Read"],
-    "llmTip": "Deprecated — use get-drive-root-item instead (identical functionality). Returns root folder metadata of a drive."
-  },
-  {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/children",
     "method": "get",
     "toolName": "list-folder-files",
@@ -1112,5 +1105,262 @@
     "toolName": "reply-to-group-thread",
     "workScopes": ["Group.ReadWrite.All"],
     "llmTip": "NOTE: Group threads are legacy — Microsoft recommends Teams. Body format: {\"post\": {\"body\": {\"contentType\": \"html\", \"content\": \"<p>Reply text</p>\"}}}."
+  },
+
+  {
+    "pathPattern": "/me/planner/plans",
+    "method": "get",
+    "toolName": "list-planner-plans",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns all Planner plans the user is a member of. Use plan-id to list tasks via list-plan-tasks."
+  },
+  {
+    "pathPattern": "/planner/plans",
+    "method": "post",
+    "toolName": "create-planner-plan",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Body: {title (required), container: {url: 'https://graph.microsoft.com/v1.0/groups/{group-id}', type: 'group'}}. Container is required — plans must belong to a group."
+  },
+  {
+    "pathPattern": "/planner/plans/{plannerPlan-id}",
+    "method": "patch",
+    "toolName": "update-planner-plan",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from GET /planner/plans/{id}. Returns 412 without it. Only title can be updated."
+  },
+  {
+    "pathPattern": "/planner/plans/{plannerPlan-id}",
+    "method": "delete",
+    "toolName": "delete-planner-plan",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-plan. Returns 412 without it."
+  },
+  {
+    "pathPattern": "/planner/plans/{plannerPlan-id}/buckets",
+    "method": "get",
+    "toolName": "list-planner-buckets",
+    "scopes": ["Tasks.Read"],
+    "llmTip": "Returns buckets (columns) in a plan. Use bucket-id with list-plan-tasks to filter tasks by bucket."
+  },
+  {
+    "pathPattern": "/planner/buckets",
+    "method": "post",
+    "toolName": "create-planner-bucket",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "Body: {name (required), planId (required), orderHint}. orderHint controls position — use ' !' for first, existing orderHint + ' !' to insert after."
+  },
+  {
+    "pathPattern": "/planner/tasks/{plannerTask-id}",
+    "method": "delete",
+    "toolName": "delete-planner-task",
+    "scopes": ["Tasks.ReadWrite"],
+    "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-task. Returns 412 without it."
+  },
+
+  {
+    "pathPattern": "/me/events/{event-id}/accept",
+    "method": "post",
+    "toolName": "accept-calendar-event",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {comment (optional), sendResponse: true/false}. sendResponse=true sends acceptance email to organizer."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/decline",
+    "method": "post",
+    "toolName": "decline-calendar-event",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {comment (optional), sendResponse: true/false, proposedNewTime: {start, end} (optional)}. Can propose alternative time."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/tentativelyAccept",
+    "method": "post",
+    "toolName": "tentatively-accept-calendar-event",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {comment (optional), sendResponse: true/false, proposedNewTime: {start, end} (optional)}."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/cancel",
+    "method": "post",
+    "toolName": "cancel-calendar-event",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {comment (optional)}. Only organizer can cancel. Sends cancellation email to all attendees."
+  },
+
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}",
+    "method": "get",
+    "toolName": "get-drive-item",
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns item metadata (name, size, file/folder type, downloadUrl). Use list-folder-files to find item IDs."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/children",
+    "method": "post",
+    "toolName": "create-folder",
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {name (required), folder: {}, '@microsoft.graph.conflictBehavior': 'rename'/'replace'/'fail'}. Set folder:{} to create a folder. conflictBehavior='rename' auto-renames on conflict."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}",
+    "method": "patch",
+    "toolName": "move-drive-item",
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {parentReference: {id: 'target-folder-item-id'}, name: 'optional-new-name'}. Use get-drive-item to find parentReference.driveId if moving across drives."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/copy",
+    "method": "post",
+    "toolName": "copy-drive-item",
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {parentReference: {driveId, id}, name (optional)}. Returns 202 Accepted — async operation. Response Location header has monitor URL."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/root/search(q='{q}')",
+    "method": "get",
+    "toolName": "search-drive",
+    "scopes": ["Files.Read"],
+    "skipEncoding": ["q"],
+    "llmTip": "Returns items matching search query across entire drive. Searches name and content. Use $select to limit fields."
+  },
+
+  {
+    "pathPattern": "/me/calendars/{calendar-id}",
+    "method": "get",
+    "toolName": "get-calendar",
+    "scopes": ["Calendars.Read"],
+    "llmTip": "Returns a single calendar by ID. Use list-calendars to find calendar IDs."
+  },
+  {
+    "pathPattern": "/me/calendars",
+    "method": "post",
+    "toolName": "create-calendar",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {name (required), color (optional): 'lightBlue','lightGreen','lightOrange','lightGray','lightYellow','lightTeal','lightPink','lightBrown','lightRed','maxColor','auto'}."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}",
+    "method": "patch",
+    "toolName": "update-calendar",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Updates calendar properties like name and color. Use list-calendars to find the calendar ID."
+  },
+  {
+    "pathPattern": "/me/calendars/{calendar-id}",
+    "method": "delete",
+    "toolName": "delete-calendar",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Cannot delete the default calendar (first in list-calendars). Returns 400 if attempted."
+  },
+
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "patch",
+    "toolName": "update-online-meeting",
+    "scopes": ["OnlineMeetings.ReadWrite"],
+    "workScopes": ["OnlineMeetings.ReadWrite"],
+    "llmTip": "CRITICAL: Only works for meetings created via Graph API (not Teams UI). Updatable fields: subject, startDateTime, endDateTime, attendees."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "delete",
+    "toolName": "delete-online-meeting",
+    "scopes": ["OnlineMeetings.ReadWrite"],
+    "workScopes": ["OnlineMeetings.ReadWrite"],
+    "llmTip": "CRITICAL: Only works for meetings created via Graph API."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/attendanceReports/{callAttendanceReport-id}/attendanceRecords",
+    "method": "get",
+    "toolName": "list-attendance-report-participants",
+    "workScopes": ["OnlineMeetingArtifact.Read.All"],
+    "llmTip": "Returns individual attendee records with attendanceIntervals (joinDateTime, leaveDateTime, durationInSeconds). Get report-id first from list-meeting-attendance-reports."
+  },
+
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}",
+    "method": "patch",
+    "toolName": "update-team-channel",
+    "workScopes": ["Channel.ReadWrite.All"],
+    "llmTip": "Updatable fields: displayName, description. membershipType cannot be changed after creation."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}",
+    "method": "delete",
+    "toolName": "delete-team-channel",
+    "workScopes": ["Channel.Delete.All"],
+    "llmTip": "Cannot delete the General channel (default channel). Returns 400 if attempted."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members",
+    "method": "post",
+    "toolName": "add-team-member",
+    "workScopes": ["TeamMember.ReadWrite.All"],
+    "llmTip": "Body: {'@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users/{user-id}', roles: ['owner'] or []}. roles=[] for regular member."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members/{conversationMember-id}",
+    "method": "delete",
+    "toolName": "remove-team-member",
+    "workScopes": ["TeamMember.ReadWrite.All"],
+    "llmTip": "conversationMember-id is from list-team-members (different from user-id). Get it first via list-team-members."
+  },
+
+  {
+    "pathPattern": "/groups",
+    "method": "get",
+    "toolName": "list-groups",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns Microsoft 365 Groups and Security Groups. Use $filter=groupTypes/any(c:c eq 'Unified') to get only M365 groups (Teams-linked). group-id = team-id for Teams."
+  },
+  {
+    "pathPattern": "/groups/{group-id}",
+    "method": "get",
+    "toolName": "get-group",
+    "workScopes": ["Group.Read.All"],
+    "llmTip": "Returns a single group by ID. group-id = team-id for Teams-linked groups."
+  },
+
+  {
+    "pathPattern": "/me/mailFolders/{mailFolder-id}",
+    "method": "get",
+    "toolName": "get-mail-folder",
+    "scopes": ["Mail.Read"],
+    "llmTip": "Returns a single mail folder by ID. Well-known folder names can be used: inbox, drafts, sentitems, deleteditems, junkemail, archive."
+  },
+  {
+    "pathPattern": "/me/mailFolders/inbox/messageRules",
+    "method": "post",
+    "toolName": "create-message-rule",
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Body: {displayName, sequence (int, lower=higher priority), isEnabled, conditions: {senderContains, subjectContains, ...}, actions: {moveToFolder, markAsRead, ...}}. Full schema: https://learn.microsoft.com/graph/api/resources/messagerule"
+  },
+  {
+    "pathPattern": "/me/mailFolders/inbox/messageRules/{messageRule-id}",
+    "method": "patch",
+    "toolName": "update-message-rule",
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Updates an existing inbox message rule. Use list-mail-rules to find rule IDs."
+  },
+  {
+    "pathPattern": "/me/mailFolders/inbox/messageRules/{messageRule-id}",
+    "method": "delete",
+    "toolName": "delete-message-rule",
+    "scopes": ["MailboxSettings.ReadWrite"],
+    "llmTip": "Deletes an inbox message rule. Use list-mail-rules to find rule IDs."
+  },
+
+  {
+    "pathPattern": "/me/contactFolders",
+    "method": "get",
+    "toolName": "list-contact-folders",
+    "scopes": ["Contacts.Read"],
+    "llmTip": "Returns all contact folders for the current user."
+  },
+  {
+    "pathPattern": "/me/contactFolders",
+    "method": "post",
+    "toolName": "create-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Body: {displayName (required), parentFolderId (optional, defaults to root contacts folder)}."
   }
 ]
