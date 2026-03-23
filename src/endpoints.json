@@ -2313,7 +2313,7 @@
     "method": "patch",
     "toolName": "update-channel-message",
     "workScopes": ["ChannelMessage.Send"],
-    "llmTip": "Soft-delete: body {deletedDateTime: 'ISO8601'} marks the message as deleted. To restore, PATCH with {deletedDateTime: null}. Body must include {body: {contentType: 'html', content: '...'}} for content updates. Bot-authored messages can be updated by the bot; user messages can only be soft-deleted. Returns 204 on success."
+    "llmTip": "Soft-delete: body {deletedDateTime: 'ISO8601'} marks the message as deleted. To restore, PATCH with {deletedDateTime: null}. Body must include {body: {contentType: 'html', content: '...'}} for content updates. Bot-authored messages can be updated by the bot; user messages can only be soft-deleted. Returns the updated message object."
   },
   {
     "pathPattern": "/sites/{site-id}/lists/{list-id}/views",

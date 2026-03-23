@@ -5,7 +5,7 @@
 | # | Test | Command/Action | Expected | Status |
 |---|------|----------------|----------|--------|
 | 1 | Build | `npm run build` | 0 errors | ✅ |
-| 2 | Unit tests | `npm run test` | All tests pass | ✅ 102/102 |
+| 2 | Unit tests | `npm run test` | All tests pass | ✅ 104/104 |
 | 3 | Lint | `npm run verify` | 0 lint errors, build + test pass | ⬜ |
 | 4 | MCP stdio | `node dist/index.js` | Server starts, tools registered | ⬜ |
 | 5 | Auth flow | Login via MCP client | Token acquired, account listed | ⬜ |
@@ -635,6 +635,26 @@
 | Tool | Method | Path |
 |------|--------|------|
 | `list-sharepoint-list-views` | GET | `/sites/{site-id}/lists/{list-id}/views` |
+
+---
+
+## Task 99 (round 10) — Code review fixes + test edge cases
+
+### Fixes applied
+| Fix | Description |
+|-----|-------------|
+| CRITICAL: `removeODataProps` | Removed local shadowed copy in `formatJsonResponse` — module-level function now used |
+| CRITICAL: `normalizeSubject` | Regex now strips repeated prefixes (`Re: Re: FW:` → stripped) |
+| `account` schema | Removed `.optional()` from `get-archive-messages` (handler required it) |
+| `userEmail` XML escape | Consistent XML escaping in EWS SOAP template |
+| `update-channel-message` llmTip | Corrected "Returns 204" → "Returns the updated message object" |
+
+### Tests added (3 new normalizeSubject edge cases)
+| Input | Expected |
+|-------|----------|
+| `Re: Re: Invoice` | `invoice` |
+| `FW: Re: Invoice` | `invoice` |
+| `Re: FW: Re: Invoice` | `invoice` |
 
 ---
 

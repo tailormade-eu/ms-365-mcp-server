@@ -1,5 +1,22 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.9.0] - 2026-03-23
+
+### Added
+- 2 new endpoints (total: 317 endpoints, up from 315)
+  - Teams: update-channel-message — PATCH channel messages (soft-delete/restore, bot message updates) (1)
+  - SharePoint: list-sharepoint-list-views — list view definitions for SharePoint lists (1)
+- 19 new tests for custom-tools.ts: normalizeSubject (13), get-archive-messages (4), update-todo-cache (2), beta-get (2). Total tests: 83→104
+
+### Fixed
+- **CRITICAL: `removeODataProps` duplicate** — module-level function was shadowed by local copy in `formatJsonResponse`. Removed local duplicate so refactored function is actually used
+- **CRITICAL: `normalizeSubject` now strips repeated prefixes** — `Re: Re: FW: Invoice` → `invoice` (was only stripping first prefix)
+- `get-archive-messages` account parameter now required in schema (was `.optional()` but handler threw on missing)
+- `userEmail` in EWS SOAP XML now XML-escaped (consistent with `search` param escaping)
+- `update-channel-message` llmTip: corrected "Returns 204" → "Returns the updated message object"
+- `removeODataProps` extracted to module-level function in graph-client.ts (V6)
+- `process.on('unhandledRejection')` handler added in index.ts (V9)
+
 ## [fork-1.8.0] - 2026-03-23
 
 ### Added
@@ -150,8 +167,4 @@
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
-
-## [0.1.0] - 2026-03-23
-
----
 

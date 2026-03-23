@@ -50,7 +50,7 @@ async function fetchAllPages(
 export function normalizeSubject(s: string | undefined): string {
   if (!s) return '';
   return s
-    .replace(/^(Re|FW|Fwd|TR|AW):\s*/i, '')
+    .replace(/^((Re|FW|Fwd|TR|AW):\s*)+/i, '')
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
@@ -84,8 +84,7 @@ Returns: [{id, subject, from, received}]
     {
       account: z
         .string()
-        .describe('Mailbox email address to impersonate (e.g. user@example.com).')
-        .optional(),
+        .describe('Mailbox email address to impersonate (e.g. user@example.com).'),
       search: z
         .string()
         .describe('Subject substring filter, e.g. "hoy.be". Optional.')
@@ -110,10 +109,7 @@ Returns: [{id, subject, from, received}]
           throw new Error('EWS_CLIENT_ID, EWS_CLIENT_SECRET and EWS_TENANT_ID env vars required');
         }
 
-        if (!account) {
-          throw new Error('account parameter is required — provide the mailbox email address to impersonate.');
-        }
-        const userEmail = account;
+        const userEmail = account.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         const limit = top ?? 25;
 
         // EWS token — different scope from Graph

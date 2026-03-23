@@ -59,6 +59,9 @@ describe('normalizeSubject', () => {
     ['invoice', 'invoice'],
     ['  Multiple   Spaces  ', 'multiple spaces'],
     ['re: Invoice', 'invoice'],
+    ['Re: Re: Invoice', 'invoice'],
+    ['FW: Re: Invoice', 'invoice'],
+    ['Re: FW: Re: Invoice', 'invoice'],
   ])('normalizeSubject(%j) → %j', (input, expected) => {
     expect(normalizeSubject(input as string | undefined)).toBe(expected);
   });
@@ -90,15 +93,6 @@ describe('get-archive-messages', () => {
     const result = await handler({});
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('EWS_CLIENT_ID');
-  });
-
-  it('missing account parameter → isError', async () => {
-    process.env.EWS_CLIENT_ID = 'id';
-    process.env.EWS_CLIENT_SECRET = 'secret';
-    process.env.EWS_TENANT_ID = 'tenant';
-    const result = await handler({});
-    expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('account');
   });
 
   it('EWS token fetch fails → isError', async () => {
