@@ -1,5 +1,21 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.8.0] - 2026-03-23
+
+### Added
+- 4 new endpoints (total: 315 endpoints, up from 312)
+  - OneDrive: get-drive-item-by-path — navigate by path instead of item ID (1)
+  - OneDrive: get-special-drive-folder — access special folders (documents, photos, etc.) (1)
+  - Directory: list-org-contacts — Exchange GAL organization contacts (1)
+  - Teams: send-teams-activity-notification — send in-app Teams notifications (1)
+
+### Fixed
+- B1: `login` tool catch block now returns `isError: true` (was silently failing)
+- B1: `logout` catch block now includes error details + `isError: true`
+- B3: `console.log` in auth.ts device code callback replaced with `process.stderr.write` (was breaking MCP stdio protocol)
+- `verify-login` tool now has try/catch with `isError: true` on failure
+- Removed company name from custom-tools.ts comments (public repo)
+
 ## [fork-1.7.0] - 2026-03-23
 
 ### Added

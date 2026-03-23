@@ -1,8 +1,8 @@
 /**
- * Tailormade custom MCP tools — NOT part of upstream softeria/ms-365-mcp-server.
+ * Custom MCP tools — NOT part of upstream softeria/ms-365-mcp-server.
  *
  * These are compound/workflow tools that combine multiple Graph API calls
- * or have Tailormade-specific output formats (e.g. local file writes).
+ * or have custom output formats (e.g. local file writes).
  *
  * Do NOT submit these to upstream. Upstream contributions go via graph-tools.ts / endpoints.json.
  */

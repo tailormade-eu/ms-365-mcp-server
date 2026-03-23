@@ -606,7 +606,7 @@
 
 ---
 
-**Score: 2/10**
+**Score: 2/10** (8 tests require live environment = human action)
 
 ---
 

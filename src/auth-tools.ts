@@ -50,6 +50,7 @@ export function registerAuthTools(server: McpServer, authManager: AuthManager): 
               text: JSON.stringify({ error: `Authentication failed: ${(error as Error).message}` }),
             },
           ],
+          isError: true,
         };
       }
     }
@@ -80,16 +81,28 @@ export function registerAuthTools(server: McpServer, authManager: AuthManager): 
   });
 
   server.tool('verify-login', 'Check current Microsoft authentication status', {}, async () => {
-    const testResult = await authManager.testLogin();
+    try {
+      const testResult = await authManager.testLogin();
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(testResult),
-        },
-      ],
-    };
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(testResult),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
+        isError: true,
+      };
+    }
   });
 
   server.tool(
