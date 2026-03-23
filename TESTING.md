@@ -1012,4 +1012,53 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Task 99 — Missing endpoints N209-N221 (round 16 gap analysis — final round)
+
+### N209 — Clear own presence (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `clear-me-presence` | POST | `/me/presence/clearPresence` |
+
+### N210 — Default calendar (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-default-calendar` | GET | `/me/calendar` |
+
+### N211-N212 — Item insights settings (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-item-insights-settings` | GET | `/me/settings/itemInsights` |
+| `update-item-insights-settings` | PATCH | `/me/settings/itemInsights` |
+
+### N213-N214 — Work hours and locations (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-work-hours` | GET | `/me/settings/workHoursAndLocations` |
+| `update-work-hours` | PATCH | `/me/settings/workHoursAndLocations` |
+
+### N215 — Transitive group membership (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-transitive-member-of` | GET | `/me/transitiveMemberOf` |
+
+### N216-N217 — Associated teams + activity notification (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-associated-teams` | GET | `/me/teamwork/associatedTeams` |
+| `send-me-activity-notification` | POST | `/me/teamwork/sendActivityNotification` |
+
+### N218-N220 — MS Bookings (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-booking-businesses` | GET | `/solutions/bookingBusinesses` |
+| `create-booking-business` | POST | `/solutions/bookingBusinesses` |
+| `list-booking-currencies` | GET | `/solutions/bookingCurrencies` |
+
+### N221 — Buildings (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-buildings` | GET | `/places/graph.building` |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

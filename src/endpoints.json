@@ -3084,5 +3084,109 @@
     "workScopes": ["OnlineMeetings.ReadWrite"],
     "contentType": "application/json",
     "llmTip": "Body: {externalId: 'unique-client-id', startDateTime: '2024-01-01T10:00:00Z', endDateTime: '2024-01-01T11:00:00Z', subject: 'Meeting title'}. Idempotent: returns existing meeting if externalId already exists, creates new otherwise. Returns joinWebUrl, audioConferencing, chatInfo. Use externalId to correlate with your own system's meeting records."
+  },
+
+  {
+    "pathPattern": "/me/presence/clearPresence",
+    "method": "post",
+    "toolName": "clear-me-presence",
+    "workScopes": ["Presence.ReadWrite"],
+    "contentType": "application/json",
+    "llmTip": "No body required (send empty JSON {}). Clears the manually set presence for the signed-in user, reverting to Teams automatic presence detection. Different from clear-user-presence which requires a user-id and admin permissions. Use after set-preferred-presence to revert to automatic."
+  },
+
+  {
+    "pathPattern": "/me/calendar",
+    "method": "get",
+    "toolName": "get-default-calendar",
+    "workScopes": [],
+    "llmTip": "Returns metadata for the user's default calendar: id, name, color, isDefaultCalendar, canEdit, canShare, canViewPrivateItems, isRemovable, owner (name + address). Use to get the default calendar id for use with other calendar endpoints. Different from list-calendars which lists all calendars."
+  },
+
+  {
+    "pathPattern": "/me/settings/itemInsights",
+    "method": "get",
+    "toolName": "get-item-insights-settings",
+    "workScopes": ["User.Read"],
+    "llmTip": "Returns whether item insights (trending, used, shared documents) are enabled for the user. Response: {isEnabled: true/false}. When disabled, the user does not appear in other people's trending/shared insights. Use to check privacy settings before calling get-insights-trending or get-insights-shared."
+  },
+  {
+    "pathPattern": "/me/settings/itemInsights",
+    "method": "patch",
+    "toolName": "update-item-insights-settings",
+    "workScopes": ["User.ReadWrite"],
+    "contentType": "application/json",
+    "llmTip": "Body: {isEnabled: false} to disable, {isEnabled: true} to enable. Controls whether the user's activity generates item insights visible to others (trending docs, shared files). Disabling affects both the user's own insights and their appearance in others' insights. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/me/settings/workHoursAndLocations",
+    "method": "get",
+    "toolName": "get-work-hours",
+    "workScopes": ["User.Read"],
+    "llmTip": "Returns user's work schedule: workingHours (daysOfWeek: ['monday','tuesday',...], startTime: '08:00:00', endTime: '17:00:00', timeZone: {name: 'UTC'}), workingLocations per day (office/remote/unknown). Use to check someone's work schedule or verify timezone for meeting scheduling."
+  },
+  {
+    "pathPattern": "/me/settings/workHoursAndLocations",
+    "method": "patch",
+    "toolName": "update-work-hours",
+    "workScopes": ["User.ReadWrite"],
+    "contentType": "application/json",
+    "llmTip": "Body: {workingHours: {daysOfWeek: ['monday','tuesday','wednesday','thursday','friday'], startTime: '08:00:00.0000000', endTime: '17:00:00.0000000', timeZone: {name: 'UTC'}}}. Updates working hours and timezone. Can also set workingLocations to indicate office/remote schedule. Returns 204 on success."
+  },
+
+  {
+    "pathPattern": "/me/transitiveMemberOf",
+    "method": "get",
+    "toolName": "list-transitive-member-of",
+    "workScopes": ["GroupMember.Read.All"],
+    "llmTip": "Returns all groups the user is a member of, including nested/transitive memberships. A user in Group A which is a member of Group B will also see Group B here. Each entry has @odata.type, id, displayName. Different from list-member-of which only returns direct memberships. Use $filter=@odata.type eq 'microsoft.graph.group' to get only groups (not directory roles)."
+  },
+
+  {
+    "pathPattern": "/me/teamwork/associatedTeams",
+    "method": "get",
+    "toolName": "list-associated-teams",
+    "workScopes": ["Team.ReadBasic.All"],
+    "llmTip": "Returns external/guest teams the user is associated with but not a direct member of (e.g., shared channels from external organizations). Each entry has id, displayName, description. Different from list-joined-teams which shows teams the user is an actual member of. Use to discover cross-org shared channel access."
+  },
+  {
+    "pathPattern": "/me/teamwork/sendActivityNotification",
+    "method": "post",
+    "toolName": "send-me-activity-notification",
+    "workScopes": ["TeamsActivity.Send"],
+    "contentType": "application/json",
+    "llmTip": "Body: {topic: {source: 'entityUrl', value: 'https://graph.microsoft.com/v1.0/me'}, activityType: 'taskCreated' (must match app manifest), previewText: {content: 'notification text'}}. Sends a Teams activity feed notification to the signed-in user themselves via the calling app's context. activityType must be declared in the app's manifest."
+  },
+
+  {
+    "pathPattern": "/solutions/bookingBusinesses",
+    "method": "get",
+    "toolName": "list-booking-businesses",
+    "workScopes": ["Bookings.Read.All"],
+    "llmTip": "Returns all Microsoft Bookings pages (booking businesses) in the organization. Each entry has id, displayName, businessType (e.g. 'consultancy'), phone, email, address, webSiteUrl, isPublished. Use to find a booking page id for further operations like getting services or staff."
+  },
+  {
+    "pathPattern": "/solutions/bookingBusinesses",
+    "method": "post",
+    "toolName": "create-booking-business",
+    "workScopes": ["Bookings.Manage.All"],
+    "contentType": "application/json",
+    "llmTip": "Body: {displayName: 'My Booking Page', businessType: 'consultancy', defaultCurrencyIso: 'EUR', email: 'bookings@company.com', phone: '+32...', address: {street, city, countryOrRegion, postalCode}}. Creates a new Microsoft Bookings page. Returns 201 with the created business including id. The page is unpublished by default."
+  },
+  {
+    "pathPattern": "/solutions/bookingCurrencies",
+    "method": "get",
+    "toolName": "list-booking-currencies",
+    "workScopes": ["Bookings.Read.All"],
+    "llmTip": "Returns all currencies supported by Microsoft Bookings. Each entry has id (ISO 4217 code, e.g. 'EUR', 'USD'), symbol (€, $), and displayName. Use to get valid currency codes when creating or updating a booking business."
+  },
+
+  {
+    "pathPattern": "/places/graph.building",
+    "method": "get",
+    "toolName": "list-buildings",
+    "workScopes": ["Place.Read.All"],
+    "llmTip": "Returns all office buildings registered in the organization's place directory. Each building has id, displayName, address (street, city, countryOrRegion, postalCode), geoCoordinates (latitude, longitude), phone. Use to get building ids for mapping floors, rooms, and workspaces. Complements list-rooms and list-room-lists."
   }
 ]
