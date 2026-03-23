@@ -298,6 +298,107 @@
 
 ---
 
+## Task N40-N57 — Missing endpoints round 4 gap analysis (29 endpoints)
+
+### N40 — Drive item share (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `share-drive-item` | POST | `/drives/{drive-id}/items/{driveItem-id}/invite` |
+
+### N41 — Remove drive item permission (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `remove-drive-item-permission` | DELETE | `/drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}` |
+
+### N42 — Folder delta sync (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-folder-delta` | GET | `/drives/{drive-id}/root/delta` |
+
+### N43 — Restore drive item version (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `restore-drive-item-version` | POST | `/drives/{drive-id}/items/{driveItem-id}/versions/{driveItemVersion-id}/restoreVersion` |
+
+### N44 — Copy mail message (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `copy-mail-message` | POST | `/me/messages/{message-id}/copy` |
+
+### N45 — Shared mailbox folders (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-shared-mailbox-folders` | GET | `/users/{user-id}/mailFolders` |
+
+### N46-N47 — Calendar event attachment get + delete (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-event-attachment` | GET | `/me/events/{event-id}/attachments/{attachment-id}` |
+| `delete-event-attachment` | DELETE | `/me/events/{event-id}/attachments/{attachment-id}` |
+
+### N48 — Calendar reminder management (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `snooze-reminder` | POST | `/me/events/{event-id}/snoozeReminder` |
+| `dismiss-reminder` | POST | `/me/events/{event-id}/dismissReminder` |
+
+### N49 — Get Excel worksheet (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `get-excel-worksheet` | GET | `/drives/.../workbook/worksheets/{id}` |
+
+### N50 — Excel table CRUD (3 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-excel-table` | POST | `/drives/.../worksheets/{id}/tables` |
+| `update-excel-table` | PATCH | `/drives/.../workbook/tables/{table-id}` |
+| `delete-excel-table` | DELETE | `/drives/.../workbook/tables/{table-id}` |
+
+### N51 — Excel workbook session (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-excel-session` | POST | `/drives/.../workbook/createSession` |
+| `close-excel-session` | POST | `/drives/.../workbook/closeSession` |
+
+### N52 — Team tag management (5 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `update-team-tag` | PATCH | `/teams/{team-id}/tags/{teamworkTag-id}` |
+| `delete-team-tag` | DELETE | `/teams/{team-id}/tags/{teamworkTag-id}` |
+| `list-team-tag-members` | GET | `/teams/{team-id}/tags/{teamworkTag-id}/members` |
+| `add-team-tag-member` | POST | `/teams/{team-id}/tags/{teamworkTag-id}/members` |
+| `remove-team-tag-member` | DELETE | `/teams/{team-id}/tags/{teamworkTag-id}/members/{teamworkTagMember-id}` |
+
+### N53 — Team app install/uninstall (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `install-team-app` | POST | `/teams/{team-id}/installedApps` |
+| `uninstall-team-app` | DELETE | `/teams/{team-id}/installedApps/{teamsAppInstallation-id}` |
+
+### N54 — Chat tabs (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-chat-tabs` | GET | `/chats/{chat-id}/tabs` |
+
+### N55 — Meeting recordings (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-meeting-recordings` | GET | `/me/onlineMeetings/{onlineMeeting-id}/recordings` |
+| `get-meeting-recording` | GET | `/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}` |
+
+### N56 — SharePoint content types (2 endpoints)
+| Tool | Method | Path |
+|------|--------|------|
+| `list-site-content-types` | GET | `/sites/{site-id}/contentTypes` |
+| `get-site-content-type` | GET | `/sites/{site-id}/contentTypes/{contentType-id}` |
+
+### N57 — Large mail attachment upload session (1 endpoint)
+| Tool | Method | Path |
+|------|--------|------|
+| `create-mail-attachment-upload-session` | POST | `/me/messages/{message-id}/attachments/createUploadSession` |
+
+---
+
 **Score: 2/10**
 
 ---

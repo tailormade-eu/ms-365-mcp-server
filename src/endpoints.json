@@ -1751,5 +1751,210 @@
     "isExcelOp": true,
     "scopes": ["Files.ReadWrite"],
     "llmTip": "Cannot delete the last remaining worksheet in a workbook. Returns 400 if only one sheet exists."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/invite",
+    "method": "post",
+    "toolName": "share-drive-item",
+    "workScopes": ["Files.ReadWrite.All"],
+    "llmTip": "Body: {recipients: [{emailAddress: {address}}], roles: ['read'/'write'], sendInvitation: true/false, message: 'optional', requireSignIn: true/false}. roles: 'read' for view only, 'write' for edit. Use list-drive-item-permissions to see existing shares."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}",
+    "method": "delete",
+    "toolName": "remove-drive-item-permission",
+    "workScopes": ["Files.ReadWrite.All"],
+    "llmTip": "permission-id from list-drive-item-permissions. Cannot delete inherited permissions — only direct permissions. Sharing links have link-type permissions that can be removed."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/root/delta",
+    "method": "get",
+    "toolName": "get-folder-delta",
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns changed items since last sync. First call returns all items + deltaLink. Pass deltaLink token as $deltaToken on next call to get only changes. Use $select to limit fields returned per item."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/versions/{driveItemVersion-id}/restoreVersion",
+    "method": "post",
+    "toolName": "restore-drive-item-version",
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Restores a previous version as current. version-id from list-drive-item-versions. Returns 204 No Content on success. Creates a new version entry rather than reverting version history."
+  },
+  {
+    "pathPattern": "/me/messages/{message-id}/copy",
+    "method": "post",
+    "toolName": "copy-mail-message",
+    "scopes": ["Mail.ReadWrite"],
+    "llmTip": "Body: {destinationId: 'folder-id or well-known name'}. Well-known names: 'inbox', 'drafts', 'sentitems', 'deleteditems'. Returns 201 with the new message copy. Complement to move-mail-message which moves without copying."
+  },
+  {
+    "pathPattern": "/users/{user-id}/mailFolders",
+    "method": "get",
+    "toolName": "list-shared-mailbox-folders",
+    "workScopes": ["Mail.Read.Shared"],
+    "llmTip": "Returns mail folders for another user's mailbox (shared mailbox or delegate access). user-id can be UPN (email) or Azure AD user ID. Requires explicit delegation — not just Mail.Read. Use list-mail-folders for your own folders."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/attachments/{attachment-id}",
+    "method": "get",
+    "toolName": "get-event-attachment",
+    "scopes": ["Calendars.Read"],
+    "llmTip": "Returns single attachment with contentBytes (base64) for file attachments. attachment-id from list-event-attachments."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/attachments/{attachment-id}",
+    "method": "delete",
+    "toolName": "delete-event-attachment",
+    "scopes": ["Calendars.ReadWrite"]
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/snoozeReminder",
+    "method": "post",
+    "toolName": "snooze-reminder",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Body: {newReminderTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}}. Snoozes reminder until newReminderTime. Use get-calendar-event to find current reminderMinutesBeforeStart."
+  },
+  {
+    "pathPattern": "/me/events/{event-id}/dismissReminder",
+    "method": "post",
+    "toolName": "dismiss-reminder",
+    "scopes": ["Calendars.ReadWrite"],
+    "llmTip": "Dismisses the reminder for this event occurrence. No body required. Only affects the reminder — event remains on calendar."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}",
+    "method": "get",
+    "toolName": "get-excel-worksheet",
+    "isExcelOp": true,
+    "scopes": ["Files.Read"],
+    "llmTip": "Returns worksheet metadata: id, name, position, visibility. Use list-excel-worksheets to find worksheet IDs."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}/tables",
+    "method": "post",
+    "toolName": "create-excel-table",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {address (required, range like 'A1:D10'), hasHeaders: true/false}. Creates a table from an existing range. Use list-excel-tables to verify."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}",
+    "method": "patch",
+    "toolName": "update-excel-table",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {name, showHeaders, showTotals, style}. style options: 'TableStyleLight1'-'TableStyleLight21', 'TableStyleMedium1'-'TableStyleMedium28', 'TableStyleDark1'-'TableStyleDark11'."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}",
+    "method": "delete",
+    "toolName": "delete-excel-table",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Deletes the table structure but preserves the cell data. table-id from list-excel-tables."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/createSession",
+    "method": "post",
+    "toolName": "create-excel-session",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Body: {persistChanges: true/false}. Returns workbook-session-id. Include workbook-session-id in Workbook-Session-Id request header for all subsequent Excel calls for better performance on large workbooks. Sessions expire after inactivity."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/closeSession",
+    "method": "post",
+    "toolName": "close-excel-session",
+    "isExcelOp": true,
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Closes the workbook session. Include same Workbook-Session-Id header. Always close sessions explicitly to free server resources. No body required."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags/{teamworkTag-id}",
+    "method": "patch",
+    "toolName": "update-team-tag",
+    "workScopes": ["TeamworkTag.ReadWrite"],
+    "llmTip": "Body: {displayName}. Only displayName can be updated. tag-id from list-team-tags."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags/{teamworkTag-id}",
+    "method": "delete",
+    "toolName": "delete-team-tag",
+    "workScopes": ["TeamworkTag.ReadWrite"]
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags/{teamworkTag-id}/members",
+    "method": "get",
+    "toolName": "list-team-tag-members",
+    "workScopes": ["TeamworkTag.Read"],
+    "llmTip": "Returns members of a tag with id and displayName. Use member id (not userId) for remove-team-tag-member."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags/{teamworkTag-id}/members",
+    "method": "post",
+    "toolName": "add-team-tag-member",
+    "workScopes": ["TeamworkTag.ReadWrite"],
+    "llmTip": "Body: {userId (required)}. userId is the Azure AD user ID from list-team-members or get-user. Max 100 members per tag."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/tags/{teamworkTag-id}/members/{teamworkTagMember-id}",
+    "method": "delete",
+    "toolName": "remove-team-tag-member",
+    "workScopes": ["TeamworkTag.ReadWrite"],
+    "llmTip": "teamworkTagMember-id from list-team-tag-members (id field, different from userId)."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/installedApps",
+    "method": "post",
+    "toolName": "install-team-app",
+    "workScopes": ["TeamsAppInstallation.ReadWriteForTeam"],
+    "llmTip": "Body: {'teamsApp@odata.bind': 'https://graph.microsoft.com/v1.0/appCatalogs/teamsApps/{app-id}'}. app-id is the Teams app catalog ID — find it in AppSource or via Graph appCatalogs endpoint. Returns 201 on success."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/installedApps/{teamsAppInstallation-id}",
+    "method": "delete",
+    "toolName": "uninstall-team-app",
+    "workScopes": ["TeamsAppInstallation.ReadWriteForTeam"],
+    "llmTip": "teamsAppInstallation-id from list-team-apps (id field, NOT teamsApp.id). Returns 204 on success."
+  },
+  {
+    "pathPattern": "/chats/{chat-id}/tabs",
+    "method": "get",
+    "toolName": "list-chat-tabs",
+    "workScopes": ["TeamsTab.Read.All"],
+    "llmTip": "Returns tabs pinned in a chat with displayName, webUrl, configuration. chat-id from list-chats. For channel tabs use list-channel-tabs with team-id + channel-id."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings",
+    "method": "get",
+    "toolName": "list-meeting-recordings",
+    "workScopes": ["OnlineMeetingRecording.Read.All"],
+    "llmTip": "Returns recording metadata: createdDateTime, recordingContentUrl. CRITICAL: Use recordingContentUrl to download — it expires after a short period. For transcripts use list-meeting-transcripts instead."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}",
+    "method": "get",
+    "toolName": "get-meeting-recording",
+    "workScopes": ["OnlineMeetingRecording.Read.All"]
+  },
+  {
+    "pathPattern": "/sites/{site-id}/contentTypes",
+    "method": "get",
+    "toolName": "list-site-content-types",
+    "workScopes": ["Sites.Read.All"],
+    "llmTip": "Returns content types for a SharePoint site. Each has id, name, description, group. Use $filter=group eq 'Custom Content Types' for custom types only."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/contentTypes/{contentType-id}",
+    "method": "get",
+    "toolName": "get-site-content-type",
+    "workScopes": ["Sites.Read.All"]
+  },
+  {
+    "pathPattern": "/me/messages/{message-id}/attachments/createUploadSession",
+    "method": "post",
+    "toolName": "create-mail-attachment-upload-session",
+    "scopes": ["Mail.ReadWrite"],
+    "llmTip": "For mail attachments > 3MB. Body: {AttachmentItem: {attachmentType: 'file', name: 'filename.ext', size: [byte size as integer]}}. Returns uploadUrl and expirationDateTime. Upload in chunks via PUT to uploadUrl with Content-Range header (e.g. 'bytes 0-25214/26000'). Max chunk size: 60MB. Session expires in 2 days."
   }
 ]
