@@ -1979,28 +1979,28 @@
     "pathPattern": "/subscriptions",
     "method": "post",
     "toolName": "create-subscription",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "llmTip": "Body: {changeType: 'created,updated,deleted', notificationUrl (public HTTPS), resource: '/me/messages', expirationDateTime, clientState (optional secret)}. notificationUrl must respond to Graph validation request (echo validationToken). Max expiry: mail/calendar/contacts 4230min, driveRoot 4230min."
   },
   {
     "pathPattern": "/subscriptions",
     "method": "get",
     "toolName": "list-subscriptions",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "llmTip": "Returns all active subscriptions. Use subscription id for renew-subscription or delete-subscription."
   },
   {
     "pathPattern": "/subscriptions/{subscription-id}",
     "method": "patch",
     "toolName": "renew-subscription",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "llmTip": "Body: {expirationDateTime (new expiry — must not exceed resource max)}. Renew before expiry to keep receiving change notifications. Returns 200 with updated subscription."
   },
   {
     "pathPattern": "/subscriptions/{subscription-id}",
     "method": "delete",
     "toolName": "delete-subscription",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "llmTip": "Permanently removes a change notification subscription. Notifications stop immediately. No request body needed."
   },
   {
@@ -2028,14 +2028,14 @@
     "pathPattern": "/planner/plans/{plannerPlan-id}/details",
     "method": "patch",
     "toolName": "update-planner-plan-details",
-    "workScopes": [],
+    "scopes": ["Tasks.ReadWrite"],
     "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-plan-details. Body: {categoryDescriptions: {category1: 'LabelName', category2: 'LabelName', ...category6: 'LabelName'}} to set task label names. sharedWith: {'{userId}': true} to add plan member, {'{userId}': false} to remove."
   },
   {
     "pathPattern": "/me/messages/{message-id}/$value",
     "method": "get",
     "toolName": "get-mail-mime-content",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "acceptType": "text/plain",
     "llmTip": "Returns raw MIME content of an email as plain text. Useful for archiving or parsing email headers/body outside Graph. Response is raw MIME string (not JSON). message-id from list-mail-messages or get-mail-message."
   },
@@ -2043,49 +2043,49 @@
     "pathPattern": "/me/insights/trending",
     "method": "get",
     "toolName": "list-trending-files",
-    "workScopes": [],
+    "workScopes": ["Sites.Read.All"],
     "llmTip": "Returns files trending around the user based on network activity. Each item has resource (driveItem with id/name/webUrl), resourceVisualization (title, previewImageUrl), lastModifiedDateTime. Use to surface relevant files without searching."
   },
   {
     "pathPattern": "/me/insights/used",
     "method": "get",
     "toolName": "list-used-files",
-    "workScopes": [],
+    "workScopes": ["Sites.Read.All"],
     "llmTip": "Returns files recently viewed or modified by the user. Sorted by lastUsed.lastAccessedDateTime desc. Each item has resource (driveItem) and resourceVisualization. Use to find recently worked-on files."
   },
   {
     "pathPattern": "/me/insights/shared",
     "method": "get",
     "toolName": "list-shared-insights",
-    "workScopes": [],
+    "workScopes": ["Sites.Read.All"],
     "llmTip": "Returns files shared with or by the user. Each item has resourceVisualization, sharingHistory (who shared, when). Filter with $filter=sharing/sharedBy/user/id eq '{user-id}' to filter by specific sharer."
   },
   {
     "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions",
     "method": "get",
     "toolName": "list-calendar-permissions",
-    "workScopes": [],
+    "scopes": ["Calendars.Read"],
     "llmTip": "Returns sharing permissions for a calendar. Each permission has emailAddress, role (read/write/freeBusyRead/custom/owner/delegate), isRemovable, isInsideOrganization. Use to audit who has access to a calendar."
   },
   {
     "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}",
     "method": "patch",
     "toolName": "update-calendar-permission",
-    "workScopes": [],
+    "scopes": ["Calendars.ReadWrite"],
     "llmTip": "Body: {role: 'read'/'write'/'freeBusyRead'/'custom'/'owner'/'delegate'}. calendarPermission-id from list-calendar-permissions."
   },
   {
     "pathPattern": "/me/calendars/{calendar-id}/calendarPermissions/{calendarPermission-id}",
     "method": "delete",
     "toolName": "delete-calendar-permission",
-    "workScopes": [],
+    "scopes": ["Calendars.ReadWrite"],
     "llmTip": "Removes sharing access. Only removable permissions (isRemovable=true) can be deleted — owner permission cannot be removed."
   },
   {
     "pathPattern": "/me/photo/$value",
     "method": "get",
     "toolName": "get-profile-photo",
-    "workScopes": [],
+    "scopes": ["User.Read"],
     "acceptType": "image/jpeg",
     "llmTip": "Returns profile photo as binary JPEG. Returns 404 if no photo set. Use GET /me/photo (without $value) to get metadata (width, height, id) first."
   },
@@ -2093,7 +2093,7 @@
     "pathPattern": "/me/photo/$value",
     "method": "put",
     "toolName": "update-profile-photo",
-    "workScopes": [],
+    "scopes": ["User.ReadWrite"],
     "contentType": "image/jpeg",
     "llmTip": "Body: binary JPEG image data. Content-Type must be image/jpeg. Max 4MB. Minimum 48x48px. Returns 200 on success. Only JPEG format is supported."
   },
@@ -2115,7 +2115,7 @@
     "pathPattern": "/me/getMailTips",
     "method": "post",
     "toolName": "get-mail-tips",
-    "workScopes": [],
+    "scopes": ["Mail.Read"],
     "llmTip": "Body: {emailAddresses: ['recipient@example.com'], mailTipsOptions: 'automaticReplies,mailboxFullStatus,outOfOffice,deliveryRestriction,maxMessageSize'}. Returns OOF status and auto-reply message per recipient. Use before send-mail to check if recipients are out of office."
   }
 ]
