@@ -990,12 +990,7 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 |------|--------|------|
 | `revoke-sign-in-sessions` | POST | `/me/revokeSignInSessions` |
 
-### N200-N202 — Insights (3 endpoints)
-| Tool | Method | Path |
-|------|--------|------|
-| `get-insights-used` | GET | `/me/insights/used` |
-| `get-insights-trending` | GET | `/me/insights/trending` |
-| `get-insights-shared` | GET | `/me/insights/shared` |
+### ~~N200-N202 — Insights~~ (duplicates of existing list-used-files, list-trending-files, list-shared-insights)
 
 ### N203-N205 — Presence status message (3 endpoints)
 | Tool | Method | Path |

@@ -1,5 +1,19 @@
 # Changelog — ms-365-mcp-server
 
+## [fork-1.15.0] - 2026-03-23
+
+### Added
+- 12 new endpoints across 7 groups (total: 416 endpoints, up from 404)
+  - Mailbox: get-mailbox-settings, update-mailbox-settings — OOF, timezone, language prefs (2)
+  - Directory: list-member-of, check-member-groups, change-password, revoke-sign-in-sessions — membership + security (4)
+  - Presence: set-status-message, set-preferred-presence, clear-preferred-presence — Teams status control (3)
+  - Teams Apps: list-personal-apps, install-personal-app — personal app management (2)
+  - Meetings: create-or-get-online-meeting — idempotent meeting creation via externalId (1)
+
+### Fixed
+- **CRITICAL: 3 duplicate insights endpoints removed** — `get-insights-used`, `get-insights-trending`, `get-insights-shared` duplicated existing `list-used-files`, `list-trending-files`, `list-shared-insights`
+- `revoke-sign-in-sessions` removed unnecessary `contentType: "application/json"` (no body required)
+
 ## [fork-1.14.0] - 2026-03-23
 
 ### Added
@@ -267,4 +281,9 @@
 
 ---
 
+
+
+## [0.7.0] - 2026-03-23
+
+---
 

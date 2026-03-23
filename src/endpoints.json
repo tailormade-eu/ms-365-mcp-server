@@ -3033,30 +3033,7 @@
     "method": "post",
     "toolName": "revoke-sign-in-sessions",
     "workScopes": ["User.ReadWrite"],
-    "contentType": "application/json",
     "llmTip": "No body required. Invalidates all refresh tokens issued to applications for a user by resetting the signInSessionsValidFromDateTime to the current UTC time. The user must sign in again on their next request. Use for security incidents: compromised account, lost device, or when revoking access after off-boarding. Returns true on success."
-  },
-
-  {
-    "pathPattern": "/me/insights/used",
-    "method": "get",
-    "toolName": "get-insights-used",
-    "workScopes": ["Sites.Read.All"],
-    "llmTip": "Returns OneDrive/SharePoint items the user has recently viewed or modified. Each item has lastUsed (lastAccessedDateTime, lastModifiedDateTime), resourceVisualization (title, type, mediaType, previewImageUrl, previewText, containerDisplayName, containerType), resourceReference (webUrl, id, type). Use to show recently used documents."
-  },
-  {
-    "pathPattern": "/me/insights/trending",
-    "method": "get",
-    "toolName": "get-insights-trending",
-    "workScopes": ["Sites.Read.All"],
-    "llmTip": "Returns documents trending around the user based on their activity and their network. Each item has weight (trending score), resourceVisualization (title, type, previewText, containerDisplayName), resourceReference (webUrl, id). Documents are ranked by relevance to the user's work context. Use to suggest relevant content."
-  },
-  {
-    "pathPattern": "/me/insights/shared",
-    "method": "get",
-    "toolName": "get-insights-shared",
-    "workScopes": ["Sites.Read.All"],
-    "llmTip": "Returns documents shared with or by the user. Each item has lastShared (sharedDateTime, sharingType, sharedBy {displayName, id}), resourceVisualization (title, type, previewText, containerDisplayName), resourceReference (webUrl, id). sharingType: 'Link'/'Email'/'Site'/'Message'. Use to find recently shared documents."
   },
 
   {
