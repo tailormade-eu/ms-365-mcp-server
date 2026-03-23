@@ -687,6 +687,12 @@ If you're having problems or need help:
 - Email: eirikb@eirikb.no
 - Discord: https://discord.gg/WvGVNScrAZ or @eirikb
 
+## References
+
+- [Microsoft Graph API](https://learn.microsoft.com/en-us/graph/api/overview) -- v1.0
+- [Model Context Protocol](https://modelcontextprotocol.io/) -- 2025-03-26
+- [MSAL Node](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-node) -- v2.x
+
 ## License
 
 MIT © 2026 Softeria
