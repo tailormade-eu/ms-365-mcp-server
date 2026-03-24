@@ -535,6 +535,71 @@ type microsoft_graph_chatMessage = {
   hostedContents?: Array<microsoft_graph_chatMessageHostedContent> | undefined;
   replies?: Array<microsoft_graph_chatMessage> | undefined;
 };
+type microsoft_graph_contactFolder = {
+  id?: string | undefined;
+  displayName?: (string | null) | undefined;
+  parentFolderId?: (string | null) | undefined;
+  childFolders?: Array<microsoft_graph_contactFolder> | undefined;
+  contacts?: Array<microsoft_graph_contact> | undefined;
+  multiValueExtendedProperties?:
+    | Array<microsoft_graph_multiValueLegacyExtendedProperty>
+    | undefined;
+  singleValueExtendedProperties?:
+    | Array<microsoft_graph_singleValueLegacyExtendedProperty>
+    | undefined;
+};
+type microsoft_graph_contact = {
+  id?: string | undefined;
+  displayName?: (string | null) | undefined;
+  createdDateTime?: (string | null) | undefined;
+  lastModifiedDateTime?: (string | null) | undefined;
+  title?: (string | null) | undefined;
+  singleValueExtendedProperties?:
+    | Array<microsoft_graph_singleValueLegacyExtendedProperty>
+    | undefined;
+  multiValueExtendedProperties?:
+    | Array<microsoft_graph_multiValueLegacyExtendedProperty>
+    | undefined;
+  categories?: Array<string | null> | undefined;
+  changeKey?: (string | null) | undefined;
+  assistantName?: (string | null) | undefined;
+  birthday?: (string | null) | undefined;
+  businessAddress?: microsoft_graph_physicalAddress | undefined;
+  businessHomePage?: (string | null) | undefined;
+  businessPhones?: Array<string | null> | undefined;
+  children?: Array<string | null> | undefined;
+  companyName?: (string | null) | undefined;
+  department?: (string | null) | undefined;
+  emailAddresses?: Array<microsoft_graph_emailAddress> | undefined;
+  fileAs?: (string | null) | undefined;
+  generation?: (string | null) | undefined;
+  givenName?: (string | null) | undefined;
+  homeAddress?: microsoft_graph_physicalAddress | undefined;
+  homePhones?: Array<string | null> | undefined;
+  imAddresses?: Array<string | null> | undefined;
+  initials?: (string | null) | undefined;
+} & {
+  [key: string]: any;
+};
+type microsoft_graph_singleValueLegacyExtendedProperty = {
+  id?: string | undefined;
+  value?: (string | null) | undefined;
+};
+type microsoft_graph_multiValueLegacyExtendedProperty = {
+  id?: string | undefined;
+  value?: Array<string | null> | undefined;
+};
+type microsoft_graph_physicalAddress = {
+  city?: (string | null) | undefined;
+  countryOrRegion?: (string | null) | undefined;
+  postalCode?: (string | null) | undefined;
+  state?: (string | null) | undefined;
+  street?: (string | null) | undefined;
+};
+type microsoft_graph_emailAddress = {
+  address?: (string | null) | undefined;
+  name?: (string | null) | undefined;
+};
 type microsoft_graph_contentType = {
   id?: string | undefined;
   associatedHubsUrls?: Array<string | null> | undefined;
@@ -930,10 +995,6 @@ type microsoft_graph_messageRuleActions = {
 type microsoft_graph_recipient = {
   emailAddress?: microsoft_graph_emailAddress | undefined;
 };
-type microsoft_graph_emailAddress = {
-  address?: (string | null) | undefined;
-  name?: (string | null) | undefined;
-};
 type microsoft_graph_importance = 'low' | 'normal' | 'high';
 type microsoft_graph_messageRulePredicates = {
   sensitivity?: microsoft_graph_sensitivity | undefined;
@@ -1017,14 +1078,6 @@ type microsoft_graph_attachment = {
   lastModifiedDateTime?: (string | null) | undefined;
   name?: (string | null) | undefined;
   size?: number | undefined;
-};
-type microsoft_graph_singleValueLegacyExtendedProperty = {
-  id?: string | undefined;
-  value?: (string | null) | undefined;
-};
-type microsoft_graph_multiValueLegacyExtendedProperty = {
-  id?: string | undefined;
-  value?: Array<string | null> | undefined;
 };
 type microsoft_graph_followupFlag = {
   completedDateTime?: microsoft_graph_dateTimeTimeZone | undefined;
@@ -1429,66 +1482,12 @@ type microsoft_graph_workbookWorksheet = {
   tables?: Array<microsoft_graph_workbookTable> | undefined;
 };
 
-const microsoft_graph_chatType = z.enum(['oneOnOne', 'group', 'meeting', 'unknownFutureValue']);
-const microsoft_graph_teamworkUserIdentityType = z.enum([
-  'aadUser',
-  'onPremiseAadUser',
-  'anonymousGuest',
-  'federatedUser',
-  'personalMicrosoftAccountUser',
-  'skypeUser',
-  'phoneUser',
+const microsoft_graph_teamsAppDistributionMethod = z.enum([
+  'store',
+  'organization',
+  'sideloaded',
   'unknownFutureValue',
-  'emailUser',
 ]);
-const microsoft_graph_teamworkUserIdentity = z
-  .object({
-    displayName: z
-      .string()
-      .describe(
-        "The display name of the identity.For drive items, the display name might not always be available or up to date. For example, if a user changes their display name the API might show the new value in a future response, but the items associated with the user don't show up as changed when using delta."
-      )
-      .nullish(),
-    id: z
-      .string()
-      .describe(
-        "Unique identifier for the identity or actor. For example, in the access reviews decisions API, this property might record the id of the principal, that is, the group, user, or application that's subject to review."
-      )
-      .nullish(),
-    userIdentityType: microsoft_graph_teamworkUserIdentityType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_teamworkOnlineMeetingInfo = z
-  .object({
-    calendarEventId: z
-      .string()
-      .describe('The identifier of the calendar event associated with the meeting.')
-      .nullish(),
-    joinWebUrl: z
-      .string()
-      .describe('The URL that users click to join or uniquely identify the meeting.')
-      .nullish(),
-    organizer: microsoft_graph_teamworkUserIdentity.optional(),
-  })
-  .passthrough();
-const microsoft_graph_chatViewpoint = z
-  .object({
-    isHidden: z
-      .boolean()
-      .describe('Indicates whether the chat is hidden for the current user.')
-      .nullish(),
-    lastMessageReadDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'Represents the dateTime up until which the current user has read chatMessages in a specific chat.'
-      )
-      .nullish(),
-  })
-  .passthrough();
 const microsoft_graph_teamsAppResourceSpecificPermissionType = z.enum([
   'delegated',
   'application',
@@ -1508,12 +1507,6 @@ const microsoft_graph_teamsAppPermissionSet = z
       .optional(),
   })
   .passthrough();
-const microsoft_graph_teamsAppDistributionMethod = z.enum([
-  'store',
-  'organization',
-  'sideloaded',
-  'unknownFutureValue',
-]);
 const microsoft_graph_teamsAppAuthorization = z
   .object({
     clientAppId: z
@@ -1599,6 +1592,106 @@ const microsoft_graph_teamsApp = z
       .array(microsoft_graph_teamsAppDefinition)
       .describe('The details for each version of the app.')
       .optional(),
+  })
+  .passthrough();
+const microsoft_graph_teamsAppCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_teamsApp),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_ODataErrors_ErrorDetails = z
+  .object({ code: z.string(), message: z.string(), target: z.string().nullish() })
+  .passthrough();
+const microsoft_graph_ODataErrors_InnerError = z
+  .object({
+    'request-id': z.string().describe('Request Id as tracked internally by the service').nullish(),
+    'client-request-id': z
+      .string()
+      .describe('Client request Id as sent by the client application.')
+      .nullish(),
+    date: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date when the error occured.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_ODataErrors_MainError = z
+  .object({
+    code: z.string(),
+    message: z.string(),
+    target: z.string().nullish(),
+    details: z.array(microsoft_graph_ODataErrors_ErrorDetails).optional(),
+    innerError: microsoft_graph_ODataErrors_InnerError.optional(),
+  })
+  .passthrough();
+const microsoft_graph_ODataErrors_ODataError = z
+  .object({ error: microsoft_graph_ODataErrors_MainError })
+  .passthrough();
+const microsoft_graph_chatType = z.enum(['oneOnOne', 'group', 'meeting', 'unknownFutureValue']);
+const microsoft_graph_teamworkUserIdentityType = z.enum([
+  'aadUser',
+  'onPremiseAadUser',
+  'anonymousGuest',
+  'federatedUser',
+  'personalMicrosoftAccountUser',
+  'skypeUser',
+  'phoneUser',
+  'unknownFutureValue',
+  'emailUser',
+]);
+const microsoft_graph_teamworkUserIdentity = z
+  .object({
+    displayName: z
+      .string()
+      .describe(
+        "The display name of the identity.For drive items, the display name might not always be available or up to date. For example, if a user changes their display name the API might show the new value in a future response, but the items associated with the user don't show up as changed when using delta."
+      )
+      .nullish(),
+    id: z
+      .string()
+      .describe(
+        "Unique identifier for the identity or actor. For example, in the access reviews decisions API, this property might record the id of the principal, that is, the group, user, or application that's subject to review."
+      )
+      .nullish(),
+    userIdentityType: microsoft_graph_teamworkUserIdentityType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_teamworkOnlineMeetingInfo = z
+  .object({
+    calendarEventId: z
+      .string()
+      .describe('The identifier of the calendar event associated with the meeting.')
+      .nullish(),
+    joinWebUrl: z
+      .string()
+      .describe('The URL that users click to join or uniquely identify the meeting.')
+      .nullish(),
+    organizer: microsoft_graph_teamworkUserIdentity.optional(),
+  })
+  .passthrough();
+const microsoft_graph_chatViewpoint = z
+  .object({
+    isHidden: z
+      .boolean()
+      .describe('Indicates whether the chat is hidden for the current user.')
+      .nullish(),
+    lastMessageReadDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Represents the dateTime up until which the current user has read chatMessages in a specific chat.'
+      )
+      .nullish(),
   })
   .passthrough();
 const microsoft_graph_teamsAppInstallation = z
@@ -2135,37 +2228,21 @@ const microsoft_graph_chat = z
       .optional(),
   })
   .passthrough();
-const microsoft_graph_ODataErrors_ErrorDetails = z
-  .object({ code: z.string(), message: z.string(), target: z.string().nullish() })
-  .passthrough();
-const microsoft_graph_ODataErrors_InnerError = z
+const microsoft_graph_teamsAppInstallationCollectionResponse = z
   .object({
-    'request-id': z.string().describe('Request Id as tracked internally by the service').nullish(),
-    'client-request-id': z
-      .string()
-      .describe('Client request Id as sent by the client application.')
-      .nullish(),
-    date: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Date when the error occured.')
-      .nullish(),
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_teamsAppInstallation),
   })
+  .partial()
   .passthrough();
-const microsoft_graph_ODataErrors_MainError = z
+const microsoft_graph_conversationMemberCollectionResponse = z
   .object({
-    code: z.string(),
-    message: z.string(),
-    target: z.string().nullish(),
-    details: z.array(microsoft_graph_ODataErrors_ErrorDetails).optional(),
-    innerError: microsoft_graph_ODataErrors_InnerError.optional(),
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_conversationMember),
   })
-  .passthrough();
-const microsoft_graph_ODataErrors_ODataError = z
-  .object({ error: microsoft_graph_ODataErrors_MainError })
+  .partial()
   .passthrough();
 const microsoft_graph_chatMessageCollectionResponse = z
   .object({
@@ -2175,27 +2252,13 @@ const microsoft_graph_chatMessageCollectionResponse = z
   })
   .partial()
   .passthrough();
-const microsoft_graph_geoCoordinates = z
+const microsoft_graph_teamsTabCollectionResponse = z
   .object({
-    altitude: z
-      .number()
-      .describe(
-        'Optional. The altitude (height), in feet,  above sea level for the item. Read-only. [Simplified from 3 options]'
-      )
-      .nullish(),
-    latitude: z
-      .number()
-      .describe(
-        'Optional. The latitude, in decimal, for the item. Read-only. [Simplified from 3 options]'
-      )
-      .nullish(),
-    longitude: z
-      .number()
-      .describe(
-        'Optional. The longitude, in decimal, for the item. Read-only. [Simplified from 3 options]'
-      )
-      .nullish(),
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_teamsTab),
   })
+  .partial()
   .passthrough();
 const microsoft_graph_sharepointIds = z
   .object({
@@ -2486,6 +2549,56 @@ const microsoft_graph_user = z
   })
   .passthrough()
   .passthrough();
+const microsoft_graph_storagePlanInformation = z
+  .object({
+    upgradeAvailable: z
+      .boolean()
+      .describe('Indicates whether there are higher storage quota plans available. Read-only.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_quota = z
+  .object({
+    deleted: z
+      .number()
+      .describe('Total space consumed by files in the recycle bin, in bytes. Read-only.')
+      .nullish(),
+    remaining: z
+      .number()
+      .describe('Total space remaining before reaching the capacity limit, in bytes. Read-only.')
+      .nullish(),
+    state: z
+      .string()
+      .describe('Enumeration value that indicates the state of the storage space. Read-only.')
+      .nullish(),
+    storagePlanInformation: microsoft_graph_storagePlanInformation.optional(),
+    total: z.number().describe('Total allowed storage space, in bytes. Read-only.').nullish(),
+    used: z.number().describe('Total space used, in bytes. Read-only.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_systemFacet = z.object({}).passthrough();
+const microsoft_graph_geoCoordinates = z
+  .object({
+    altitude: z
+      .number()
+      .describe(
+        'Optional. The altitude (height), in feet,  above sea level for the item. Read-only. [Simplified from 3 options]'
+      )
+      .nullish(),
+    latitude: z
+      .number()
+      .describe(
+        'Optional. The latitude, in decimal, for the item. Read-only. [Simplified from 3 options]'
+      )
+      .nullish(),
+    longitude: z
+      .number()
+      .describe(
+        'Optional. The longitude, in decimal, for the item. Read-only. [Simplified from 3 options]'
+      )
+      .nullish(),
+  })
+  .passthrough();
 const microsoft_graph_audio = z
   .object({
     album: z.string().describe('The title of the album for this audio file.').nullish(),
@@ -2756,1768 +2869,6 @@ const microsoft_graph_driveItem = z
   })
   .passthrough()
   .passthrough();
-const microsoft_graph_driveItemCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_driveItem),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_workbookChartFont = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    bold: z.boolean().describe('Indicates whether the fond is bold.').nullish(),
-    color: z
-      .string()
-      .describe(
-        'The HTML color code representation of the text color. For example #FF0000 represents Red.'
-      )
-      .nullish(),
-    italic: z.boolean().describe('Indicates whether the fond is italic.').nullish(),
-    name: z.string().describe("The font name. For example 'Calibri'.").nullish(),
-    size: z
-      .number()
-      .describe('The size of the font. For example,  11. [Simplified from 3 options]')
-      .nullish(),
-    underline: z
-      .string()
-      .describe(
-        'The type of underlining applied to the font. The possible values are: None, Single.'
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartLineFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    color: z
-      .string()
-      .describe('The HTML color code that represents the color of lines in the chart.')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAxisFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-    line: microsoft_graph_workbookChartLineFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartGridlinesFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    line: microsoft_graph_workbookChartLineFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartGridlines = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    visible: z.boolean().describe('Indicates whether the axis gridlines are visible.').optional(),
-    format: microsoft_graph_workbookChartGridlinesFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAxisTitleFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAxisTitle = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    text: z.string().describe('Represents the axis title.').nullish(),
-    visible: z
-      .boolean()
-      .describe('A Boolean that specifies the visibility of an axis title.')
-      .optional(),
-    format: microsoft_graph_workbookChartAxisTitleFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAxis = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    majorUnit: z
-      .unknown()
-      .describe(
-        'Represents the interval between two major tick marks. Can be set to a numeric value or an empty string.  The returned value is always a number.'
-      )
-      .optional(),
-    maximum: z
-      .unknown()
-      .describe(
-        'Represents the maximum value on the value axis.  Can be set to a numeric value or an empty string (for automatic axis values).  The returned value is always a number.'
-      )
-      .optional(),
-    minimum: z
-      .unknown()
-      .describe(
-        'Represents the minimum value on the value axis. Can be set to a numeric value or an empty string (for automatic axis values).  The returned value is always a number.'
-      )
-      .optional(),
-    minorUnit: z
-      .unknown()
-      .describe(
-        "Represents the interval between two minor tick marks. 'Can be set to a numeric value or an empty string (for automatic axis values). The returned value is always a number."
-      )
-      .optional(),
-    format: microsoft_graph_workbookChartAxisFormat.optional(),
-    majorGridlines: microsoft_graph_workbookChartGridlines.optional(),
-    minorGridlines: microsoft_graph_workbookChartGridlines.optional(),
-    title: microsoft_graph_workbookChartAxisTitle.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAxes = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    categoryAxis: microsoft_graph_workbookChartAxis.optional(),
-    seriesAxis: microsoft_graph_workbookChartAxis.optional(),
-    valueAxis: microsoft_graph_workbookChartAxis.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartFill = z
-  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
-  .passthrough();
-const microsoft_graph_workbookChartDataLabelFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartDataLabels = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    position: z
-      .string()
-      .describe(
-        'DataLabelPosition value that represents the position of the data label. The possible values are: None, Center, InsideEnd, InsideBase, OutsideEnd, Left, Right, Top, Bottom, BestFit, Callout.'
-      )
-      .nullish(),
-    separator: z
-      .string()
-      .describe('String that represents the separator used for the data labels on a chart.')
-      .nullish(),
-    showBubbleSize: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label bubble size is visible.')
-      .nullish(),
-    showCategoryName: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label category name is visible.')
-      .nullish(),
-    showLegendKey: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label legend key is visible.')
-      .nullish(),
-    showPercentage: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label percentage is visible.')
-      .nullish(),
-    showSeriesName: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label series name is visible.')
-      .nullish(),
-    showValue: z
-      .boolean()
-      .describe('Boolean value that represents whether the data label value is visible.')
-      .nullish(),
-    format: microsoft_graph_workbookChartDataLabelFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartAreaFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartLegendFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartLegend = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    overlay: z
-      .boolean()
-      .describe(
-        'Indicates whether the chart legend should overlap with the main body of the chart.'
-      )
-      .nullish(),
-    position: z
-      .string()
-      .describe(
-        'Represents the position of the legend on the chart. The possible values are: Top, Bottom, Left, Right, Corner, Custom.'
-      )
-      .nullish(),
-    visible: z.boolean().describe('Indicates whether the chart legend is visible.').optional(),
-    format: microsoft_graph_workbookChartLegendFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartSeriesFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-    line: microsoft_graph_workbookChartLineFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartPointFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartPoint = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    value: z.unknown().describe('The value of a chart point. Read-only.').optional(),
-    format: microsoft_graph_workbookChartPointFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartSeries = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    name: z.string().describe('The name of a series in a chart.').nullish(),
-    format: microsoft_graph_workbookChartSeriesFormat.optional(),
-    points: z
-      .array(microsoft_graph_workbookChartPoint)
-      .describe('A collection of all points in the series. Read-only.')
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartTitleFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fill: microsoft_graph_workbookChartFill.optional(),
-    font: microsoft_graph_workbookChartFont.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChartTitle = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    overlay: z
-      .boolean()
-      .describe('Indicates whether the chart title will overlay the chart or not.')
-      .nullish(),
-    text: z.string().describe('The title text of the chart.').nullish(),
-    visible: z.boolean().describe('Indicates whether the chart title is visible.').optional(),
-    format: microsoft_graph_workbookChartTitleFormat.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookChart: z.ZodType<microsoft_graph_workbookChart> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      height: z
-        .number()
-        .describe(
-          'Represents the height, in points, of the chart object. [Simplified from 3 options]'
-        )
-        .nullish(),
-      left: z
-        .number()
-        .describe(
-          'The distance, in points, from the left side of the chart to the worksheet origin. [Simplified from 3 options]'
-        )
-        .nullish(),
-      name: z.string().describe('Represents the name of a chart object.').nullish(),
-      top: z
-        .number()
-        .describe(
-          'Represents the distance, in points, from the top edge of the object to the top of row 1 (on a worksheet) or the top of the chart area (on a chart). [Simplified from 3 options]'
-        )
-        .nullish(),
-      width: z
-        .number()
-        .describe(
-          'Represents the width, in points, of the chart object. [Simplified from 3 options]'
-        )
-        .nullish(),
-      axes: microsoft_graph_workbookChartAxes.optional(),
-      dataLabels: microsoft_graph_workbookChartDataLabels.optional(),
-      format: microsoft_graph_workbookChartAreaFormat.optional(),
-      legend: microsoft_graph_workbookChartLegend.optional(),
-      series: z
-        .array(microsoft_graph_workbookChartSeries)
-        .describe(
-          'Represents either a single series or collection of series in the chart. Read-only.'
-        )
-        .optional(),
-      title: microsoft_graph_workbookChartTitle.optional(),
-      worksheet: microsoft_graph_workbookWorksheet.optional(),
-    })
-    .passthrough()
-);
-const microsoft_graph_workbookNamedItem: z.ZodType<microsoft_graph_workbookNamedItem> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      comment: z.string().describe('The comment associated with this name.').nullish(),
-      name: z.string().describe('The name of the object. Read-only.').nullish(),
-      scope: z
-        .string()
-        .describe(
-          'Indicates whether the name is scoped to the workbook or to a specific worksheet. Read-only.'
-        )
-        .optional(),
-      type: z
-        .string()
-        .describe(
-          'The type of reference is associated with the name. The possible values are: String, Integer, Double, Boolean, Range. Read-only.'
-        )
-        .nullish(),
-      value: z
-        .unknown()
-        .describe(
-          'The formula that the name is defined to refer to. For example, =Sheet14!$B$2:$H$12 and =4.75. Read-only.'
-        )
-        .optional(),
-      visible: z.boolean().describe('Indicates whether the object is visible.').optional(),
-      worksheet: microsoft_graph_workbookWorksheet.optional(),
-    })
-    .passthrough()
-);
-const microsoft_graph_workbookPivotTable: z.ZodType<microsoft_graph_workbookPivotTable> = z.lazy(
-  () =>
-    z
-      .object({
-        id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-        name: z.string().describe('The name of the pivot table.').nullish(),
-        worksheet: microsoft_graph_workbookWorksheet.optional(),
-      })
-      .passthrough()
-);
-const microsoft_graph_workbookWorksheetProtectionOptions = z
-  .object({
-    allowAutoFilter: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow the use of the autofilter feature is enabled.'
-      )
-      .optional(),
-    allowDeleteColumns: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow deleting columns is enabled.'
-      )
-      .optional(),
-    allowDeleteRows: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow deleting rows is enabled.'
-      )
-      .optional(),
-    allowFormatCells: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow formatting cells is enabled.'
-      )
-      .optional(),
-    allowFormatColumns: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow formatting columns is enabled.'
-      )
-      .optional(),
-    allowFormatRows: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow formatting rows is enabled.'
-      )
-      .optional(),
-    allowInsertColumns: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow inserting columns is enabled.'
-      )
-      .optional(),
-    allowInsertHyperlinks: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow inserting hyperlinks is enabled.'
-      )
-      .optional(),
-    allowInsertRows: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow inserting rows is enabled.'
-      )
-      .optional(),
-    allowPivotTables: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow the use of the pivot table feature is enabled.'
-      )
-      .optional(),
-    allowSort: z
-      .boolean()
-      .describe(
-        'Indicates whether the worksheet protection option to allow the use of the sort feature is enabled.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookWorksheetProtection = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    options: microsoft_graph_workbookWorksheetProtectionOptions.optional(),
-    protected: z
-      .boolean()
-      .describe('Indicates whether the worksheet is protected.  Read-only.')
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookIcon = z
-  .object({
-    index: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('The index of the icon in the given set.')
-      .optional(),
-    set: z
-      .string()
-      .describe(
-        'The set that the icon is part of. The possible values are: Invalid, ThreeArrows, ThreeArrowsGray, ThreeFlags, ThreeTrafficLights1, ThreeTrafficLights2, ThreeSigns, ThreeSymbols, ThreeSymbols2, FourArrows, FourArrowsGray, FourRedToBlack, FourRating, FourTrafficLights, FiveArrows, FiveArrowsGray, FiveRating, FiveQuarters, ThreeStars, ThreeTriangles, FiveBoxes.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookFilterCriteria = z
-  .object({
-    color: z.string().describe('The color applied to the cell.').nullish(),
-    criterion1: z.string().describe('A custom criterion.').nullish(),
-    criterion2: z.string().describe('A custom criterion.').nullish(),
-    dynamicCriteria: z
-      .string()
-      .describe('A dynamic formula specified in a custom filter.')
-      .optional(),
-    filterOn: z.string().describe('Indicates whether a filter is applied to a column.').optional(),
-    icon: microsoft_graph_workbookIcon.optional(),
-    operator: z
-      .string()
-      .describe('An operator in a cell; for example, =, >, <, <=, or <>.')
-      .optional(),
-    values: z.unknown().describe('The values that appear in the cell.').optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookFilter = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    criteria: microsoft_graph_workbookFilterCriteria.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookTableColumn = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    index: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'The index of the column within the columns collection of the table. Zero-indexed. Read-only.'
-      )
-      .optional(),
-    name: z.string().describe('The name of the table column.').nullish(),
-    values: z
-      .unknown()
-      .describe(
-        'TRepresents the raw values of the specified range. The data returned could be of type string, number, or a Boolean. Cell that contain an error will return the error string.'
-      )
-      .optional(),
-    filter: microsoft_graph_workbookFilter.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookTableRow = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    index: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'The index of the row within the rows collection of the table. Zero-based. Read-only.'
-      )
-      .optional(),
-    values: z
-      .unknown()
-      .describe(
-        'The raw values of the specified range. The data returned could be of type string, number, or a Boolean. Any cell that contain an error will return the error string.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookSortField = z
-  .object({
-    ascending: z
-      .boolean()
-      .describe('Represents whether the sorting is done in an ascending fashion.')
-      .optional(),
-    color: z
-      .string()
-      .describe(
-        'Represents the color that is the target of the condition if the sorting is on font or cell color.'
-      )
-      .nullish(),
-    dataOption: z
-      .string()
-      .describe(
-        'Represents additional sorting options for this field. The possible values are: Normal, TextAsNumber.'
-      )
-      .optional(),
-    icon: microsoft_graph_workbookIcon.optional(),
-    key: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'Represents the column (or row, depending on the sort orientation) that the condition is on. Represented as an offset from the first column (or row).'
-      )
-      .optional(),
-    sortOn: z
-      .string()
-      .describe(
-        'Represents the type of sorting of this condition. The possible values are: Value, CellColor, FontColor, Icon.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookTableSort = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    fields: z
-      .array(microsoft_graph_workbookSortField)
-      .describe('The list of the current conditions last used to sort the table. Read-only.')
-      .optional(),
-    matchCase: z
-      .boolean()
-      .describe('Indicates whether the casing impacted the last sort of the table. Read-only.')
-      .optional(),
-    method: z
-      .string()
-      .describe(
-        'The Chinese character ordering method last used to sort the table. The possible values are: PinYin, StrokeCount. Read-only.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookTable: z.ZodType<microsoft_graph_workbookTable> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      highlightFirstColumn: z
-        .boolean()
-        .describe('Indicates whether the first column contains special formatting.')
-        .optional(),
-      highlightLastColumn: z
-        .boolean()
-        .describe('Indicates whether the last column contains special formatting.')
-        .optional(),
-      legacyId: z
-        .string()
-        .describe(
-          "A legacy identifier used in older Excel clients. The value of the identifier remains the same even when the table is renamed. This property should be interpreted as an opaque string value and shouldn't be parsed to any other type. Read-only."
-        )
-        .nullish(),
-      name: z.string().describe('The name of the table.').nullish(),
-      showBandedColumns: z
-        .boolean()
-        .describe(
-          'Indicates whether the columns show banded formatting in which odd columns are highlighted differently from even ones to make reading the table easier.'
-        )
-        .optional(),
-      showBandedRows: z
-        .boolean()
-        .describe(
-          'Indicates whether the rows show banded formatting in which odd rows are highlighted differently from even ones to make reading the table easier.'
-        )
-        .optional(),
-      showFilterButton: z
-        .boolean()
-        .describe(
-          'Indicates whether the filter buttons are visible at the top of each column header. Setting this is only allowed if the table contains a header row.'
-        )
-        .optional(),
-      showHeaders: z
-        .boolean()
-        .describe(
-          'Indicates whether the header row is visible or not. This value can be set to show or remove the header row.'
-        )
-        .optional(),
-      showTotals: z
-        .boolean()
-        .describe(
-          'Indicates whether the total row is visible or not. This value can be set to show or remove the total row.'
-        )
-        .optional(),
-      style: z
-        .string()
-        .describe(
-          'A constant value that represents the Table style. The possible values are: TableStyleLight1 through TableStyleLight21, TableStyleMedium1 through TableStyleMedium28, TableStyleStyleDark1 through TableStyleStyleDark11. A custom user-defined style present in the workbook can also be specified.'
-        )
-        .nullish(),
-      columns: z
-        .array(microsoft_graph_workbookTableColumn)
-        .describe('The list of all the columns in the table. Read-only.')
-        .optional(),
-      rows: z
-        .array(microsoft_graph_workbookTableRow)
-        .describe('The list of all the rows in the table. Read-only.')
-        .optional(),
-      sort: microsoft_graph_workbookTableSort.optional(),
-      worksheet: microsoft_graph_workbookWorksheet.optional(),
-    })
-    .passthrough()
-);
-const microsoft_graph_workbookWorksheet: z.ZodType<microsoft_graph_workbookWorksheet> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      name: z.string().describe('The display name of the worksheet.').nullish(),
-      position: z
-        .number()
-        .gte(-2147483648)
-        .lte(2147483647)
-        .describe('The zero-based position of the worksheet within the workbook.')
-        .optional(),
-      visibility: z
-        .string()
-        .describe(
-          'The visibility of the worksheet. The possible values are: Visible, Hidden, VeryHidden.'
-        )
-        .optional(),
-      charts: z
-        .array(microsoft_graph_workbookChart)
-        .describe('The list of charts that are part of the worksheet. Read-only.')
-        .optional(),
-      names: z
-        .array(microsoft_graph_workbookNamedItem)
-        .describe('The list of names that are associated with the worksheet. Read-only.')
-        .optional(),
-      pivotTables: z
-        .array(microsoft_graph_workbookPivotTable)
-        .describe('The list of piot tables that are part of the worksheet.')
-        .optional(),
-      protection: microsoft_graph_workbookWorksheetProtection.optional(),
-      tables: z
-        .array(microsoft_graph_workbookTable)
-        .describe('The list of tables that are part of the worksheet. Read-only.')
-        .optional(),
-    })
-    .passthrough()
-);
-const microsoft_graph_workbookWorksheetCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_workbookWorksheet),
-  })
-  .partial()
-  .passthrough();
-const create_excel_chart_Body = z
-  .object({ type: z.string(), sourceData: z.unknown(), seriesBy: z.string() })
-  .partial()
-  .passthrough();
-const microsoft_graph_workbookRangeBorder = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    color: z
-      .string()
-      .describe(
-        "The HTML color code that represents the color of the border line. Can either be of the form #RRGGBB, for example 'FFA500', or a named HTML color, for example 'orange'."
-      )
-      .nullish(),
-    sideIndex: z
-      .string()
-      .describe(
-        'Indicates the specific side of the border. The possible values are: EdgeTop, EdgeBottom, EdgeLeft, EdgeRight, InsideVertical, InsideHorizontal, DiagonalDown, DiagonalUp. Read-only.'
-      )
-      .nullish(),
-    style: z
-      .string()
-      .describe(
-        'Indicates the line style for the border. The possible values are: None, Continuous, Dash, DashDot, DashDotDot, Dot, Double, SlantDashDot.'
-      )
-      .nullish(),
-    weight: z
-      .string()
-      .describe(
-        'The weight of the border around a range. The possible values are: Hairline, Thin, Medium, Thick.'
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookRangeFill = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    color: z
-      .string()
-      .describe(
-        "HTML color code representing the color of the border line. Can either be of the form #RRGGBB, for example 'FFA500', or be a named HTML color, for example 'orange'."
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookRangeFont = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    bold: z.boolean().describe('Inidicates whether the font is bold.').nullish(),
-    color: z
-      .string()
-      .describe(
-        'The HTML color code representation of the text color. For example, #FF0000 represents the color red.'
-      )
-      .nullish(),
-    italic: z.boolean().describe('Inidicates whether the font is italic.').nullish(),
-    name: z.string().describe("The font name. For example, 'Calibri'.").nullish(),
-    size: z.number().describe('The font size. [Simplified from 3 options]').nullish(),
-    underline: z
-      .string()
-      .describe(
-        'The type of underlining applied to the font. The possible values are: None, Single, Double, SingleAccountant, DoubleAccountant.'
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookFormatProtection = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    formulaHidden: z
-      .boolean()
-      .describe(
-        "Indicates whether Excel hides the formula for the cells in the range. A null value indicates that the entire range doesn't have uniform formula hidden setting."
-      )
-      .nullish(),
-    locked: z
-      .boolean()
-      .describe(
-        "Indicates whether Excel locks the cells in the object. A null value indicates that the entire range doesn't have uniform lock setting."
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_workbookRangeFormat = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    columnWidth: z
-      .number()
-      .describe(
-        "The width of all columns within the range. If the column widths aren't uniform, null will be returned. [Simplified from 3 options]"
-      )
-      .nullish(),
-    horizontalAlignment: z
-      .string()
-      .describe(
-        'The horizontal alignment for the specified object. The possible values are: General, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed.'
-      )
-      .nullish(),
-    rowHeight: z
-      .number()
-      .describe(
-        "The height of all rows in the range. If the row heights aren't uniform null will be returned. [Simplified from 3 options]"
-      )
-      .nullish(),
-    verticalAlignment: z
-      .string()
-      .describe(
-        'The vertical alignment for the specified object. The possible values are: Top, Center, Bottom, Justify, Distributed.'
-      )
-      .nullish(),
-    wrapText: z
-      .boolean()
-      .describe(
-        "Indicates whether Excel wraps the text in the object. A null value indicates that the entire range doesn't have a uniform wrap setting."
-      )
-      .nullish(),
-    borders: z
-      .array(microsoft_graph_workbookRangeBorder)
-      .describe('Collection of border objects that apply to the overall range selected Read-only.')
-      .optional(),
-    fill: microsoft_graph_workbookRangeFill.optional(),
-    font: microsoft_graph_workbookRangeFont.optional(),
-    protection: microsoft_graph_workbookFormatProtection.optional(),
-  })
-  .passthrough();
-const microsoft_graph_workbookRangeSort = z
-  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
-  .passthrough();
-const microsoft_graph_workbookRange = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    address: z
-      .string()
-      .describe(
-        'Represents the range reference in A1-style. Address value contains the Sheet reference (for example, Sheet1!A1:B4). Read-only.'
-      )
-      .nullish(),
-    addressLocal: z
-      .string()
-      .describe(
-        'Represents range reference for the specified range in the language of the user. Read-only.'
-      )
-      .nullish(),
-    cellCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Number of cells in the range. Read-only.')
-      .optional(),
-    columnCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Represents the total number of columns in the range. Read-only.')
-      .optional(),
-    columnHidden: z
-      .boolean()
-      .describe('Indicates whether all columns of the current range are hidden.')
-      .nullish(),
-    columnIndex: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'Represents the column number of the first cell in the range. Zero-indexed. Read-only.'
-      )
-      .optional(),
-    formulas: z.unknown().describe('Represents the formula in A1-style notation.').optional(),
-    formulasLocal: z
-      .unknown()
-      .describe(
-        "Represents the formula in A1-style notation, in the user's language and number-formatting locale.  For example, the English '=SUM(A1, 1.5)' formula would become '=SUMME(A1; 1,5)' in German."
-      )
-      .optional(),
-    formulasR1C1: z.unknown().describe('Represents the formula in R1C1-style notation.').optional(),
-    hidden: z
-      .boolean()
-      .describe('Represents if all cells of the current range are hidden. Read-only.')
-      .nullish(),
-    numberFormat: z
-      .unknown()
-      .describe("Represents Excel's number format code for the given cell.")
-      .optional(),
-    rowCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Returns the total number of rows in the range. Read-only.')
-      .optional(),
-    rowHidden: z
-      .boolean()
-      .describe('Indicates whether all rows of the current range are hidden.')
-      .nullish(),
-    rowIndex: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Returns the row number of the first cell in the range. Zero-indexed. Read-only.')
-      .optional(),
-    text: z
-      .unknown()
-      .describe(
-        "Text values of the specified range. The Text value doesn't depend on the cell width. The # sign substitution that happens in Excel UI doesn't affect the text value returned by the API. Read-only."
-      )
-      .optional(),
-    values: z
-      .unknown()
-      .describe(
-        'Represents the raw values of the specified range. The data returned can be of type string, number, or a Boolean. Cell that contains an error returns the error string.'
-      )
-      .optional(),
-    valueTypes: z
-      .unknown()
-      .describe(
-        'Represents the type of data of each cell. The possible values are: Unknown, Empty, String, Integer, Double, Boolean, Error. Read-only.'
-      )
-      .optional(),
-    format: microsoft_graph_workbookRangeFormat.optional(),
-    sort: microsoft_graph_workbookRangeSort.optional(),
-    worksheet: microsoft_graph_workbookWorksheet.optional(),
-  })
-  .passthrough();
-const microsoft_graph_emailAddress = z
-  .object({
-    address: z.string().describe('The email address of the person or entity.').nullish(),
-    name: z.string().describe('The display name of the person or entity.').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_recipient = z
-  .object({ emailAddress: microsoft_graph_emailAddress.optional() })
-  .passthrough();
-const microsoft_graph_attachment = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    contentType: z.string().describe('The MIME type.').nullish(),
-    isInline: z
-      .boolean()
-      .describe('true if the attachment is an inline attachment; otherwise, false.')
-      .optional(),
-    lastModifiedDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-    name: z.string().describe("The attachment's file name.").nullish(),
-    size: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('The length of the attachment in bytes.')
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_extension = z
-  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
-  .passthrough();
-const microsoft_graph_multiValueLegacyExtendedProperty = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    value: z.array(z.string().nullable()).describe('A collection of property values.').optional(),
-  })
-  .passthrough();
-const microsoft_graph_singleValueLegacyExtendedProperty = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    value: z.string().describe('A property value.').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_post: z.ZodType<microsoft_graph_post> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      categories: z
-        .array(z.string().nullable())
-        .describe('The categories associated with the item')
-        .optional(),
-      changeKey: z
-        .string()
-        .describe(
-          'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
-        )
-        .nullish(),
-      createdDateTime: z
-        .string()
-        .regex(
-          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-        )
-        .datetime({ offset: true })
-        .describe(
-          'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-        )
-        .nullish(),
-      lastModifiedDateTime: z
-        .string()
-        .regex(
-          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-        )
-        .datetime({ offset: true })
-        .describe(
-          'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-        )
-        .nullish(),
-      body: microsoft_graph_itemBody.optional(),
-      conversationId: z.string().describe('Unique ID of the conversation. Read-only.').nullish(),
-      conversationThreadId: z
-        .string()
-        .describe('Unique ID of the conversation thread. Read-only.')
-        .nullish(),
-      from: microsoft_graph_recipient.optional(),
-      hasAttachments: z
-        .boolean()
-        .describe(
-          'Indicates whether the post has at least one attachment. This is a default property.'
-        )
-        .optional(),
-      newParticipants: z
-        .array(microsoft_graph_recipient)
-        .describe('Conversation participants that were added to the thread as part of this post.')
-        .optional(),
-      receivedDateTime: z
-        .string()
-        .regex(
-          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-        )
-        .datetime({ offset: true })
-        .describe(
-          'Specifies when the post was received. The DateTimeOffset type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-        )
-        .optional(),
-      sender: microsoft_graph_recipient.optional(),
-      attachments: z
-        .array(microsoft_graph_attachment)
-        .describe('Read-only. Nullable. Supports $expand.')
-        .optional(),
-      extensions: z
-        .array(microsoft_graph_extension)
-        .describe(
-          'The collection of open extensions defined for the post. Read-only. Nullable. Supports $expand.'
-        )
-        .optional(),
-      inReplyTo: microsoft_graph_post.optional(),
-      multiValueExtendedProperties: z
-        .array(microsoft_graph_multiValueLegacyExtendedProperty)
-        .describe(
-          'The collection of multi-value extended properties defined for the post. Read-only. Nullable.'
-        )
-        .optional(),
-      singleValueExtendedProperties: z
-        .array(microsoft_graph_singleValueLegacyExtendedProperty)
-        .describe(
-          'The collection of single-value extended properties defined for the post. Read-only. Nullable.'
-        )
-        .optional(),
-    })
-    .passthrough()
-);
-const microsoft_graph_conversationThread = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    ccRecipients: z
-      .array(microsoft_graph_recipient)
-      .describe('The Cc: recipients for the thread. Returned only on $select.')
-      .optional(),
-    hasAttachments: z
-      .boolean()
-      .describe(
-        'Indicates whether any of the posts within this thread has at least one attachment. Returned by default.'
-      )
-      .optional(),
-    isLocked: z
-      .boolean()
-      .describe('Indicates if the thread is locked. Returned by default.')
-      .optional(),
-    lastDeliveredDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.Returned by default.'
-      )
-      .optional(),
-    preview: z
-      .string()
-      .describe(
-        'A short summary from the body of the latest post in this conversation. Returned by default.'
-      )
-      .optional(),
-    topic: z
-      .string()
-      .describe(
-        'The topic of the conversation. This property can be set when the conversation is created, but it cannot be updated. Returned by default.'
-      )
-      .optional(),
-    toRecipients: z
-      .array(microsoft_graph_recipient)
-      .describe('The To: recipients for the thread. Returned only on $select.')
-      .optional(),
-    uniqueSenders: z
-      .array(z.string())
-      .describe('All the users that sent a message to this thread. Returned by default.')
-      .optional(),
-    posts: z.array(microsoft_graph_post).optional(),
-  })
-  .passthrough();
-const microsoft_graph_conversation = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    hasAttachments: z
-      .boolean()
-      .describe(
-        'Indicates whether any of the posts within this Conversation has at least one attachment. Supports $filter (eq, ne) and $search.'
-      )
-      .optional(),
-    lastDeliveredDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .optional(),
-    preview: z
-      .string()
-      .describe(
-        'A short summary from the body of the latest post in this conversation. Supports $filter (eq, ne, le, ge).'
-      )
-      .optional(),
-    topic: z
-      .string()
-      .describe(
-        'The topic of the conversation. This property can be set when the conversation is created, but it cannot be updated.'
-      )
-      .optional(),
-    uniqueSenders: z
-      .array(z.string())
-      .describe('All the users that sent a message to this Conversation.')
-      .optional(),
-    threads: z
-      .array(microsoft_graph_conversationThread)
-      .describe(
-        'A collection of all the conversation threads in the conversation. A navigation property. Read-only. Nullable.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_conversationCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_conversation),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_conversationThreadCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_conversationThread),
-  })
-  .partial()
-  .passthrough();
-const reply_to_group_thread_Body = z.object({ Post: microsoft_graph_post }).partial().passthrough();
-const microsoft_graph_onlineMeetingProviderType = z.enum([
-  'unknown',
-  'skypeForBusiness',
-  'skypeForConsumer',
-  'teamsForBusiness',
-]);
-const microsoft_graph_calendarColor = z.enum([
-  'auto',
-  'lightBlue',
-  'lightGreen',
-  'lightOrange',
-  'lightGray',
-  'lightYellow',
-  'lightTeal',
-  'lightPink',
-  'lightBrown',
-  'lightRed',
-  'maxColor',
-]);
-const microsoft_graph_calendarRoleType = z.enum([
-  'none',
-  'freeBusyRead',
-  'limitedRead',
-  'read',
-  'write',
-  'delegateWithoutPrivateEventAccess',
-  'delegateWithPrivateEventAccess',
-  'custom',
-]);
-const microsoft_graph_calendarPermission = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    allowedRoles: z
-      .array(z.union([microsoft_graph_calendarRoleType, z.object({}).partial().passthrough()]))
-      .describe(
-        'List of allowed sharing or delegating permission levels for the calendar. The possible values are: none, freeBusyRead, limitedRead, read, write, delegateWithoutPrivateEventAccess, delegateWithPrivateEventAccess, custom.'
-      )
-      .optional(),
-    emailAddress: microsoft_graph_emailAddress.optional(),
-    isInsideOrganization: z
-      .boolean()
-      .describe(
-        'True if the user in context (recipient or delegate) is inside the same organization as the calendar owner.'
-      )
-      .nullish(),
-    isRemovable: z
-      .boolean()
-      .describe(
-        "True if the user can be removed from the list of recipients or delegates for the specified calendar, false otherwise. The 'My organization' user determines the permissions other people within your organization have to the given calendar. You can't remove 'My organization' as a share recipient to a calendar."
-      )
-      .nullish(),
-    role: microsoft_graph_calendarRoleType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_eventType = z.enum([
-  'singleInstance',
-  'occurrence',
-  'exception',
-  'seriesMaster',
-]);
-const microsoft_graph_dateTimeTimeZone = z
-  .object({
-    dateTime: z
-      .string()
-      .describe(
-        'A single point of time in a combined date and time representation ({date}T{time}; for example, 2017-08-29T04:00:00.0000000).'
-      )
-      .optional(),
-    timeZone: z
-      .string()
-      .describe(
-        "Represents a time zone, for example, 'Pacific Standard Time'. See below for more possible values."
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_physicalAddress = z
-  .object({
-    city: z.string().describe('The city.').nullish(),
-    countryOrRegion: z
-      .string()
-      .describe(
-        "The country or region. It's a free-format string value, for example, 'United States'."
-      )
-      .nullish(),
-    postalCode: z.string().describe('The postal code.').nullish(),
-    state: z.string().describe('The state.').nullish(),
-    street: z.string().describe('The street.').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_outlookGeoCoordinates = z
-  .object({
-    accuracy: z
-      .number()
-      .describe(
-        'The accuracy of the latitude and longitude. As an example, the accuracy can be measured in meters, such as the latitude and longitude are accurate to within 50 meters. [Simplified from 3 options]'
-      )
-      .nullish(),
-    altitude: z
-      .number()
-      .describe('The altitude of the location. [Simplified from 3 options]')
-      .nullish(),
-    altitudeAccuracy: z
-      .number()
-      .describe('The accuracy of the altitude. [Simplified from 3 options]')
-      .nullish(),
-    latitude: z
-      .number()
-      .describe('The latitude of the location. [Simplified from 3 options]')
-      .nullish(),
-    longitude: z
-      .number()
-      .describe('The longitude of the location. [Simplified from 3 options]')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_locationType = z.enum([
-  'default',
-  'conferenceRoom',
-  'homeAddress',
-  'businessAddress',
-  'geoCoordinates',
-  'streetAddress',
-  'hotel',
-  'restaurant',
-  'localBusiness',
-  'postalAddress',
-]);
-const microsoft_graph_locationUniqueIdType = z.enum([
-  'unknown',
-  'locationStore',
-  'directory',
-  'private',
-  'bing',
-]);
-const microsoft_graph_location = z
-  .object({
-    address: microsoft_graph_physicalAddress.optional(),
-    coordinates: microsoft_graph_outlookGeoCoordinates.optional(),
-    displayName: z.string().describe('The name associated with the location.').nullish(),
-    locationEmailAddress: z.string().describe('Optional email address of the location.').nullish(),
-    locationType: microsoft_graph_locationType.optional(),
-    locationUri: z.string().describe('Optional URI representing the location.').nullish(),
-    uniqueId: z.string().describe('For internal use only.').nullish(),
-    uniqueIdType: microsoft_graph_locationUniqueIdType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_freeBusyStatus = z.enum([
-  'unknown',
-  'free',
-  'tentative',
-  'busy',
-  'oof',
-  'workingElsewhere',
-]);
-const microsoft_graph_sensitivity = z.enum(['normal', 'personal', 'private', 'confidential']);
-const microsoft_graph_importance = z.enum(['low', 'normal', 'high']);
-const microsoft_graph_attendeeType = z.enum(['required', 'optional', 'resource']);
-const microsoft_graph_timeSlot = z
-  .object({
-    end: microsoft_graph_dateTimeTimeZone.optional(),
-    start: microsoft_graph_dateTimeTimeZone.optional(),
-  })
-  .passthrough();
-const microsoft_graph_responseType = z.enum([
-  'none',
-  'organizer',
-  'tentativelyAccepted',
-  'accepted',
-  'declined',
-  'notResponded',
-]);
-const microsoft_graph_responseStatus = z
-  .object({
-    response: microsoft_graph_responseType.optional(),
-    time: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The date and time when the response was returned. It uses ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_attendee = z
-  .object({
-    emailAddress: microsoft_graph_emailAddress.optional(),
-    type: microsoft_graph_attendeeType.optional(),
-    proposedNewTime: microsoft_graph_timeSlot.optional(),
-    status: microsoft_graph_responseStatus.optional(),
-  })
-  .passthrough();
-const microsoft_graph_dayOfWeek = z.enum([
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-]);
-const microsoft_graph_weekIndex = z.enum(['first', 'second', 'third', 'fourth', 'last']);
-const microsoft_graph_recurrencePatternType = z.enum([
-  'daily',
-  'weekly',
-  'absoluteMonthly',
-  'relativeMonthly',
-  'absoluteYearly',
-  'relativeYearly',
-]);
-const microsoft_graph_recurrencePattern = z
-  .object({
-    dayOfMonth: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'The day of the month on which the event occurs. Required if type is absoluteMonthly or absoluteYearly.'
-      )
-      .optional(),
-    daysOfWeek: z
-      .array(z.union([microsoft_graph_dayOfWeek, z.object({}).partial().passthrough()]))
-      .describe(
-        'A collection of the days of the week on which the event occurs. The possible values are: sunday, monday, tuesday, wednesday, thursday, friday, saturday. If type is relativeMonthly or relativeYearly, and daysOfWeek specifies more than one day, the event falls on the first day that satisfies the pattern.  Required if type is weekly, relativeMonthly, or relativeYearly.'
-      )
-      .optional(),
-    firstDayOfWeek: microsoft_graph_dayOfWeek.optional(),
-    index: microsoft_graph_weekIndex.optional(),
-    interval: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'The number of units between occurrences, where units can be in days, weeks, months, or years, depending on the type. Required.'
-      )
-      .optional(),
-    month: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('The month in which the event occurs.  This is a number from 1 to 12.')
-      .optional(),
-    type: microsoft_graph_recurrencePatternType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_recurrenceRangeType = z.enum(['endDate', 'noEnd', 'numbered']);
-const microsoft_graph_recurrenceRange = z
-  .object({
-    endDate: z
-      .string()
-      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
-      .describe(
-        'The date to stop applying the recurrence pattern. Depending on the recurrence pattern of the event, the last occurrence of the meeting may not be this date. Required if type is endDate.'
-      )
-      .nullish(),
-    numberOfOccurrences: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'The number of times to repeat the event. Required and must be positive if type is numbered.'
-      )
-      .optional(),
-    recurrenceTimeZone: z
-      .string()
-      .describe(
-        'Time zone for the startDate and endDate properties. Optional. If not specified, the time zone of the event is used.'
-      )
-      .nullish(),
-    startDate: z
-      .string()
-      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
-      .describe(
-        'The date to start applying the recurrence pattern. The first occurrence of the meeting may be this date or later, depending on the recurrence pattern of the event. Must be the same value as the start property of the recurring event. Required.'
-      )
-      .nullish(),
-    type: microsoft_graph_recurrenceRangeType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_patternedRecurrence = z
-  .object({
-    pattern: microsoft_graph_recurrencePattern.optional(),
-    range: microsoft_graph_recurrenceRange.optional(),
-  })
-  .passthrough();
-const microsoft_graph_event = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    createdDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-    lastModifiedDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-    type: microsoft_graph_eventType.optional(),
-    body: microsoft_graph_itemBody.optional(),
-    subject: z.string().describe("The text of the event's subject line.").nullish(),
-    attachments: z
-      .array(microsoft_graph_attachment)
-      .describe(
-        'The collection of FileAttachment, ItemAttachment, and referenceAttachment attachments for the event. Navigation property. Read-only. Nullable.'
-      )
-      .optional(),
-    singleValueExtendedProperties: z
-      .array(microsoft_graph_singleValueLegacyExtendedProperty)
-      .describe(
-        'The collection of single-value extended properties defined for the event. Read-only. Nullable.'
-      )
-      .optional(),
-    multiValueExtendedProperties: z
-      .array(microsoft_graph_multiValueLegacyExtendedProperty)
-      .describe(
-        'The collection of multi-value extended properties defined for the event. Read-only. Nullable.'
-      )
-      .optional(),
-    start: microsoft_graph_dateTimeTimeZone.optional(),
-    end: microsoft_graph_dateTimeTimeZone.optional(),
-    location: microsoft_graph_location.optional(),
-    showAs: microsoft_graph_freeBusyStatus.optional(),
-    sensitivity: microsoft_graph_sensitivity.optional(),
-    isAllDay: z
-      .boolean()
-      .describe(
-        "Set to true if the event lasts all day. If true, regardless of whether it's a single-day or multi-day event, start, and endtime must be set to midnight and be in the same time zone."
-      )
-      .nullish(),
-    importance: microsoft_graph_importance.optional(),
-    isOnlineMeeting: z
-      .boolean()
-      .describe(
-        'True if this event has online meeting information (that is, onlineMeeting points to an onlineMeetingInfo resource), false otherwise. Default is false (onlineMeeting is null). Optional.  After you set isOnlineMeeting to true, Microsoft Graph initializes onlineMeeting. Subsequently, Outlook ignores any further changes to isOnlineMeeting, and the meeting remains available online.'
-      )
-      .nullish(),
-    isReminderOn: z
-      .boolean()
-      .describe('Set to true if an alert is set to remind the user of the event.')
-      .nullish(),
-    attendees: z
-      .array(microsoft_graph_attendee)
-      .describe('The collection of attendees for the event.')
-      .optional(),
-    recurrence: microsoft_graph_patternedRecurrence.optional(),
-    reminderMinutesBeforeStart: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('The number of minutes before the event start time that the reminder alert occurs.')
-      .nullish(),
-    allowNewTimeProposals: z
-      .boolean()
-      .describe(
-        'true if the meeting organizer allows invitees to propose a new time when responding; otherwise, false. Optional. The default is true.'
-      )
-      .nullish(),
-    responseRequested: z
-      .boolean()
-      .describe(
-        'Default is true, which represents the organizer would like an invitee to send a response to the event.'
-      )
-      .nullish(),
-    categories: z
-      .array(z.string().nullable())
-      .describe('The categories associated with the item')
-      .optional(),
-    changeKey: z
-      .string()
-      .describe(
-        'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
-      )
-      .nullish(),
-  })
-  .passthrough()
-  .passthrough();
-const microsoft_graph_calendar = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    allowedOnlineMeetingProviders: z
-      .array(z.union([microsoft_graph_onlineMeetingProviderType, z.object({}).partial().passthrough()]))
-      .describe(
-        'Represent the online meeting service providers that can be used to create online meetings in this calendar. The possible values are: unknown, skypeForBusiness, skypeForConsumer, teamsForBusiness.'
-      )
-      .optional(),
-    canEdit: z
-      .boolean()
-      .describe(
-        'true if the user can write to the calendar, false otherwise. This property is true for the user who created the calendar. This property is also true for a user who shared a calendar and granted write access.'
-      )
-      .nullish(),
-    canShare: z
-      .boolean()
-      .describe(
-        'true if the user has permission to share the calendar, false otherwise. Only the user who created the calendar can share it.'
-      )
-      .nullish(),
-    canViewPrivateItems: z
-      .boolean()
-      .describe(
-        'If true, the user can read calendar items that have been marked private, false otherwise.'
-      )
-      .nullish(),
-    changeKey: z
-      .string()
-      .describe(
-        'Identifies the version of the calendar object. Every time the calendar is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
-      )
-      .nullish(),
-    color: microsoft_graph_calendarColor.optional(),
-    defaultOnlineMeetingProvider: microsoft_graph_onlineMeetingProviderType.optional(),
-    hexColor: z
-      .string()
-      .describe(
-        'The calendar color, expressed in a hex color code of three hexadecimal values, each ranging from 00 to FF and representing the red, green, or blue components of the color in the RGB color space. If the user has never explicitly set a color for the calendar, this property is empty. Read-only.'
-      )
-      .nullish(),
-    isDefaultCalendar: z
-      .boolean()
-      .describe(
-        'true if this is the default calendar where new events are created by default, false otherwise.'
-      )
-      .nullish(),
-    isRemovable: z
-      .boolean()
-      .describe('Indicates whether this user calendar can be deleted from the user mailbox.')
-      .nullish(),
-    isTallyingResponses: z
-      .boolean()
-      .describe(
-        "Indicates whether this user calendar supports tracking of meeting responses. Only meeting invites sent from users' primary calendars support tracking of meeting responses."
-      )
-      .nullish(),
-    name: z.string().describe('The calendar name.').nullish(),
-    owner: microsoft_graph_emailAddress.optional(),
-    calendarPermissions: z
-      .array(microsoft_graph_calendarPermission)
-      .describe('The permissions of the users with whom the calendar is shared.')
-      .optional(),
-    calendarView: z
-      .array(microsoft_graph_event)
-      .describe('The calendar view for the calendar. Navigation property. Read-only.')
-      .optional(),
-    events: z
-      .array(microsoft_graph_event)
-      .describe('The events in the calendar. Navigation property. Read-only.')
-      .optional(),
-    multiValueExtendedProperties: z
-      .array(microsoft_graph_multiValueLegacyExtendedProperty)
-      .describe(
-        'The collection of multi-value extended properties defined for the calendar. Read-only. Nullable.'
-      )
-      .optional(),
-    singleValueExtendedProperties: z
-      .array(microsoft_graph_singleValueLegacyExtendedProperty)
-      .describe(
-        'The collection of single-value extended properties defined for the calendar. Read-only. Nullable.'
-      )
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_calendarCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_calendar),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_eventCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_event),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_chatCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_chat),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_contact = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    displayName: z
-      .string()
-      .describe(
-        "The contact's display name. You can specify the display name in a create or update operation. Note that later updates to other properties may cause an automatically generated value to overwrite the displayName value you have specified. To preserve a pre-existing value, always include it as displayName in an update operation."
-      )
-      .nullish(),
-    createdDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-    lastModifiedDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
-      )
-      .nullish(),
-    title: z.string().describe("The contact's title.").nullish(),
-    singleValueExtendedProperties: z
-      .array(microsoft_graph_singleValueLegacyExtendedProperty)
-      .describe(
-        'The collection of single-value extended properties defined for the contact. Read-only. Nullable.'
-      )
-      .optional(),
-    multiValueExtendedProperties: z
-      .array(microsoft_graph_multiValueLegacyExtendedProperty)
-      .describe(
-        'The collection of multi-value extended properties defined for the contact. Read-only. Nullable.'
-      )
-      .optional(),
-    categories: z
-      .array(z.string().nullable())
-      .describe('The categories associated with the item')
-      .optional(),
-    changeKey: z
-      .string()
-      .describe(
-        'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
-      )
-      .nullish(),
-    assistantName: z.string().describe("The name of the contact's assistant.").nullish(),
-    birthday: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe(
-        "The contact's birthday. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z"
-      )
-      .nullish(),
-    businessAddress: microsoft_graph_physicalAddress.optional(),
-    businessHomePage: z.string().describe('The business home page of the contact.').nullish(),
-    businessPhones: z
-      .array(z.string().nullable())
-      .describe("The contact's business phone numbers.")
-      .optional(),
-    children: z
-      .array(z.string().nullable())
-      .describe("The names of the contact's children.")
-      .optional(),
-    companyName: z.string().describe("The name of the contact's company.").nullish(),
-    department: z.string().describe("The contact's department.").nullish(),
-    emailAddresses: z
-      .array(microsoft_graph_emailAddress)
-      .describe("The contact's email addresses.")
-      .optional(),
-    fileAs: z.string().describe('The name the contact is filed under.').nullish(),
-    generation: z.string().describe("The contact's suffix.").nullish(),
-    givenName: z.string().describe("The contact's given name.").nullish(),
-    homeAddress: microsoft_graph_physicalAddress.optional(),
-    homePhones: z
-      .array(z.string().nullable())
-      .describe("The contact's home phone numbers.")
-      .optional(),
-    imAddresses: z
-      .array(z.string().nullable())
-      .describe("The contact's instant messaging (IM) addresses.")
-      .optional(),
-    initials: z.string().describe("The contact's initials.").nullish(),
-  })
-  .passthrough()
-  .passthrough();
-const microsoft_graph_contactCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_contact),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_storagePlanInformation = z
-  .object({
-    upgradeAvailable: z
-      .boolean()
-      .describe('Indicates whether there are higher storage quota plans available. Read-only.')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_quota = z
-  .object({
-    deleted: z
-      .number()
-      .describe('Total space consumed by files in the recycle bin, in bytes. Read-only.')
-      .nullish(),
-    remaining: z
-      .number()
-      .describe('Total space remaining before reaching the capacity limit, in bytes. Read-only.')
-      .nullish(),
-    state: z
-      .string()
-      .describe('Enumeration value that indicates the state of the storage space. Read-only.')
-      .nullish(),
-    storagePlanInformation: microsoft_graph_storagePlanInformation.optional(),
-    total: z.number().describe('Total allowed storage space, in bytes. Read-only.').nullish(),
-    used: z.number().describe('Total space used, in bytes. Read-only.').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_systemFacet = z.object({}).passthrough();
 const microsoft_graph_listInfo = z
   .object({
     contentTypesEnabled: z
@@ -5445,256 +3796,1206 @@ const microsoft_graph_drive: z.ZodType<microsoft_graph_drive> = z.lazy(() =>
     })
     .passthrough()
 );
-const microsoft_graph_driveCollectionResponse = z
+const microsoft_graph_driveItemCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
     '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_drive),
+    value: z.array(microsoft_graph_driveItem),
   })
   .partial()
   .passthrough();
-const microsoft_graph_giphyRatingType = z.enum(['strict', 'moderate', 'unknownFutureValue']);
-const microsoft_graph_teamFunSettings = z
+const checkin_drive_item_Body = z
+  .object({ checkInAs: z.string().nullable(), comment: z.string().nullable() })
+  .partial()
+  .passthrough();
+const copy_drive_item_Body = z
   .object({
-    allowCustomMemes: z
-      .boolean()
-      .describe('If set to true, enables users to include custom memes.')
+    name: z.string().nullable(),
+    parentReference: z.union([microsoft_graph_itemReference, z.object({}).partial().passthrough()]),
+    childrenOnly: z.boolean().nullable().default(false),
+    includeAllVersionHistory: z.boolean().nullable().default(false),
+  })
+  .partial()
+  .passthrough();
+const create_drive_item_link_Body = z
+  .object({
+    type: z.string().nullable(),
+    scope: z.string().nullable(),
+    expirationDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .nullable(),
+    password: z.string().nullable(),
+    message: z.string().nullable(),
+    recipients: z.array(z.object({}).partial().passthrough()),
+    retainInheritedPermissions: z.boolean().nullable().default(false),
+    sendNotification: z.boolean().nullable().default(false),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_sharePointIdentity = z
+  .object({
+    displayName: z
+      .string()
+      .describe(
+        "The display name of the identity.For drive items, the display name might not always be available or up to date. For example, if a user changes their display name the API might show the new value in a future response, but the items associated with the user don't show up as changed when using delta."
+      )
       .nullish(),
-    allowGiphy: z.boolean().describe('If set to true, enables Giphy use.').nullish(),
-    allowStickersAndMemes: z
-      .boolean()
-      .describe('If set to true, enables users to include stickers and memes.')
+    id: z
+      .string()
+      .describe(
+        "Unique identifier for the identity or actor. For example, in the access reviews decisions API, this property might record the id of the principal, that is, the group, user, or application that's subject to review."
+      )
       .nullish(),
-    giphyContentRating: microsoft_graph_giphyRatingType.optional(),
+    loginName: z.string().describe('The sign in name of the SharePoint identity.').nullish(),
   })
   .passthrough();
-const microsoft_graph_teamGuestSettings = z
+const microsoft_graph_sharePointIdentitySet = z
   .object({
-    allowCreateUpdateChannels: z
-      .boolean()
-      .describe('If set to true, guests can add and update channels.')
-      .nullish(),
-    allowDeleteChannels: z
-      .boolean()
-      .describe('If set to true, guests can delete channels.')
-      .nullish(),
+    application: microsoft_graph_identity.optional(),
+    device: microsoft_graph_identity.optional(),
+    user: microsoft_graph_identity.optional(),
+    group: microsoft_graph_identity.optional(),
+    siteGroup: microsoft_graph_sharePointIdentity.optional(),
+    siteUser: microsoft_graph_sharePointIdentity.optional(),
   })
   .passthrough();
-const microsoft_graph_teamMemberSettings = z
+const microsoft_graph_sharingInvitation = z
   .object({
-    allowAddRemoveApps: z
+    email: z
+      .string()
+      .describe(
+        'The email address provided for the recipient of the sharing invitation. Read-only.'
+      )
+      .nullish(),
+    invitedBy: microsoft_graph_identitySet.optional(),
+    redeemedBy: z.string().nullish(),
+    signInRequired: z
       .boolean()
-      .describe('If set to true, members can add and remove apps.')
-      .nullish(),
-    allowCreatePrivateChannels: z
-      .boolean()
-      .describe('If set to true, members can add and update private channels.')
-      .nullish(),
-    allowCreateUpdateChannels: z
-      .boolean()
-      .describe('If set to true, members can add and update channels.')
-      .nullish(),
-    allowCreateUpdateRemoveConnectors: z
-      .boolean()
-      .describe('If set to true, members can add, update, and remove connectors.')
-      .nullish(),
-    allowCreateUpdateRemoveTabs: z
-      .boolean()
-      .describe('If set to true, members can add, update, and remove tabs.')
-      .nullish(),
-    allowDeleteChannels: z
-      .boolean()
-      .describe('If set to true, members can delete channels.')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_teamMessagingSettings = z
-  .object({
-    allowChannelMentions: z
-      .boolean()
-      .describe('If set to true, @channel mentions are allowed.')
-      .nullish(),
-    allowOwnerDeleteMessages: z
-      .boolean()
-      .describe('If set to true, owners can delete any message.')
-      .nullish(),
-    allowTeamMentions: z
-      .boolean()
-      .describe('If set to true, @team mentions are allowed.')
-      .nullish(),
-    allowUserDeleteMessages: z
-      .boolean()
-      .describe('If set to true, users can delete their messages.')
-      .nullish(),
-    allowUserEditMessages: z
-      .boolean()
-      .describe('If set to true, users can edit their messages.')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_teamSpecialization = z.enum([
-  'none',
-  'educationStandard',
-  'educationClass',
-  'educationProfessionalLearningCommunity',
-  'educationStaff',
-  'healthcareStandard',
-  'healthcareCareCoordination',
-  'unknownFutureValue',
-]);
-const microsoft_graph_teamSummary = z
-  .object({
-    guestsCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of guests in a team.')
-      .nullish(),
-    membersCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of members in a team.')
-      .nullish(),
-    ownersCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of owners in a team.')
+      .describe(
+        'If true the recipient of the invitation needs to sign in in order to access the shared item. Read-only.'
+      )
       .nullish(),
   })
   .passthrough();
-const microsoft_graph_teamVisibilityType = z.enum([
-  'private',
-  'public',
-  'hiddenMembership',
-  'unknownFutureValue',
-]);
-const microsoft_graph_channelMembershipType = z.enum([
-  'standard',
-  'private',
-  'unknownFutureValue',
-  'shared',
-]);
-const microsoft_graph_channelSummary = z
+const microsoft_graph_sharingLink = z
   .object({
-    guestsCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of guests in a channel.')
-      .nullish(),
-    hasMembersFromOtherTenants: z
+    application: microsoft_graph_identity.optional(),
+    preventsDownload: z
       .boolean()
-      .describe('Indicates whether external members are included on the channel.')
+      .describe(
+        'If true then the user can only use this link to view the item on the web, and cannot use it to download the contents of the item. Only for OneDrive for Business and SharePoint.'
+      )
       .nullish(),
-    membersCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of members in a channel.')
+    scope: z
+      .string()
+      .describe(
+        'The scope of the link represented by this permission. Value anonymous indicates the link is usable by anyone, organization indicates the link is only usable for users signed into the same tenant.'
+      )
       .nullish(),
-    ownersCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe('Count of owners in a channel.')
+    type: z.string().describe('The type of the link created.').nullish(),
+    webHtml: z
+      .string()
+      .describe(
+        'For embed links, this property contains the HTML code for an <iframe> element that will embed the item in a webpage.'
+      )
+      .nullish(),
+    webUrl: z
+      .string()
+      .describe('A URL that opens the item in the browser on the OneDrive website.')
       .nullish(),
   })
   .passthrough();
-const microsoft_graph_sharedWithChannelTeamInfo: z.ZodType<microsoft_graph_sharedWithChannelTeamInfo> =
-  z.lazy(() =>
-    z
-      .object({
-        id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-        displayName: z.string().describe('The name of the team.').nullish(),
-        tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
-        team: microsoft_graph_team
-          .describe('[Note: Simplified from 30 properties to 25 most common ones]')
-          .optional(),
-        isHostTeam: z
-          .boolean()
-          .describe('Indicates whether the team is the host of the channel.')
-          .nullish(),
-        allowedMembers: z
-          .array(microsoft_graph_conversationMember)
-          .describe('A collection of team members who have access to the shared channel.')
-          .optional(),
-      })
-      .passthrough()
-  );
-const microsoft_graph_channel: z.ZodType<microsoft_graph_channel> = z.lazy(() =>
+const microsoft_graph_permission = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    expirationDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        "A format of yyyy-MM-ddTHH:mm:ssZ of DateTimeOffset indicates the expiration time of the permission. DateTime.MinValue indicates there's no expiration set for this permission. Optional."
+      )
+      .nullish(),
+    grantedTo: microsoft_graph_identitySet.optional(),
+    grantedToIdentities: z
+      .array(microsoft_graph_identitySet)
+      .describe(
+        'For type permissions, the details of the users to whom permission was granted. Read-only.'
+      )
+      .optional(),
+    grantedToIdentitiesV2: z
+      .array(microsoft_graph_sharePointIdentitySet)
+      .describe(
+        'For link type permissions, the details of the users to whom permission was granted. Read-only.'
+      )
+      .optional(),
+    grantedToV2: microsoft_graph_sharePointIdentitySet.optional(),
+    hasPassword: z
+      .boolean()
+      .describe(
+        'Indicates whether the password is set for this permission. This property only appears in the response. Optional. Read-only. For OneDrive Personal only..'
+      )
+      .nullish(),
+    inheritedFrom: microsoft_graph_itemReference.optional(),
+    invitation: microsoft_graph_sharingInvitation.optional(),
+    link: microsoft_graph_sharingLink.optional(),
+    roles: z
+      .array(z.string().nullable())
+      .describe(
+        'The type of permission, for example, read. See below for the full list of roles. Read-only.'
+      )
+      .optional(),
+    shareId: z
+      .string()
+      .describe(
+        'A unique token that can be used to access this shared item via the shares API. Read-only.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const create_upload_session_Body = z
+  .object({ item: z.object({}).partial().passthrough() })
+  .partial()
+  .passthrough();
+const microsoft_graph_uploadSession = z
+  .object({
+    expirationDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date and time in UTC that the upload session expires. The complete file must be uploaded before this expiration time is reached. Each fragment uploaded during the session extends the expiration time.'
+      )
+      .nullish(),
+    nextExpectedRanges: z
+      .array(z.string().nullable())
+      .describe(
+        "A collection of byte ranges that the server is missing for the file. These ranges are zero indexed and of the format 'start-end' (for example '0-26' to indicate the first 27 bytes of the file). When uploading files as Outlook attachments, instead of a collection of ranges, this property always indicates a single value '{start}', the location in the file where the next upload should begin."
+      )
+      .optional(),
+    uploadUrl: z
+      .string()
+      .describe('The URL endpoint that accepts PUT requests for byte ranges of the file.')
+      .nullish(),
+  })
+  .passthrough();
+const share_drive_item_Body = z
+  .object({
+    requireSignIn: z.boolean().nullable().default(false),
+    roles: z.array(z.string().nullable()),
+    sendInvitation: z.boolean().nullable().default(false),
+    message: z.string().nullable(),
+    recipients: z.array(z.object({}).partial().passthrough()),
+    retainInheritedPermissions: z.boolean().nullable().default(false),
+    expirationDateTime: z.string().nullable(),
+    password: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const BaseCollectionPaginationCountResponse = z
+  .object({ '@odata.count': z.number().int().nullable(), '@odata.nextLink': z.string().nullable() })
+  .partial()
+  .passthrough();
+const ReferenceNumeric = z.enum(['-INF', 'INF', 'NaN']);
+const preview_drive_item_Body = z
+  .object({
+    page: z.string().nullable(),
+    zoom: z.union([z.number(), z.string(), ReferenceNumeric]),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_itemPreviewInfo = z
+  .object({
+    getUrl: z.string().nullish(),
+    postParameters: z.string().nullish(),
+    postUrl: z.string().nullish(),
+  })
+  .passthrough();
+const microsoft_graph_permissionCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_permission),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_thumbnail = z
+  .object({
+    content: z.string().describe('The content stream for the thumbnail.').nullish(),
+    height: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The height of the thumbnail, in pixels.')
+      .nullish(),
+    sourceItemId: z
+      .string()
+      .describe(
+        'The unique identifier of the item that provided the thumbnail. This is only available when a folder thumbnail is requested.'
+      )
+      .nullish(),
+    url: z.string().describe('The URL used to fetch the thumbnail content.').nullish(),
+    width: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The width of the thumbnail, in pixels.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_thumbnailSet = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    large: microsoft_graph_thumbnail.optional(),
+    medium: microsoft_graph_thumbnail.optional(),
+    small: microsoft_graph_thumbnail.optional(),
+    source: microsoft_graph_thumbnail.optional(),
+  })
+  .passthrough();
+const microsoft_graph_thumbnailSetCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_thumbnailSet),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_driveItemVersion = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    lastModifiedBy: microsoft_graph_identitySet.optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time the version was last modified. Read-only.')
+      .nullish(),
+    publication: microsoft_graph_publicationFacet.optional(),
+    content: z.string().describe('The content stream for this version of the item.').nullish(),
+    size: z
+      .number()
+      .describe('Indicates the size of the content stream for this version of the item.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_driveItemVersionCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_driveItemVersion),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_workbookSessionInfo = z
+  .object({
+    id: z.string().describe('ID of the workbook session.').nullish(),
+    persistChanges: z
+      .boolean()
+      .describe('true for persistent session. false for non-persistent session (view mode)')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartFont = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    bold: z.boolean().describe('Indicates whether the fond is bold.').nullish(),
+    color: z
+      .string()
+      .describe(
+        'The HTML color code representation of the text color. For example #FF0000 represents Red.'
+      )
+      .nullish(),
+    italic: z.boolean().describe('Indicates whether the fond is italic.').nullish(),
+    name: z.string().describe("The font name. For example 'Calibri'.").nullish(),
+    size: z
+      .number()
+      .describe('The size of the font. For example,  11. [Simplified from 3 options]')
+      .nullish(),
+    underline: z
+      .string()
+      .describe(
+        'The type of underlining applied to the font. The possible values are: None, Single.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartLineFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    color: z
+      .string()
+      .describe('The HTML color code that represents the color of lines in the chart.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAxisFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+    line: microsoft_graph_workbookChartLineFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartGridlinesFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    line: microsoft_graph_workbookChartLineFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartGridlines = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    visible: z.boolean().describe('Indicates whether the axis gridlines are visible.').optional(),
+    format: microsoft_graph_workbookChartGridlinesFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAxisTitleFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAxisTitle = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    text: z.string().describe('Represents the axis title.').nullish(),
+    visible: z
+      .boolean()
+      .describe('A Boolean that specifies the visibility of an axis title.')
+      .optional(),
+    format: microsoft_graph_workbookChartAxisTitleFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAxis = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    majorUnit: z
+      .unknown()
+      .describe(
+        'Represents the interval between two major tick marks. Can be set to a numeric value or an empty string.  The returned value is always a number.'
+      )
+      .optional(),
+    maximum: z
+      .unknown()
+      .describe(
+        'Represents the maximum value on the value axis.  Can be set to a numeric value or an empty string (for automatic axis values).  The returned value is always a number.'
+      )
+      .optional(),
+    minimum: z
+      .unknown()
+      .describe(
+        'Represents the minimum value on the value axis. Can be set to a numeric value or an empty string (for automatic axis values).  The returned value is always a number.'
+      )
+      .optional(),
+    minorUnit: z
+      .unknown()
+      .describe(
+        "Represents the interval between two minor tick marks. 'Can be set to a numeric value or an empty string (for automatic axis values). The returned value is always a number."
+      )
+      .optional(),
+    format: microsoft_graph_workbookChartAxisFormat.optional(),
+    majorGridlines: microsoft_graph_workbookChartGridlines.optional(),
+    minorGridlines: microsoft_graph_workbookChartGridlines.optional(),
+    title: microsoft_graph_workbookChartAxisTitle.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAxes = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    categoryAxis: microsoft_graph_workbookChartAxis.optional(),
+    seriesAxis: microsoft_graph_workbookChartAxis.optional(),
+    valueAxis: microsoft_graph_workbookChartAxis.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartFill = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_workbookChartDataLabelFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartDataLabels = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    position: z
+      .string()
+      .describe(
+        'DataLabelPosition value that represents the position of the data label. The possible values are: None, Center, InsideEnd, InsideBase, OutsideEnd, Left, Right, Top, Bottom, BestFit, Callout.'
+      )
+      .nullish(),
+    separator: z
+      .string()
+      .describe('String that represents the separator used for the data labels on a chart.')
+      .nullish(),
+    showBubbleSize: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label bubble size is visible.')
+      .nullish(),
+    showCategoryName: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label category name is visible.')
+      .nullish(),
+    showLegendKey: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label legend key is visible.')
+      .nullish(),
+    showPercentage: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label percentage is visible.')
+      .nullish(),
+    showSeriesName: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label series name is visible.')
+      .nullish(),
+    showValue: z
+      .boolean()
+      .describe('Boolean value that represents whether the data label value is visible.')
+      .nullish(),
+    format: microsoft_graph_workbookChartDataLabelFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartAreaFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartLegendFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartLegend = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    overlay: z
+      .boolean()
+      .describe(
+        'Indicates whether the chart legend should overlap with the main body of the chart.'
+      )
+      .nullish(),
+    position: z
+      .string()
+      .describe(
+        'Represents the position of the legend on the chart. The possible values are: Top, Bottom, Left, Right, Corner, Custom.'
+      )
+      .nullish(),
+    visible: z.boolean().describe('Indicates whether the chart legend is visible.').optional(),
+    format: microsoft_graph_workbookChartLegendFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartSeriesFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+    line: microsoft_graph_workbookChartLineFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartPointFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartPoint = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    value: z.unknown().describe('The value of a chart point. Read-only.').optional(),
+    format: microsoft_graph_workbookChartPointFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartSeries = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    name: z.string().describe('The name of a series in a chart.').nullish(),
+    format: microsoft_graph_workbookChartSeriesFormat.optional(),
+    points: z
+      .array(microsoft_graph_workbookChartPoint)
+      .describe('A collection of all points in the series. Read-only.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartTitleFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fill: microsoft_graph_workbookChartFill.optional(),
+    font: microsoft_graph_workbookChartFont.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChartTitle = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    overlay: z
+      .boolean()
+      .describe('Indicates whether the chart title will overlay the chart or not.')
+      .nullish(),
+    text: z.string().describe('The title text of the chart.').nullish(),
+    visible: z.boolean().describe('Indicates whether the chart title is visible.').optional(),
+    format: microsoft_graph_workbookChartTitleFormat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookChart: z.ZodType<microsoft_graph_workbookChart> = z.lazy(() =>
   z
     .object({
       id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      createdDateTime: z
-        .string()
-        .regex(
-          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-        )
-        .datetime({ offset: true })
-        .describe('Read only. Timestamp at which the channel was created.')
-        .nullish(),
-      description: z.string().describe('Optional textual description for the channel.').nullish(),
-      displayName: z
-        .string()
+      height: z
+        .number()
         .describe(
-          'Channel name as it will appear to the user in Microsoft Teams. The maximum length is 50 characters.'
+          'Represents the height, in points, of the chart object. [Simplified from 3 options]'
+        )
+        .nullish(),
+      left: z
+        .number()
+        .describe(
+          'The distance, in points, from the left side of the chart to the worksheet origin. [Simplified from 3 options]'
+        )
+        .nullish(),
+      name: z.string().describe('Represents the name of a chart object.').nullish(),
+      top: z
+        .number()
+        .describe(
+          'Represents the distance, in points, from the top edge of the object to the top of row 1 (on a worksheet) or the top of the chart area (on a chart). [Simplified from 3 options]'
+        )
+        .nullish(),
+      width: z
+        .number()
+        .describe(
+          'Represents the width, in points, of the chart object. [Simplified from 3 options]'
+        )
+        .nullish(),
+      axes: microsoft_graph_workbookChartAxes.optional(),
+      dataLabels: microsoft_graph_workbookChartDataLabels.optional(),
+      format: microsoft_graph_workbookChartAreaFormat.optional(),
+      legend: microsoft_graph_workbookChartLegend.optional(),
+      series: z
+        .array(microsoft_graph_workbookChartSeries)
+        .describe(
+          'Represents either a single series or collection of series in the chart. Read-only.'
         )
         .optional(),
-      email: z
-        .string()
-        .describe('The email address for sending messages to the channel. Read-only.')
-        .nullish(),
-      isArchived: z
+      title: microsoft_graph_workbookChartTitle.optional(),
+      worksheet: microsoft_graph_workbookWorksheet.optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_workbookPivotTable: z.ZodType<microsoft_graph_workbookPivotTable> = z.lazy(
+  () =>
+    z
+      .object({
+        id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+        name: z.string().describe('The name of the pivot table.').nullish(),
+        worksheet: microsoft_graph_workbookWorksheet.optional(),
+      })
+      .passthrough()
+);
+const microsoft_graph_workbookWorksheetProtectionOptions = z
+  .object({
+    allowAutoFilter: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow the use of the autofilter feature is enabled.'
+      )
+      .optional(),
+    allowDeleteColumns: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow deleting columns is enabled.'
+      )
+      .optional(),
+    allowDeleteRows: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow deleting rows is enabled.'
+      )
+      .optional(),
+    allowFormatCells: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow formatting cells is enabled.'
+      )
+      .optional(),
+    allowFormatColumns: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow formatting columns is enabled.'
+      )
+      .optional(),
+    allowFormatRows: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow formatting rows is enabled.'
+      )
+      .optional(),
+    allowInsertColumns: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow inserting columns is enabled.'
+      )
+      .optional(),
+    allowInsertHyperlinks: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow inserting hyperlinks is enabled.'
+      )
+      .optional(),
+    allowInsertRows: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow inserting rows is enabled.'
+      )
+      .optional(),
+    allowPivotTables: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow the use of the pivot table feature is enabled.'
+      )
+      .optional(),
+    allowSort: z
+      .boolean()
+      .describe(
+        'Indicates whether the worksheet protection option to allow the use of the sort feature is enabled.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookWorksheetProtection = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    options: microsoft_graph_workbookWorksheetProtectionOptions.optional(),
+    protected: z
+      .boolean()
+      .describe('Indicates whether the worksheet is protected.  Read-only.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookIcon = z
+  .object({
+    index: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The index of the icon in the given set.')
+      .optional(),
+    set: z
+      .string()
+      .describe(
+        'The set that the icon is part of. The possible values are: Invalid, ThreeArrows, ThreeArrowsGray, ThreeFlags, ThreeTrafficLights1, ThreeTrafficLights2, ThreeSigns, ThreeSymbols, ThreeSymbols2, FourArrows, FourArrowsGray, FourRedToBlack, FourRating, FourTrafficLights, FiveArrows, FiveArrowsGray, FiveRating, FiveQuarters, ThreeStars, ThreeTriangles, FiveBoxes.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookFilterCriteria = z
+  .object({
+    color: z.string().describe('The color applied to the cell.').nullish(),
+    criterion1: z.string().describe('A custom criterion.').nullish(),
+    criterion2: z.string().describe('A custom criterion.').nullish(),
+    dynamicCriteria: z
+      .string()
+      .describe('A dynamic formula specified in a custom filter.')
+      .optional(),
+    filterOn: z.string().describe('Indicates whether a filter is applied to a column.').optional(),
+    icon: microsoft_graph_workbookIcon.optional(),
+    operator: z
+      .string()
+      .describe('An operator in a cell; for example, =, >, <, <=, or <>.')
+      .optional(),
+    values: z.unknown().describe('The values that appear in the cell.').optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookFilter = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    criteria: microsoft_graph_workbookFilterCriteria.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookTableColumn = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    index: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The index of the column within the columns collection of the table. Zero-indexed. Read-only.'
+      )
+      .optional(),
+    name: z.string().describe('The name of the table column.').nullish(),
+    values: z
+      .unknown()
+      .describe(
+        'TRepresents the raw values of the specified range. The data returned could be of type string, number, or a Boolean. Cell that contain an error will return the error string.'
+      )
+      .optional(),
+    filter: microsoft_graph_workbookFilter.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookTableRow = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    index: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The index of the row within the rows collection of the table. Zero-based. Read-only.'
+      )
+      .optional(),
+    values: z
+      .unknown()
+      .describe(
+        'The raw values of the specified range. The data returned could be of type string, number, or a Boolean. Any cell that contain an error will return the error string.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookSortField = z
+  .object({
+    ascending: z
+      .boolean()
+      .describe('Represents whether the sorting is done in an ascending fashion.')
+      .optional(),
+    color: z
+      .string()
+      .describe(
+        'Represents the color that is the target of the condition if the sorting is on font or cell color.'
+      )
+      .nullish(),
+    dataOption: z
+      .string()
+      .describe(
+        'Represents additional sorting options for this field. The possible values are: Normal, TextAsNumber.'
+      )
+      .optional(),
+    icon: microsoft_graph_workbookIcon.optional(),
+    key: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'Represents the column (or row, depending on the sort orientation) that the condition is on. Represented as an offset from the first column (or row).'
+      )
+      .optional(),
+    sortOn: z
+      .string()
+      .describe(
+        'Represents the type of sorting of this condition. The possible values are: Value, CellColor, FontColor, Icon.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookTableSort = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    fields: z
+      .array(microsoft_graph_workbookSortField)
+      .describe('The list of the current conditions last used to sort the table. Read-only.')
+      .optional(),
+    matchCase: z
+      .boolean()
+      .describe('Indicates whether the casing impacted the last sort of the table. Read-only.')
+      .optional(),
+    method: z
+      .string()
+      .describe(
+        'The Chinese character ordering method last used to sort the table. The possible values are: PinYin, StrokeCount. Read-only.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookTable: z.ZodType<microsoft_graph_workbookTable> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      highlightFirstColumn: z
         .boolean()
-        .describe('Indicates whether the channel is archived. Read-only.')
-        .nullish(),
-      isFavoriteByDefault: z
+        .describe('Indicates whether the first column contains special formatting.')
+        .optional(),
+      highlightLastColumn: z
         .boolean()
-        .describe(
-          'Indicates whether the channel should be marked as recommended for all members of the team to show in their channel list. Note: All recommended channels automatically show in the channels list for education and frontline worker users. The property can only be set programmatically via the Create team method. The default value is false.'
-        )
-        .nullish(),
-      membershipType: microsoft_graph_channelMembershipType.optional(),
-      summary: microsoft_graph_channelSummary.optional(),
-      tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
-      webUrl: z
+        .describe('Indicates whether the last column contains special formatting.')
+        .optional(),
+      legacyId: z
         .string()
         .describe(
-          'A hyperlink that will go to the channel in Microsoft Teams. This is the URL that you get when you right-click a channel in Microsoft Teams and select Get link to channel. This URL should be treated as an opaque blob, and not parsed. Read-only.'
+          "A legacy identifier used in older Excel clients. The value of the identifier remains the same even when the table is renamed. This property should be interpreted as an opaque string value and shouldn't be parsed to any other type. Read-only."
         )
         .nullish(),
-      allMembers: z
-        .array(microsoft_graph_conversationMember)
+      name: z.string().describe('The name of the table.').nullish(),
+      showBandedColumns: z
+        .boolean()
         .describe(
-          'A collection of membership records associated with the channel, including both direct and indirect members of shared channels.'
+          'Indicates whether the columns show banded formatting in which odd columns are highlighted differently from even ones to make reading the table easier.'
         )
         .optional(),
-      filesFolder: microsoft_graph_driveItem
-        .describe('[Note: Simplified from 45 properties to 25 most common ones]')
-        .optional(),
-      members: z
-        .array(microsoft_graph_conversationMember)
-        .describe('A collection of membership records associated with the channel.')
-        .optional(),
-      messages: z
-        .array(microsoft_graph_chatMessage)
+      showBandedRows: z
+        .boolean()
         .describe(
-          'A collection of all the messages in the channel. A navigation property. Nullable.'
+          'Indicates whether the rows show banded formatting in which odd rows are highlighted differently from even ones to make reading the table easier.'
         )
         .optional(),
-      sharedWithTeams: z
-        .array(microsoft_graph_sharedWithChannelTeamInfo)
-        .describe('A collection of teams with which a channel is shared.')
+      showFilterButton: z
+        .boolean()
+        .describe(
+          'Indicates whether the filter buttons are visible at the top of each column header. Setting this is only allowed if the table contains a header row.'
+        )
         .optional(),
-      tabs: z
-        .array(microsoft_graph_teamsTab)
-        .describe('A collection of all the tabs in the channel. A navigation property.')
+      showHeaders: z
+        .boolean()
+        .describe(
+          'Indicates whether the header row is visible or not. This value can be set to show or remove the header row.'
+        )
+        .optional(),
+      showTotals: z
+        .boolean()
+        .describe(
+          'Indicates whether the total row is visible or not. This value can be set to show or remove the total row.'
+        )
+        .optional(),
+      style: z
+        .string()
+        .describe(
+          'A constant value that represents the Table style. The possible values are: TableStyleLight1 through TableStyleLight21, TableStyleMedium1 through TableStyleMedium28, TableStyleStyleDark1 through TableStyleStyleDark11. A custom user-defined style present in the workbook can also be specified.'
+        )
+        .nullish(),
+      columns: z
+        .array(microsoft_graph_workbookTableColumn)
+        .describe('The list of all the columns in the table. Read-only.')
+        .optional(),
+      rows: z
+        .array(microsoft_graph_workbookTableRow)
+        .describe('The list of all the rows in the table. Read-only.')
+        .optional(),
+      sort: microsoft_graph_workbookTableSort.optional(),
+      worksheet: microsoft_graph_workbookWorksheet.optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_workbookWorksheet: z.ZodType<microsoft_graph_workbookWorksheet> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      name: z.string().describe('The display name of the worksheet.').nullish(),
+      position: z
+        .number()
+        .gte(-2147483648)
+        .lte(2147483647)
+        .describe('The zero-based position of the worksheet within the workbook.')
+        .optional(),
+      visibility: z
+        .string()
+        .describe(
+          'The visibility of the worksheet. The possible values are: Visible, Hidden, VeryHidden.'
+        )
+        .optional(),
+      charts: z
+        .array(microsoft_graph_workbookChart)
+        .describe('The list of charts that are part of the worksheet. Read-only.')
+        .optional(),
+      names: z
+        .array(microsoft_graph_workbookNamedItem)
+        .describe('The list of names that are associated with the worksheet. Read-only.')
+        .optional(),
+      pivotTables: z
+        .array(microsoft_graph_workbookPivotTable)
+        .describe('The list of piot tables that are part of the worksheet.')
+        .optional(),
+      protection: microsoft_graph_workbookWorksheetProtection.optional(),
+      tables: z
+        .array(microsoft_graph_workbookTable)
+        .describe('The list of tables that are part of the worksheet. Read-only.')
         .optional(),
     })
     .passthrough()
 );
+const microsoft_graph_workbookNamedItem: z.ZodType<microsoft_graph_workbookNamedItem> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      comment: z.string().describe('The comment associated with this name.').nullish(),
+      name: z.string().describe('The name of the object. Read-only.').nullish(),
+      scope: z
+        .string()
+        .describe(
+          'Indicates whether the name is scoped to the workbook or to a specific worksheet. Read-only.'
+        )
+        .optional(),
+      type: z
+        .string()
+        .describe(
+          'The type of reference is associated with the name. The possible values are: String, Integer, Double, Boolean, Range. Read-only.'
+        )
+        .nullish(),
+      value: z
+        .unknown()
+        .describe(
+          'The formula that the name is defined to refer to. For example, =Sheet14!$B$2:$H$12 and =4.75. Read-only.'
+        )
+        .optional(),
+      visible: z.boolean().describe('Indicates whether the object is visible.').optional(),
+      worksheet: microsoft_graph_workbookWorksheet.optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_workbookNamedItemCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_workbookNamedItem),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_workbookWorksheetCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_workbookWorksheet),
+  })
+  .partial()
+  .passthrough();
+const create_excel_chart_Body = z
+  .object({ type: z.string(), sourceData: z.unknown(), seriesBy: z.string() })
+  .partial()
+  .passthrough();
+const microsoft_graph_workbookRangeBorder = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    color: z
+      .string()
+      .describe(
+        "The HTML color code that represents the color of the border line. Can either be of the form #RRGGBB, for example 'FFA500', or a named HTML color, for example 'orange'."
+      )
+      .nullish(),
+    sideIndex: z
+      .string()
+      .describe(
+        'Indicates the specific side of the border. The possible values are: EdgeTop, EdgeBottom, EdgeLeft, EdgeRight, InsideVertical, InsideHorizontal, DiagonalDown, DiagonalUp. Read-only.'
+      )
+      .nullish(),
+    style: z
+      .string()
+      .describe(
+        'Indicates the line style for the border. The possible values are: None, Continuous, Dash, DashDot, DashDotDot, Dot, Double, SlantDashDot.'
+      )
+      .nullish(),
+    weight: z
+      .string()
+      .describe(
+        'The weight of the border around a range. The possible values are: Hairline, Thin, Medium, Thick.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookRangeFill = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    color: z
+      .string()
+      .describe(
+        "HTML color code representing the color of the border line. Can either be of the form #RRGGBB, for example 'FFA500', or be a named HTML color, for example 'orange'."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookRangeFont = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    bold: z.boolean().describe('Inidicates whether the font is bold.').nullish(),
+    color: z
+      .string()
+      .describe(
+        'The HTML color code representation of the text color. For example, #FF0000 represents the color red.'
+      )
+      .nullish(),
+    italic: z.boolean().describe('Inidicates whether the font is italic.').nullish(),
+    name: z.string().describe("The font name. For example, 'Calibri'.").nullish(),
+    size: z.number().describe('The font size. [Simplified from 3 options]').nullish(),
+    underline: z
+      .string()
+      .describe(
+        'The type of underlining applied to the font. The possible values are: None, Single, Double, SingleAccountant, DoubleAccountant.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookFormatProtection = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    formulaHidden: z
+      .boolean()
+      .describe(
+        "Indicates whether Excel hides the formula for the cells in the range. A null value indicates that the entire range doesn't have uniform formula hidden setting."
+      )
+      .nullish(),
+    locked: z
+      .boolean()
+      .describe(
+        "Indicates whether Excel locks the cells in the object. A null value indicates that the entire range doesn't have uniform lock setting."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workbookRangeFormat = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    columnWidth: z
+      .number()
+      .describe(
+        "The width of all columns within the range. If the column widths aren't uniform, null will be returned. [Simplified from 3 options]"
+      )
+      .nullish(),
+    horizontalAlignment: z
+      .string()
+      .describe(
+        'The horizontal alignment for the specified object. The possible values are: General, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed.'
+      )
+      .nullish(),
+    rowHeight: z
+      .number()
+      .describe(
+        "The height of all rows in the range. If the row heights aren't uniform null will be returned. [Simplified from 3 options]"
+      )
+      .nullish(),
+    verticalAlignment: z
+      .string()
+      .describe(
+        'The vertical alignment for the specified object. The possible values are: Top, Center, Bottom, Justify, Distributed.'
+      )
+      .nullish(),
+    wrapText: z
+      .boolean()
+      .describe(
+        "Indicates whether Excel wraps the text in the object. A null value indicates that the entire range doesn't have a uniform wrap setting."
+      )
+      .nullish(),
+    borders: z
+      .array(microsoft_graph_workbookRangeBorder)
+      .describe('Collection of border objects that apply to the overall range selected Read-only.')
+      .optional(),
+    fill: microsoft_graph_workbookRangeFill.optional(),
+    font: microsoft_graph_workbookRangeFont.optional(),
+    protection: microsoft_graph_workbookFormatProtection.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookRangeSort = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_workbookRange = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    address: z
+      .string()
+      .describe(
+        'Represents the range reference in A1-style. Address value contains the Sheet reference (for example, Sheet1!A1:B4). Read-only.'
+      )
+      .nullish(),
+    addressLocal: z
+      .string()
+      .describe(
+        'Represents range reference for the specified range in the language of the user. Read-only.'
+      )
+      .nullish(),
+    cellCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Number of cells in the range. Read-only.')
+      .optional(),
+    columnCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Represents the total number of columns in the range. Read-only.')
+      .optional(),
+    columnHidden: z
+      .boolean()
+      .describe('Indicates whether all columns of the current range are hidden.')
+      .nullish(),
+    columnIndex: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'Represents the column number of the first cell in the range. Zero-indexed. Read-only.'
+      )
+      .optional(),
+    formulas: z.unknown().describe('Represents the formula in A1-style notation.').optional(),
+    formulasLocal: z
+      .unknown()
+      .describe(
+        "Represents the formula in A1-style notation, in the user's language and number-formatting locale.  For example, the English '=SUM(A1, 1.5)' formula would become '=SUMME(A1; 1,5)' in German."
+      )
+      .optional(),
+    formulasR1C1: z.unknown().describe('Represents the formula in R1C1-style notation.').optional(),
+    hidden: z
+      .boolean()
+      .describe('Represents if all cells of the current range are hidden. Read-only.')
+      .nullish(),
+    numberFormat: z
+      .unknown()
+      .describe("Represents Excel's number format code for the given cell.")
+      .optional(),
+    rowCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Returns the total number of rows in the range. Read-only.')
+      .optional(),
+    rowHidden: z
+      .boolean()
+      .describe('Indicates whether all rows of the current range are hidden.')
+      .nullish(),
+    rowIndex: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Returns the row number of the first cell in the range. Zero-indexed. Read-only.')
+      .optional(),
+    text: z
+      .unknown()
+      .describe(
+        "Text values of the specified range. The Text value doesn't depend on the cell width. The # sign substitution that happens in Excel UI doesn't affect the text value returned by the API. Read-only."
+      )
+      .optional(),
+    values: z
+      .unknown()
+      .describe(
+        'Represents the raw values of the specified range. The data returned can be of type string, number, or a Boolean. Cell that contains an error returns the error string.'
+      )
+      .optional(),
+    valueTypes: z
+      .unknown()
+      .describe(
+        'Represents the type of data of each cell. The possible values are: Unknown, Empty, String, Integer, Double, Boolean, Error. Read-only.'
+      )
+      .optional(),
+    format: microsoft_graph_workbookRangeFormat.optional(),
+    sort: microsoft_graph_workbookRangeSort.optional(),
+    worksheet: microsoft_graph_workbookWorksheet.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workbookTableCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_workbookTable),
+  })
+  .partial()
+  .passthrough();
 const microsoft_graph_assignedLabel = z
   .object({
     displayName: z.string().describe('The display name of the label. Read-only.').nullish(),
@@ -5859,421 +5160,294 @@ const microsoft_graph_group = z
   })
   .passthrough()
   .passthrough();
-const microsoft_graph_operationError = z
-  .object({
-    code: z.string().describe('Operation error code.').nullish(),
-    message: z.string().describe('Operation error message.').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_teamsAsyncOperationType = z.enum([
-  'invalid',
-  'cloneTeam',
-  'archiveTeam',
-  'unarchiveTeam',
-  'createTeam',
-  'unknownFutureValue',
-  'teamifyGroup',
-  'createChannel',
-  'archiveChannel',
-  'unarchiveChannel',
-]);
-const microsoft_graph_teamsAsyncOperationStatus = z.enum([
-  'invalid',
-  'notStarted',
-  'inProgress',
-  'succeeded',
-  'failed',
-  'unknownFutureValue',
-]);
-const microsoft_graph_teamsAsyncOperation = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    attemptsCount: z
-      .number()
-      .gte(-2147483648)
-      .lte(2147483647)
-      .describe(
-        'Number of times the operation was attempted before being marked successful or failed.'
-      )
-      .optional(),
-    createdDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Time when the operation was created.')
-      .optional(),
-    error: microsoft_graph_operationError.optional(),
-    lastActionDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Time when the async operation was last updated.')
-      .optional(),
-    operationType: microsoft_graph_teamsAsyncOperationType.optional(),
-    status: microsoft_graph_teamsAsyncOperationStatus.optional(),
-    targetResourceId: z
-      .string()
-      .describe(
-        "The ID of the object that's created or modified as result of this async operation, typically a team."
-      )
-      .nullish(),
-    targetResourceLocation: z
-      .string()
-      .describe(
-        "The location of the object that's created or modified as result of this async operation. This URL should be treated as an opaque value and not parsed into its component paths."
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_team: z.ZodType<microsoft_graph_team> = z.lazy(() =>
-  z
-    .object({
-      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      displayName: z.string().describe('The name of the team.').nullish(),
-      description: z
-        .string()
-        .describe('An optional description for the team. Maximum length: 1,024 characters.')
-        .nullish(),
-      createdDateTime: z
-        .string()
-        .regex(
-          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-        )
-        .datetime({ offset: true })
-        .describe('Timestamp at which the team was created.')
-        .nullish(),
-      classification: z
-        .string()
-        .describe(
-          "An optional label. Typically describes the data or business sensitivity of the team. Must match one of a preconfigured set in the tenant's directory."
-        )
-        .nullish(),
-      firstChannelName: z
-        .string()
-        .describe(
-          "The name of the first channel in the team. This is an optional property, only used during team creation and isn't returned in methods to get and list teams."
-        )
-        .nullish(),
-      funSettings: microsoft_graph_teamFunSettings.optional(),
-      guestSettings: microsoft_graph_teamGuestSettings.optional(),
-      internalId: z
-        .string()
-        .describe(
-          'A unique ID for the team that was used in a few places such as the audit log/Office 365 Management Activity API.'
-        )
-        .nullish(),
-      isArchived: z.boolean().describe('Whether this team is in read-only mode.').nullish(),
-      memberSettings: microsoft_graph_teamMemberSettings.optional(),
-      messagingSettings: microsoft_graph_teamMessagingSettings.optional(),
-      specialization: microsoft_graph_teamSpecialization.optional(),
-      summary: microsoft_graph_teamSummary.optional(),
-      tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
-      visibility: microsoft_graph_teamVisibilityType.optional(),
-      webUrl: z
-        .string()
-        .describe(
-          'A hyperlink that goes to the team in the Microsoft Teams client. You get this URL when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be treated as an opaque blob, and not parsed.'
-        )
-        .nullish(),
-      allChannels: z
-        .array(microsoft_graph_channel)
-        .describe('List of channels either hosted in or shared with the team (incoming channels).')
-        .optional(),
-      channels: z
-        .array(microsoft_graph_channel)
-        .describe('The collection of channels and messages associated with the team.')
-        .optional(),
-      group: microsoft_graph_group
-        .describe('[Note: Simplified from 73 properties to 25 most common ones]')
-        .optional(),
-      incomingChannels: z
-        .array(microsoft_graph_channel)
-        .describe('List of channels shared with the team.')
-        .optional(),
-      installedApps: z
-        .array(microsoft_graph_teamsAppInstallation)
-        .describe('The apps installed in this team.')
-        .optional(),
-      members: z
-        .array(microsoft_graph_conversationMember)
-        .describe('Members and owners of the team.')
-        .optional(),
-      operations: z
-        .array(microsoft_graph_teamsAsyncOperation)
-        .describe('The async operations that ran or are running on this team.')
-        .optional(),
-      permissionGrants: z
-        .array(microsoft_graph_resourceSpecificPermissionGrant)
-        .describe('A collection of permissions granted to apps to access the team.')
-        .optional(),
-    })
-    .passthrough()
-    .passthrough()
-);
-const microsoft_graph_teamCollectionResponse = z
+const microsoft_graph_groupCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
     '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_team),
+    value: z.array(microsoft_graph_group),
   })
   .partial()
   .passthrough();
-const microsoft_graph_messageRuleActions = z
-  .object({
-    assignCategories: z
-      .array(z.string().nullable())
-      .describe('A list of categories to be assigned to a message.')
-      .optional(),
-    copyToFolder: z
-      .string()
-      .describe('The ID of a folder that a message is to be copied to.')
-      .nullish(),
-    delete: z
-      .boolean()
-      .describe('Indicates whether a message should be moved to the Deleted Items folder.')
-      .nullish(),
-    forwardAsAttachmentTo: z
-      .array(microsoft_graph_recipient)
-      .describe(
-        'The email addresses of the recipients to which a message should be forwarded as an attachment.'
-      )
-      .optional(),
-    forwardTo: z
-      .array(microsoft_graph_recipient)
-      .describe('The email addresses of the recipients to which a message should be forwarded.')
-      .optional(),
-    markAsRead: z
-      .boolean()
-      .describe('Indicates whether a message should be marked as read.')
-      .nullish(),
-    markImportance: microsoft_graph_importance.optional(),
-    moveToFolder: z
-      .string()
-      .describe('The ID of the folder that a message will be moved to.')
-      .nullish(),
-    permanentDelete: z
-      .boolean()
-      .describe(
-        'Indicates whether a message should be permanently deleted and not saved to the Deleted Items folder.'
-      )
-      .nullish(),
-    redirectTo: z
-      .array(microsoft_graph_recipient)
-      .describe('The email addresses to which a message should be redirected.')
-      .optional(),
-    stopProcessingRules: z
-      .boolean()
-      .describe('Indicates whether subsequent rules should be evaluated.')
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_messageActionFlag = z.enum([
-  'any',
-  'call',
-  'doNotForward',
-  'followUp',
-  'fyi',
-  'forward',
-  'noResponseNecessary',
-  'read',
-  'reply',
-  'replyToAll',
-  'review',
+const microsoft_graph_eventType = z.enum([
+  'singleInstance',
+  'occurrence',
+  'exception',
+  'seriesMaster',
 ]);
-const microsoft_graph_messageRulePredicates = z
-  .object({
-    sensitivity: microsoft_graph_sensitivity.optional(),
-    importance: microsoft_graph_importance.optional(),
-    bodyContains: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the strings that should appear in the body of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    bodyOrSubjectContains: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the strings that should appear in the body or subject of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    categories: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the categories that an incoming message should be labeled with in order for the condition or exception to apply.'
-      )
-      .optional(),
-    fromAddresses: z
-      .array(microsoft_graph_recipient)
-      .describe(
-        'Represents the specific sender email addresses of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    hasAttachments: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must have attachments in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    headerContains: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the strings that appear in the headers of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    isApprovalRequest: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be an approval request in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isAutomaticForward: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be automatically forwarded in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isAutomaticReply: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be an auto reply in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isEncrypted: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be encrypted in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isMeetingRequest: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be a meeting request in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isMeetingResponse: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be a meeting response in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isNonDeliveryReport: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be a non-delivery report in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isPermissionControlled: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be permission controlled (RMS-protected) in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isReadReceipt: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be a read receipt in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isSigned: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be S/MIME-signed in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    isVoicemail: z
-      .boolean()
-      .describe(
-        'Indicates whether an incoming message must be a voice mail in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    messageActionFlag: microsoft_graph_messageActionFlag.optional(),
-    notSentToMe: z
-      .boolean()
-      .describe(
-        'Indicates whether the owner of the mailbox must not be a recipient of an incoming message in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    recipientContains: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the strings that appear in either the toRecipients or ccRecipients properties of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    senderContains: z
-      .array(z.string().nullable())
-      .describe(
-        'Represents the strings that appear in the from property of an incoming message in order for the condition or exception to apply.'
-      )
-      .optional(),
-    sentCcMe: z
-      .boolean()
-      .describe(
-        'Indicates whether the owner of the mailbox must be in the ccRecipients property of an incoming message in order for the condition or exception to apply.'
-      )
-      .nullish(),
-    sentOnlyToMe: z
-      .boolean()
-      .describe(
-        'Indicates whether the owner of the mailbox must be the only recipient in an incoming message in order for the condition or exception to apply.'
-      )
-      .nullish(),
-  })
-  .passthrough()
-  .passthrough();
-const microsoft_graph_messageRule = z
+const microsoft_graph_attachment = z
   .object({
     id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    actions: microsoft_graph_messageRuleActions.optional(),
-    conditions: microsoft_graph_messageRulePredicates
-      .describe('[Note: Simplified from 30 properties to 25 most common ones]')
+    contentType: z.string().describe('The MIME type.').nullish(),
+    isInline: z
+      .boolean()
+      .describe('true if the attachment is an inline attachment; otherwise, false.')
       .optional(),
-    displayName: z.string().describe('The display name of the rule.').nullish(),
-    exceptions: microsoft_graph_messageRulePredicates
-      .describe('[Note: Simplified from 30 properties to 25 most common ones]')
-      .optional(),
-    hasError: z
-      .boolean()
-      .describe('Indicates whether the rule is in an error condition. Read-only.')
-      .nullish(),
-    isEnabled: z
-      .boolean()
-      .describe('Indicates whether the rule is enabled to be applied to messages.')
-      .nullish(),
-    isReadOnly: z
-      .boolean()
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
       .describe(
-        'Indicates if the rule is read-only and cannot be modified or deleted by the rules REST API.'
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
       )
       .nullish(),
-    sequence: z
+    name: z.string().describe("The attachment's file name.").nullish(),
+    size: z
       .number()
       .gte(-2147483648)
       .lte(2147483647)
-      .describe('Indicates the order in which the rule is executed, among other rules.')
+      .describe('The length of the attachment in bytes.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_singleValueLegacyExtendedProperty = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    value: z.string().describe('A property value.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_multiValueLegacyExtendedProperty = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    value: z.array(z.string().nullable()).describe('A collection of property values.').optional(),
+  })
+  .passthrough();
+const microsoft_graph_dateTimeTimeZone = z
+  .object({
+    dateTime: z
+      .string()
+      .describe(
+        'A single point of time in a combined date and time representation ({date}T{time}; for example, 2017-08-29T04:00:00.0000000).'
+      )
+      .optional(),
+    timeZone: z
+      .string()
+      .describe(
+        "Represents a time zone, for example, 'Pacific Standard Time'. See below for more possible values."
+      )
       .nullish(),
   })
   .passthrough();
-const microsoft_graph_followupFlagStatus = z.enum(['notFlagged', 'complete', 'flagged']);
-const microsoft_graph_followupFlag = z
+const microsoft_graph_physicalAddress = z
   .object({
-    completedDateTime: microsoft_graph_dateTimeTimeZone.optional(),
-    dueDateTime: microsoft_graph_dateTimeTimeZone.optional(),
-    flagStatus: microsoft_graph_followupFlagStatus.optional(),
-    startDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    city: z.string().describe('The city.').nullish(),
+    countryOrRegion: z
+      .string()
+      .describe(
+        "The country or region. It's a free-format string value, for example, 'United States'."
+      )
+      .nullish(),
+    postalCode: z.string().describe('The postal code.').nullish(),
+    state: z.string().describe('The state.').nullish(),
+    street: z.string().describe('The street.').nullish(),
   })
   .passthrough();
-const microsoft_graph_inferenceClassificationType = z.enum(['focused', 'other']);
-const microsoft_graph_internetMessageHeader = z
+const microsoft_graph_outlookGeoCoordinates = z
   .object({
-    name: z.string().describe('Represents the key in a key-value pair.').nullish(),
-    value: z.string().describe('The value in a key-value pair.').nullish(),
+    accuracy: z
+      .number()
+      .describe(
+        'The accuracy of the latitude and longitude. As an example, the accuracy can be measured in meters, such as the latitude and longitude are accurate to within 50 meters. [Simplified from 3 options]'
+      )
+      .nullish(),
+    altitude: z
+      .number()
+      .describe('The altitude of the location. [Simplified from 3 options]')
+      .nullish(),
+    altitudeAccuracy: z
+      .number()
+      .describe('The accuracy of the altitude. [Simplified from 3 options]')
+      .nullish(),
+    latitude: z
+      .number()
+      .describe('The latitude of the location. [Simplified from 3 options]')
+      .nullish(),
+    longitude: z
+      .number()
+      .describe('The longitude of the location. [Simplified from 3 options]')
+      .nullish(),
   })
   .passthrough();
-const microsoft_graph_message = z
+const microsoft_graph_locationType = z.enum([
+  'default',
+  'conferenceRoom',
+  'homeAddress',
+  'businessAddress',
+  'geoCoordinates',
+  'streetAddress',
+  'hotel',
+  'restaurant',
+  'localBusiness',
+  'postalAddress',
+]);
+const microsoft_graph_locationUniqueIdType = z.enum([
+  'unknown',
+  'locationStore',
+  'directory',
+  'private',
+  'bing',
+]);
+const microsoft_graph_location = z
+  .object({
+    address: microsoft_graph_physicalAddress.optional(),
+    coordinates: microsoft_graph_outlookGeoCoordinates.optional(),
+    displayName: z.string().describe('The name associated with the location.').nullish(),
+    locationEmailAddress: z.string().describe('Optional email address of the location.').nullish(),
+    locationType: microsoft_graph_locationType.optional(),
+    locationUri: z.string().describe('Optional URI representing the location.').nullish(),
+    uniqueId: z.string().describe('For internal use only.').nullish(),
+    uniqueIdType: microsoft_graph_locationUniqueIdType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_freeBusyStatus = z.enum([
+  'unknown',
+  'free',
+  'tentative',
+  'busy',
+  'oof',
+  'workingElsewhere',
+]);
+const microsoft_graph_sensitivity = z.enum(['normal', 'personal', 'private', 'confidential']);
+const microsoft_graph_importance = z.enum(['low', 'normal', 'high']);
+const microsoft_graph_emailAddress = z
+  .object({
+    address: z.string().describe('The email address of the person or entity.').nullish(),
+    name: z.string().describe('The display name of the person or entity.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_attendeeType = z.enum(['required', 'optional', 'resource']);
+const microsoft_graph_timeSlot = z
+  .object({
+    end: microsoft_graph_dateTimeTimeZone.optional(),
+    start: microsoft_graph_dateTimeTimeZone.optional(),
+  })
+  .passthrough();
+const microsoft_graph_responseType = z.enum([
+  'none',
+  'organizer',
+  'tentativelyAccepted',
+  'accepted',
+  'declined',
+  'notResponded',
+]);
+const microsoft_graph_responseStatus = z
+  .object({
+    response: microsoft_graph_responseType.optional(),
+    time: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date and time when the response was returned. It uses ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_attendee = z
+  .object({
+    emailAddress: microsoft_graph_emailAddress.optional(),
+    type: microsoft_graph_attendeeType.optional(),
+    proposedNewTime: microsoft_graph_timeSlot.optional(),
+    status: microsoft_graph_responseStatus.optional(),
+  })
+  .passthrough();
+const microsoft_graph_dayOfWeek = z.enum([
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+]);
+const microsoft_graph_weekIndex = z.enum(['first', 'second', 'third', 'fourth', 'last']);
+const microsoft_graph_recurrencePatternType = z.enum([
+  'daily',
+  'weekly',
+  'absoluteMonthly',
+  'relativeMonthly',
+  'absoluteYearly',
+  'relativeYearly',
+]);
+const microsoft_graph_recurrencePattern = z
+  .object({
+    dayOfMonth: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The day of the month on which the event occurs. Required if type is absoluteMonthly or absoluteYearly.'
+      )
+      .optional(),
+    daysOfWeek: z
+      .array(z.union([microsoft_graph_dayOfWeek, z.object({}).partial().passthrough()]))
+      .describe(
+        'A collection of the days of the week on which the event occurs. The possible values are: sunday, monday, tuesday, wednesday, thursday, friday, saturday. If type is relativeMonthly or relativeYearly, and daysOfWeek specifies more than one day, the event falls on the first day that satisfies the pattern.  Required if type is weekly, relativeMonthly, or relativeYearly.'
+      )
+      .optional(),
+    firstDayOfWeek: microsoft_graph_dayOfWeek.optional(),
+    index: microsoft_graph_weekIndex.optional(),
+    interval: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The number of units between occurrences, where units can be in days, weeks, months, or years, depending on the type. Required.'
+      )
+      .optional(),
+    month: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The month in which the event occurs.  This is a number from 1 to 12.')
+      .optional(),
+    type: microsoft_graph_recurrencePatternType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_recurrenceRangeType = z.enum(['endDate', 'noEnd', 'numbered']);
+const microsoft_graph_recurrenceRange = z
+  .object({
+    endDate: z
+      .string()
+      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
+      .describe(
+        'The date to stop applying the recurrence pattern. Depending on the recurrence pattern of the event, the last occurrence of the meeting may not be this date. Required if type is endDate.'
+      )
+      .nullish(),
+    numberOfOccurrences: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The number of times to repeat the event. Required and must be positive if type is numbered.'
+      )
+      .optional(),
+    recurrenceTimeZone: z
+      .string()
+      .describe(
+        'Time zone for the startDate and endDate properties. Optional. If not specified, the time zone of the event is used.'
+      )
+      .nullish(),
+    startDate: z
+      .string()
+      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
+      .describe(
+        'The date to start applying the recurrence pattern. The first occurrence of the meeting may be this date or later, depending on the recurrence pattern of the event. Must be the same value as the start property of the recurring event. Required.'
+      )
+      .nullish(),
+    type: microsoft_graph_recurrenceRangeType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_patternedRecurrence = z
+  .object({
+    pattern: microsoft_graph_recurrencePattern.optional(),
+    range: microsoft_graph_recurrenceRange.optional(),
+  })
+  .passthrough();
+const microsoft_graph_event = z
   .object({
     id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
     createdDateTime: z
@@ -6296,30 +5470,72 @@ const microsoft_graph_message = z
         'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
       )
       .nullish(),
+    type: microsoft_graph_eventType.optional(),
     body: microsoft_graph_itemBody.optional(),
-    subject: z.string().describe('The subject of the message.').nullish(),
+    subject: z.string().describe("The text of the event's subject line.").nullish(),
     attachments: z
       .array(microsoft_graph_attachment)
-      .describe('The fileAttachment and itemAttachment attachments for the message.')
+      .describe(
+        'The collection of FileAttachment, ItemAttachment, and referenceAttachment attachments for the event. Navigation property. Read-only. Nullable.'
+      )
       .optional(),
     singleValueExtendedProperties: z
       .array(microsoft_graph_singleValueLegacyExtendedProperty)
       .describe(
-        'The collection of single-value extended properties defined for the message. Nullable.'
+        'The collection of single-value extended properties defined for the event. Read-only. Nullable.'
       )
       .optional(),
     multiValueExtendedProperties: z
       .array(microsoft_graph_multiValueLegacyExtendedProperty)
       .describe(
-        'The collection of multi-value extended properties defined for the message. Nullable.'
+        'The collection of multi-value extended properties defined for the event. Read-only. Nullable.'
       )
       .optional(),
+    start: microsoft_graph_dateTimeTimeZone.optional(),
+    end: microsoft_graph_dateTimeTimeZone.optional(),
+    location: microsoft_graph_location.optional(),
+    showAs: microsoft_graph_freeBusyStatus.optional(),
+    sensitivity: microsoft_graph_sensitivity.optional(),
+    isAllDay: z
+      .boolean()
+      .describe(
+        "Set to true if the event lasts all day. If true, regardless of whether it's a single-day or multi-day event, start, and endtime must be set to midnight and be in the same time zone."
+      )
+      .nullish(),
     importance: microsoft_graph_importance.optional(),
-    from: microsoft_graph_recipient.optional(),
-    toRecipients: z
-      .array(microsoft_graph_recipient)
-      .describe('The To: recipients for the message.')
+    isOnlineMeeting: z
+      .boolean()
+      .describe(
+        'True if this event has online meeting information (that is, onlineMeeting points to an onlineMeetingInfo resource), false otherwise. Default is false (onlineMeeting is null). Optional.  After you set isOnlineMeeting to true, Microsoft Graph initializes onlineMeeting. Subsequently, Outlook ignores any further changes to isOnlineMeeting, and the meeting remains available online.'
+      )
+      .nullish(),
+    isReminderOn: z
+      .boolean()
+      .describe('Set to true if an alert is set to remind the user of the event.')
+      .nullish(),
+    attendees: z
+      .array(microsoft_graph_attendee)
+      .describe('The collection of attendees for the event.')
       .optional(),
+    recurrence: microsoft_graph_patternedRecurrence.optional(),
+    reminderMinutesBeforeStart: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The number of minutes before the event start time that the reminder alert occurs.')
+      .nullish(),
+    allowNewTimeProposals: z
+      .boolean()
+      .describe(
+        'true if the meeting organizer allows invitees to propose a new time when responding; otherwise, false. Optional. The default is true.'
+      )
+      .nullish(),
+    responseRequested: z
+      .boolean()
+      .describe(
+        'Default is true, which represents the organizer would like an invitee to send a response to the event.'
+      )
+      .nullish(),
     categories: z
       .array(z.string().nullable())
       .describe('The categories associated with the item')
@@ -6330,236 +5546,236 @@ const microsoft_graph_message = z
         'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
       )
       .nullish(),
-    bccRecipients: z
-      .array(microsoft_graph_recipient)
-      .describe('The Bcc: recipients for the message.')
-      .optional(),
-    bodyPreview: z
-      .string()
-      .describe('The first 255 characters of the message body. It is in text format.')
-      .nullish(),
-    ccRecipients: z
-      .array(microsoft_graph_recipient)
-      .describe('The Cc: recipients for the message.')
-      .optional(),
-    conversationId: z
-      .string()
-      .describe('The ID of the conversation the email belongs to.')
-      .nullish(),
-    conversationIndex: z
-      .string()
-      .describe('Indicates the position of the message within the conversation.')
-      .nullish(),
-    flag: microsoft_graph_followupFlag.optional(),
-    hasAttachments: z
-      .boolean()
-      .describe(
-        "Indicates whether the message has attachments. This property doesn't include inline attachments, so if a message contains only inline attachments, this property is false. To verify the existence of inline attachments, parse the body property to look for a src attribute, such as <IMG src='cid:image001.jpg@01D26CD8.6C05F070'>."
-      )
-      .nullish(),
-    inferenceClassification: microsoft_graph_inferenceClassificationType.optional(),
-    internetMessageHeaders: z
-      .array(microsoft_graph_internetMessageHeader)
-      .describe(
-        'A collection of message headers defined by RFC5322. The set includes message headers indicating the network path taken by a message from the sender to the recipient. It can also contain custom message headers that hold app data for the message.  Returned only on applying a $select query option. Read-only.'
-      )
-      .optional(),
-    internetMessageId: z
-      .string()
-      .describe('The message ID in the format specified by RFC2822.')
-      .nullish(),
-    isDeliveryReceiptRequested: z
-      .boolean()
-      .describe('Indicates whether a read receipt is requested for the message.')
-      .nullish(),
-    isDraft: z
-      .boolean()
-      .describe(
-        "Indicates whether the message is a draft. A message is a draft if it hasn't been sent yet."
-      )
-      .nullish(),
   })
   .passthrough()
   .passthrough();
-const microsoft_graph_mailFolder: z.ZodType<microsoft_graph_mailFolder> = z.lazy(() =>
+const microsoft_graph_recipient = z
+  .object({ emailAddress: microsoft_graph_emailAddress.optional() })
+  .passthrough();
+const microsoft_graph_extension = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_post: z.ZodType<microsoft_graph_post> = z.lazy(() =>
   z
     .object({
       id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-      childFolderCount: z
-        .number()
-        .gte(-2147483648)
-        .lte(2147483647)
-        .describe('The number of immediate child mailFolders in the current mailFolder.')
-        .nullish(),
-      displayName: z.string().describe("The mailFolder's display name.").nullish(),
-      isHidden: z
-        .boolean()
+      categories: z
+        .array(z.string().nullable())
+        .describe('The categories associated with the item')
+        .optional(),
+      changeKey: z
+        .string()
         .describe(
-          'Indicates whether the mailFolder is hidden. This property can be set only when creating the folder. Find more information in Hidden mail folders.'
+          'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
         )
         .nullish(),
-      parentFolderId: z
+      createdDateTime: z
         .string()
-        .describe("The unique identifier for the mailFolder's parent mailFolder.")
+        .regex(
+          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+        )
+        .datetime({ offset: true })
+        .describe(
+          'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+        )
         .nullish(),
-      totalItemCount: z
-        .number()
-        .gte(-2147483648)
-        .lte(2147483647)
-        .describe('The number of items in the mailFolder.')
+      lastModifiedDateTime: z
+        .string()
+        .regex(
+          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+        )
+        .datetime({ offset: true })
+        .describe(
+          'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+        )
         .nullish(),
-      unreadItemCount: z
-        .number()
-        .gte(-2147483648)
-        .lte(2147483647)
-        .describe('The number of items in the mailFolder marked as unread.')
+      body: microsoft_graph_itemBody.optional(),
+      conversationId: z.string().describe('Unique ID of the conversation. Read-only.').nullish(),
+      conversationThreadId: z
+        .string()
+        .describe('Unique ID of the conversation thread. Read-only.')
         .nullish(),
-      childFolders: z
-        .array(microsoft_graph_mailFolder)
-        .describe('The collection of child folders in the mailFolder.')
+      from: microsoft_graph_recipient.optional(),
+      hasAttachments: z
+        .boolean()
+        .describe(
+          'Indicates whether the post has at least one attachment. This is a default property.'
+        )
         .optional(),
-      messageRules: z
-        .array(microsoft_graph_messageRule)
-        .describe("The collection of rules that apply to the user's Inbox folder.")
+      newParticipants: z
+        .array(microsoft_graph_recipient)
+        .describe('Conversation participants that were added to the thread as part of this post.')
         .optional(),
-      messages: z
-        .array(microsoft_graph_message)
-        .describe('The collection of messages in the mailFolder.')
+      receivedDateTime: z
+        .string()
+        .regex(
+          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+        )
+        .datetime({ offset: true })
+        .describe(
+          'Specifies when the post was received. The DateTimeOffset type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+        )
         .optional(),
+      sender: microsoft_graph_recipient.optional(),
+      attachments: z
+        .array(microsoft_graph_attachment)
+        .describe('Read-only. Nullable. Supports $expand.')
+        .optional(),
+      extensions: z
+        .array(microsoft_graph_extension)
+        .describe(
+          'The collection of open extensions defined for the post. Read-only. Nullable. Supports $expand.'
+        )
+        .optional(),
+      inReplyTo: microsoft_graph_post.optional(),
       multiValueExtendedProperties: z
         .array(microsoft_graph_multiValueLegacyExtendedProperty)
         .describe(
-          'The collection of multi-value extended properties defined for the mailFolder. Read-only. Nullable.'
+          'The collection of multi-value extended properties defined for the post. Read-only. Nullable.'
         )
         .optional(),
       singleValueExtendedProperties: z
         .array(microsoft_graph_singleValueLegacyExtendedProperty)
         .describe(
-          'The collection of single-value extended properties defined for the mailFolder. Read-only. Nullable.'
+          'The collection of single-value extended properties defined for the post. Read-only. Nullable.'
         )
         .optional(),
     })
     .passthrough()
 );
-const microsoft_graph_mailFolderCollectionResponse = z
+const microsoft_graph_conversationThread = z
   .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_mailFolder),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_messageCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_message),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_attachmentCollectionResponse = z
-  .object({
-    '@odata.count': z.number().int().nullable(),
-    '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_attachment),
-  })
-  .partial()
-  .passthrough();
-const create_forward_draft_Body = z
-  .object({
-    ToRecipients: z.array(microsoft_graph_recipient),
-    Message: z.union([microsoft_graph_message, z.object({}).partial().passthrough()]),
-    Comment: z.string().nullable(),
-  })
-  .partial()
-  .passthrough();
-const create_reply_draft_Body = z
-  .object({
-    Message: z.union([microsoft_graph_message, z.object({}).partial().passthrough()]),
-    Comment: z.string().nullable(),
-  })
-  .partial()
-  .passthrough();
-const microsoft_graph_attendeeBase = z
-  .object({
-    emailAddress: microsoft_graph_emailAddress.optional(),
-    type: microsoft_graph_attendeeType.optional(),
-  })
-  .passthrough();
-const microsoft_graph_locationConstraintItem = z
-  .object({
-    address: microsoft_graph_physicalAddress.optional(),
-    coordinates: microsoft_graph_outlookGeoCoordinates.optional(),
-    displayName: z.string().describe('The name associated with the location.').nullish(),
-    locationEmailAddress: z.string().describe('Optional email address of the location.').nullish(),
-    locationType: microsoft_graph_locationType.optional(),
-    locationUri: z.string().describe('Optional URI representing the location.').nullish(),
-    uniqueId: z.string().describe('For internal use only.').nullish(),
-    uniqueIdType: microsoft_graph_locationUniqueIdType.optional(),
-    resolveAvailability: z
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    ccRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe('The Cc: recipients for the thread. Returned only on $select.')
+      .optional(),
+    hasAttachments: z
       .boolean()
       .describe(
-        "If set to true and the specified resource is busy, findMeetingTimes looks for another resource that is free. If set to false and the specified resource is busy, findMeetingTimes returns the resource best ranked in the user's cache without checking if it's free. Default is true."
-      )
-      .nullish(),
-  })
-  .passthrough();
-const microsoft_graph_locationConstraint = z
-  .object({
-    isRequired: z
-      .boolean()
-      .describe(
-        "The client requests the service to include in the response a meeting location for the meeting. If this is true and all the resources are busy, findMeetingTimes won't return any meeting time suggestions. If this is false and all the resources are busy, findMeetingTimes would still look for meeting times without locations."
-      )
-      .nullish(),
-    locations: z
-      .array(microsoft_graph_locationConstraintItem)
-      .describe(
-        'Constraint information for one or more locations that the client requests for the meeting.'
+        'Indicates whether any of the posts within this thread has at least one attachment. Returned by default.'
       )
       .optional(),
-    suggestLocation: z
+    isLocked: z
       .boolean()
-      .describe('The client requests the service to suggest one or more meeting locations.')
+      .describe('Indicates if the thread is locked. Returned by default.')
+      .optional(),
+    lastDeliveredDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.Returned by default.'
+      )
+      .optional(),
+    preview: z
+      .string()
+      .describe(
+        'A short summary from the body of the latest post in this conversation. Returned by default.'
+      )
+      .optional(),
+    topic: z
+      .string()
+      .describe(
+        'The topic of the conversation. This property can be set when the conversation is created, but it cannot be updated. Returned by default.'
+      )
+      .optional(),
+    toRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe('The To: recipients for the thread. Returned only on $select.')
+      .optional(),
+    uniqueSenders: z
+      .array(z.string())
+      .describe('All the users that sent a message to this thread. Returned by default.')
+      .optional(),
+    posts: z.array(microsoft_graph_post).optional(),
+  })
+  .passthrough();
+const microsoft_graph_conversation = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    hasAttachments: z
+      .boolean()
+      .describe(
+        'Indicates whether any of the posts within this Conversation has at least one attachment. Supports $filter (eq, ne) and $search.'
+      )
+      .optional(),
+    lastDeliveredDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .optional(),
+    preview: z
+      .string()
+      .describe(
+        'A short summary from the body of the latest post in this conversation. Supports $filter (eq, ne, le, ge).'
+      )
+      .optional(),
+    topic: z
+      .string()
+      .describe(
+        'The topic of the conversation. This property can be set when the conversation is created, but it cannot be updated.'
+      )
+      .optional(),
+    uniqueSenders: z
+      .array(z.string())
+      .describe('All the users that sent a message to this Conversation.')
+      .optional(),
+    threads: z
+      .array(microsoft_graph_conversationThread)
+      .describe(
+        'A collection of all the conversation threads in the conversation. A navigation property. Read-only. Nullable.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_conversationCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_conversation),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_eventCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_event),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_directoryObject = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    deletedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        "Date and time when this object was deleted. Always null when the object hasn't been deleted."
+      )
       .nullish(),
   })
   .passthrough();
-const microsoft_graph_activityDomain = z.enum(['unknown', 'work', 'personal', 'unrestricted']);
-const microsoft_graph_timeConstraint = z
+const microsoft_graph_directoryObjectCollectionResponse = z
   .object({
-    activityDomain: microsoft_graph_activityDomain.optional(),
-    timeSlots: z.array(microsoft_graph_timeSlot).optional(),
-  })
-  .passthrough();
-const ReferenceNumeric = z.enum(['-INF', 'INF', 'NaN']);
-const find_meeting_times_Body = z
-  .object({
-    attendees: z.array(microsoft_graph_attendeeBase),
-    locationConstraint: z.union([
-      microsoft_graph_locationConstraint,
-      z.object({}).partial().passthrough(),
-    ]),
-    timeConstraint: z.union([microsoft_graph_timeConstraint, z.object({}).partial().passthrough()]),
-    meetingDuration: z
-      .string()
-      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
-      .nullable(),
-    maxCandidates: z.number().gte(-2147483648).lte(2147483647).nullable(),
-    isOrganizerOptional: z.boolean().nullable().default(false),
-    returnSuggestionReasons: z.boolean().nullable().default(false),
-    minimumAttendeePercentage: z.union([z.number(), z.string(), ReferenceNumeric]),
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_directoryObject),
   })
   .partial()
   .passthrough();
-const send_mail_Body = z
-  .object({
-    Message: microsoft_graph_message.describe(
-      '[Note: Simplified from 35 properties to 25 most common ones]'
-    ),
-    SaveToSentItems: z.boolean().nullable().default(false),
-  })
-  .partial()
-  .passthrough();
+const ReferenceCreate = z.record(z.object({}).partial().passthrough());
 const microsoft_graph_externalLink = z
   .object({ href: z.string().describe('The URL of the link.').nullish() })
   .passthrough();
@@ -6833,6 +6049,17 @@ const microsoft_graph_onenotePageCollectionResponse = z
   })
   .partial()
   .passthrough();
+const microsoft_graph_plannerContainerType = z.enum(['group', 'unknownFutureValue', 'roster']);
+const microsoft_graph_plannerPlanContainer = z
+  .object({
+    containerId: z
+      .string()
+      .describe('The identifier of the resource that contains the plan. Optional.')
+      .nullish(),
+    type: microsoft_graph_plannerContainerType.optional(),
+    url: z.string().describe('The full canonical URL of the container. Optional.').nullish(),
+  })
+  .passthrough();
 const microsoft_graph_plannerChecklistItems = z.object({}).passthrough();
 const microsoft_graph_plannerPreviewType = z.enum([
   'automatic',
@@ -6995,11 +6222,2897 @@ const microsoft_graph_plannerTask = z
   })
   .passthrough()
   .passthrough();
+const microsoft_graph_plannerBucket = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    name: z.string().describe('Name of the bucket.').optional(),
+    orderHint: z
+      .string()
+      .describe(
+        'Hint used to order items of this type in a list view. For details about the supported format, see Using order hints in Planner.'
+      )
+      .nullish(),
+    planId: z.string().describe('Plan ID to which the bucket belongs.').nullish(),
+    tasks: z
+      .array(microsoft_graph_plannerTask)
+      .describe('Read-only. Nullable. The collection of tasks in the bucket.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_plannerCategoryDescriptions = z
+  .object({
+    category1: z.string().describe('The label associated with Category 1').nullish(),
+    category10: z.string().describe('The label associated with Category 10').nullish(),
+    category11: z.string().describe('The label associated with Category 11').nullish(),
+    category12: z.string().describe('The label associated with Category 12').nullish(),
+    category13: z.string().describe('The label associated with Category 13').nullish(),
+    category14: z.string().describe('The label associated with Category 14').nullish(),
+    category15: z.string().describe('The label associated with Category 15').nullish(),
+    category16: z.string().describe('The label associated with Category 16').nullish(),
+    category17: z.string().describe('The label associated with Category 17').nullish(),
+    category18: z.string().describe('The label associated with Category 18').nullish(),
+    category19: z.string().describe('The label associated with Category 19').nullish(),
+    category2: z.string().describe('The label associated with Category 2').nullish(),
+    category20: z.string().describe('The label associated with Category 20').nullish(),
+    category21: z.string().describe('The label associated with Category 21').nullish(),
+    category22: z.string().describe('The label associated with Category 22').nullish(),
+    category23: z.string().describe('The label associated with Category 23').nullish(),
+    category24: z.string().describe('The label associated with Category 24').nullish(),
+    category25: z.string().describe('The label associated with Category 25').nullish(),
+    category3: z.string().describe('The label associated with Category 3').nullish(),
+    category4: z.string().describe('The label associated with Category 4').nullish(),
+    category5: z.string().describe('The label associated with Category 5').nullish(),
+    category6: z.string().describe('The label associated with Category 6').nullish(),
+    category7: z.string().describe('The label associated with Category 7').nullish(),
+    category8: z.string().describe('The label associated with Category 8').nullish(),
+    category9: z.string().describe('The label associated with Category 9').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_plannerUserIds = z.object({}).passthrough();
+const microsoft_graph_plannerPlanDetails = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    categoryDescriptions: microsoft_graph_plannerCategoryDescriptions.optional(),
+    sharedWith: microsoft_graph_plannerUserIds.optional(),
+  })
+  .passthrough();
+const microsoft_graph_plannerPlan = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    container: microsoft_graph_plannerPlanContainer.optional(),
+    createdBy: microsoft_graph_identitySet.optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Read-only. Date and time at which the plan is created. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    owner: z
+      .string()
+      .describe(
+        "Use the container property instead. ID of the group that owns the plan. After it's set, this property can’t be updated. This property won't return a valid group ID if the container of the plan isn't a group."
+      )
+      .nullish(),
+    title: z.string().describe('Required. Title of the plan.').optional(),
+    buckets: z
+      .array(microsoft_graph_plannerBucket)
+      .describe('Read-only. Nullable. Collection of buckets in the plan.')
+      .optional(),
+    details: microsoft_graph_plannerPlanDetails.optional(),
+    tasks: z
+      .array(microsoft_graph_plannerTask)
+      .describe('Read-only. Nullable. Collection of tasks in the plan.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_plannerPlanCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_plannerPlan),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_settingValue = z
+  .object({
+    name: z
+      .string()
+      .describe('Name of the setting (as defined by the groupSettingTemplate).')
+      .nullish(),
+    value: z.string().describe('Value of the setting.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_groupSetting = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    displayName: z
+      .string()
+      .describe('Display name of this group of settings, which comes from the associated template.')
+      .nullish(),
+    templateId: z
+      .string()
+      .describe(
+        "Unique identifier for the tenant-level groupSettingTemplates object that's been customized for this group-level settings object. Read-only."
+      )
+      .nullish(),
+    values: z
+      .array(microsoft_graph_settingValue)
+      .describe(
+        'Collection of name-value pairs corresponding to the name and defaultValue properties in the referenced groupSettingTemplates object.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_groupSettingCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_groupSetting),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_conversationThreadCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_conversationThread),
+  })
+  .partial()
+  .passthrough();
+const reply_to_group_thread_Body = z.object({ Post: microsoft_graph_post }).partial().passthrough();
+const microsoft_graph_invitedUserMessageInfo = z
+  .object({
+    ccRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe(
+        'Additional recipients the invitation message should be sent to. Currently only one additional recipient is supported.'
+      )
+      .optional(),
+    customizedMessageBody: z
+      .string()
+      .describe(
+        "Customized message body you want to send if you don't want the default message. Only plain text is allowed."
+      )
+      .nullish(),
+    messageLanguage: z
+      .string()
+      .describe(
+        'The language you want to send the default message in. If the customizedMessageBody is specified, this property is ignored, and the message is sent using the customizedMessageBody. The language format should be in ISO 639. The default is en-US.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_invitation = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    invitedUserDisplayName: z
+      .string()
+      .describe('The display name of the user being invited.')
+      .nullish(),
+    invitedUserEmailAddress: z
+      .string()
+      .describe(
+        "The email address of the user being invited. Required. The following special characters aren't permitted in the email address:Tilde (~)Exclamation point (!)Number sign (#)Dollar sign ($)Percent (%)Circumflex (^)Ampersand (&)Asterisk (*)Parentheses (( ))Plus sign (+)Equal sign (=)Brackets ([ ])Braces ({ })Backslash (/)Slash mark (/)Pipe (/|)Semicolon (;)Colon (:)Quotation marks (')Angle brackets (< >)Question mark (?)Comma (,)However, the following exceptions apply:A period (.) or a hyphen (-) is permitted anywhere in the user name, except at the beginning or end of the name.An underscore (_) is permitted anywhere in the user name, including at the beginning or end of the name."
+      )
+      .optional(),
+    invitedUserMessageInfo: microsoft_graph_invitedUserMessageInfo.optional(),
+    invitedUserType: z
+      .string()
+      .describe(
+        "The userType of the user being invited. By default, this is Guest. You can invite as Member if you're a company administrator."
+      )
+      .nullish(),
+    inviteRedeemUrl: z
+      .string()
+      .describe('The URL the user can use to redeem their invitation. Read-only.')
+      .nullish(),
+    inviteRedirectUrl: z
+      .string()
+      .describe(
+        'The URL the user should be redirected to after the invitation is redeemed. Required.'
+      )
+      .optional(),
+    resetRedemption: z
+      .boolean()
+      .describe(
+        "Reset the user's redemption status and reinvite a user while retaining their user identifier, group memberships, and app assignments. This property allows you to enable a user to sign-in using a different email address from the one in the previous invitation. When true, the invitedUser/id relationship is required. For more information about using this property, see Reset redemption status for a guest user."
+      )
+      .nullish(),
+    sendInvitationMessage: z
+      .boolean()
+      .describe(
+        'Indicates whether an email should be sent to the user being invited. The default is false.'
+      )
+      .nullish(),
+    status: z
+      .string()
+      .describe(
+        'The status of the invitation. The possible values are: PendingAcceptance, Completed, InProgress, and Error.'
+      )
+      .nullish(),
+    invitedUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    invitedUserSponsors: z
+      .array(microsoft_graph_directoryObject)
+      .describe(
+        "The users or groups who are sponsors of the invited user. Sponsors are users and groups that are responsible for guest users' privileges in the tenant and for keeping the guest users' information and access up to date."
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_onlineMeetingProviderType = z.enum([
+  'unknown',
+  'skypeForBusiness',
+  'skypeForConsumer',
+  'teamsForBusiness',
+]);
+const microsoft_graph_calendarColor = z.enum([
+  'auto',
+  'lightBlue',
+  'lightGreen',
+  'lightOrange',
+  'lightGray',
+  'lightYellow',
+  'lightTeal',
+  'lightPink',
+  'lightBrown',
+  'lightRed',
+  'maxColor',
+]);
+const microsoft_graph_calendarRoleType = z.enum([
+  'none',
+  'freeBusyRead',
+  'limitedRead',
+  'read',
+  'write',
+  'delegateWithoutPrivateEventAccess',
+  'delegateWithPrivateEventAccess',
+  'custom',
+]);
+const microsoft_graph_calendarPermission = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    allowedRoles: z
+      .array(z.union([microsoft_graph_calendarRoleType, z.object({}).partial().passthrough()]))
+      .describe(
+        'List of allowed sharing or delegating permission levels for the calendar. The possible values are: none, freeBusyRead, limitedRead, read, write, delegateWithoutPrivateEventAccess, delegateWithPrivateEventAccess, custom.'
+      )
+      .optional(),
+    emailAddress: microsoft_graph_emailAddress.optional(),
+    isInsideOrganization: z
+      .boolean()
+      .describe(
+        'True if the user in context (recipient or delegate) is inside the same organization as the calendar owner.'
+      )
+      .nullish(),
+    isRemovable: z
+      .boolean()
+      .describe(
+        "True if the user can be removed from the list of recipients or delegates for the specified calendar, false otherwise. The 'My organization' user determines the permissions other people within your organization have to the given calendar. You can't remove 'My organization' as a share recipient to a calendar."
+      )
+      .nullish(),
+    role: microsoft_graph_calendarRoleType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_calendar = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    allowedOnlineMeetingProviders: z
+      .array(z.union([microsoft_graph_onlineMeetingProviderType, z.object({}).partial().passthrough()]))
+      .describe(
+        'Represent the online meeting service providers that can be used to create online meetings in this calendar. The possible values are: unknown, skypeForBusiness, skypeForConsumer, teamsForBusiness.'
+      )
+      .optional(),
+    canEdit: z
+      .boolean()
+      .describe(
+        'true if the user can write to the calendar, false otherwise. This property is true for the user who created the calendar. This property is also true for a user who shared a calendar and granted write access.'
+      )
+      .nullish(),
+    canShare: z
+      .boolean()
+      .describe(
+        'true if the user has permission to share the calendar, false otherwise. Only the user who created the calendar can share it.'
+      )
+      .nullish(),
+    canViewPrivateItems: z
+      .boolean()
+      .describe(
+        'If true, the user can read calendar items that have been marked private, false otherwise.'
+      )
+      .nullish(),
+    changeKey: z
+      .string()
+      .describe(
+        'Identifies the version of the calendar object. Every time the calendar is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+      )
+      .nullish(),
+    color: microsoft_graph_calendarColor.optional(),
+    defaultOnlineMeetingProvider: microsoft_graph_onlineMeetingProviderType.optional(),
+    hexColor: z
+      .string()
+      .describe(
+        'The calendar color, expressed in a hex color code of three hexadecimal values, each ranging from 00 to FF and representing the red, green, or blue components of the color in the RGB color space. If the user has never explicitly set a color for the calendar, this property is empty. Read-only.'
+      )
+      .nullish(),
+    isDefaultCalendar: z
+      .boolean()
+      .describe(
+        'true if this is the default calendar where new events are created by default, false otherwise.'
+      )
+      .nullish(),
+    isRemovable: z
+      .boolean()
+      .describe('Indicates whether this user calendar can be deleted from the user mailbox.')
+      .nullish(),
+    isTallyingResponses: z
+      .boolean()
+      .describe(
+        "Indicates whether this user calendar supports tracking of meeting responses. Only meeting invites sent from users' primary calendars support tracking of meeting responses."
+      )
+      .nullish(),
+    name: z.string().describe('The calendar name.').nullish(),
+    owner: microsoft_graph_emailAddress.optional(),
+    calendarPermissions: z
+      .array(microsoft_graph_calendarPermission)
+      .describe('The permissions of the users with whom the calendar is shared.')
+      .optional(),
+    calendarView: z
+      .array(microsoft_graph_event)
+      .describe('The calendar view for the calendar. Navigation property. Read-only.')
+      .optional(),
+    events: z
+      .array(microsoft_graph_event)
+      .describe('The events in the calendar. Navigation property. Read-only.')
+      .optional(),
+    multiValueExtendedProperties: z
+      .array(microsoft_graph_multiValueLegacyExtendedProperty)
+      .describe(
+        'The collection of multi-value extended properties defined for the calendar. Read-only. Nullable.'
+      )
+      .optional(),
+    singleValueExtendedProperties: z
+      .array(microsoft_graph_singleValueLegacyExtendedProperty)
+      .describe(
+        'The collection of single-value extended properties defined for the calendar. Read-only. Nullable.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const get_schedule_Body = z
+  .object({
+    Schedules: z.array(z.string().nullable()),
+    EndTime: z.union([microsoft_graph_dateTimeTimeZone, z.object({}).partial().passthrough()]),
+    StartTime: z.union([microsoft_graph_dateTimeTimeZone, z.object({}).partial().passthrough()]),
+    AvailabilityViewInterval: z.number().gte(-2147483648).lte(2147483647).nullable(),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_freeBusyError = z
+  .object({
+    message: z.string().describe('Describes the error.').nullish(),
+    responseCode: z
+      .string()
+      .describe(
+        'The response code from querying for the availability of the user, distribution list, or resource.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_scheduleItem = z
+  .object({
+    end: microsoft_graph_dateTimeTimeZone.optional(),
+    isPrivate: z
+      .boolean()
+      .describe(
+        'The sensitivity of the corresponding event. True if the event is marked private, false otherwise. Optional.'
+      )
+      .nullish(),
+    location: z
+      .string()
+      .describe('The location where the corresponding event is held or attended from. Optional.')
+      .nullish(),
+    start: microsoft_graph_dateTimeTimeZone.optional(),
+    status: microsoft_graph_freeBusyStatus.optional(),
+    subject: z.string().describe("The corresponding event's subject line. Optional.").nullish(),
+  })
+  .passthrough();
+const microsoft_graph_timeZoneBase = z
+  .object({
+    name: z
+      .string()
+      .describe(
+        "The name of a time zone. It can be a standard time zone name such as 'Hawaii-Aleutian Standard Time', or 'Customized Time Zone' for a custom time zone."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workingHours = z
+  .object({
+    daysOfWeek: z
+      .array(z.union([microsoft_graph_dayOfWeek, z.object({}).partial().passthrough()]))
+      .describe('The days of the week on which the user works.')
+      .optional(),
+    endTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('The time of the day that the user stops working.')
+      .nullish(),
+    startTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('The time of the day that the user starts working.')
+      .nullish(),
+    timeZone: microsoft_graph_timeZoneBase.optional(),
+  })
+  .passthrough();
+const microsoft_graph_scheduleInformation = z
+  .object({
+    availabilityView: z
+      .string()
+      .describe(
+        'Represents a merged view of availability of all the items in scheduleItems. The view consists of time slots. Availability during each time slot is indicated with: 0= free or working elswhere, 1= tentative, 2= busy, 3= out of office.Note: Working elsewhere is set to 0 instead of 4 for backward compatibility. For details, see the Q&A and Exchange 2007 and Exchange 2010 do not use the WorkingElsewhere value.'
+      )
+      .nullish(),
+    error: microsoft_graph_freeBusyError.optional(),
+    scheduleId: z
+      .string()
+      .describe(
+        'An SMTP address of the user, distribution list, or resource, identifying an instance of scheduleInformation.'
+      )
+      .nullish(),
+    scheduleItems: z
+      .array(microsoft_graph_scheduleItem)
+      .describe('Contains the items that describe the availability of the user or resource.')
+      .optional(),
+    workingHours: microsoft_graph_workingHours.optional(),
+  })
+  .passthrough();
+const microsoft_graph_calendarGroup = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    changeKey: z
+      .string()
+      .describe(
+        'Identifies the version of the calendar group. Every time the calendar group is changed, ChangeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+      )
+      .nullish(),
+    classId: z
+      .string()
+      .regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+      .uuid()
+      .describe('The class identifier. Read-only.')
+      .nullish(),
+    name: z.string().describe('The group name.').nullish(),
+    calendars: z
+      .array(microsoft_graph_calendar)
+      .describe('The calendars in the calendar group. Navigation property. Read-only. Nullable.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_calendarGroupCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_calendarGroup),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_calendarCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_calendar),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_calendarPermissionCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_calendarPermission),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_chatCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_chat),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_contact = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    displayName: z
+      .string()
+      .describe(
+        "The contact's display name. You can specify the display name in a create or update operation. Note that later updates to other properties may cause an automatically generated value to overwrite the displayName value you have specified. To preserve a pre-existing value, always include it as displayName in an update operation."
+      )
+      .nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    title: z.string().describe("The contact's title.").nullish(),
+    singleValueExtendedProperties: z
+      .array(microsoft_graph_singleValueLegacyExtendedProperty)
+      .describe(
+        'The collection of single-value extended properties defined for the contact. Read-only. Nullable.'
+      )
+      .optional(),
+    multiValueExtendedProperties: z
+      .array(microsoft_graph_multiValueLegacyExtendedProperty)
+      .describe(
+        'The collection of multi-value extended properties defined for the contact. Read-only. Nullable.'
+      )
+      .optional(),
+    categories: z
+      .array(z.string().nullable())
+      .describe('The categories associated with the item')
+      .optional(),
+    changeKey: z
+      .string()
+      .describe(
+        'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+      )
+      .nullish(),
+    assistantName: z.string().describe("The name of the contact's assistant.").nullish(),
+    birthday: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        "The contact's birthday. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z"
+      )
+      .nullish(),
+    businessAddress: microsoft_graph_physicalAddress.optional(),
+    businessHomePage: z.string().describe('The business home page of the contact.').nullish(),
+    businessPhones: z
+      .array(z.string().nullable())
+      .describe("The contact's business phone numbers.")
+      .optional(),
+    children: z
+      .array(z.string().nullable())
+      .describe("The names of the contact's children.")
+      .optional(),
+    companyName: z.string().describe("The name of the contact's company.").nullish(),
+    department: z.string().describe("The contact's department.").nullish(),
+    emailAddresses: z
+      .array(microsoft_graph_emailAddress)
+      .describe("The contact's email addresses.")
+      .optional(),
+    fileAs: z.string().describe('The name the contact is filed under.').nullish(),
+    generation: z.string().describe("The contact's suffix.").nullish(),
+    givenName: z.string().describe("The contact's given name.").nullish(),
+    homeAddress: microsoft_graph_physicalAddress.optional(),
+    homePhones: z
+      .array(z.string().nullable())
+      .describe("The contact's home phone numbers.")
+      .optional(),
+    imAddresses: z
+      .array(z.string().nullable())
+      .describe("The contact's instant messaging (IM) addresses.")
+      .optional(),
+    initials: z.string().describe("The contact's initials.").nullish(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_contactFolder: z.ZodType<microsoft_graph_contactFolder> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      displayName: z.string().describe("The folder's display name.").nullish(),
+      parentFolderId: z.string().describe("The ID of the folder's parent folder.").nullish(),
+      childFolders: z
+        .array(microsoft_graph_contactFolder)
+        .describe(
+          'The collection of child folders in the folder. Navigation property. Read-only. Nullable.'
+        )
+        .optional(),
+      contacts: z
+        .array(microsoft_graph_contact)
+        .describe('The contacts in the folder. Navigation property. Read-only. Nullable.')
+        .optional(),
+      multiValueExtendedProperties: z
+        .array(microsoft_graph_multiValueLegacyExtendedProperty)
+        .describe(
+          'The collection of multi-value extended properties defined for the contactFolder. Read-only. Nullable.'
+        )
+        .optional(),
+      singleValueExtendedProperties: z
+        .array(microsoft_graph_singleValueLegacyExtendedProperty)
+        .describe(
+          'The collection of single-value extended properties defined for the contactFolder. Read-only. Nullable.'
+        )
+        .optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_contactFolderCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_contactFolder),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_contactCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_contact),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_driveCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_drive),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_attachmentCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_attachment),
+  })
+  .partial()
+  .passthrough();
+const accept_calendar_event_Body = z
+  .object({ SendResponse: z.boolean().nullable().default(false), Comment: z.string().nullable() })
+  .partial()
+  .passthrough();
+const decline_calendar_event_Body = z
+  .object({
+    ProposedNewTime: z.union([microsoft_graph_timeSlot, z.object({}).partial().passthrough()]),
+    SendResponse: z.boolean().nullable().default(false),
+    Comment: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const forward_calendar_event_Body = z
+  .object({ ToRecipients: z.array(microsoft_graph_recipient), Comment: z.string().nullable() })
+  .partial()
+  .passthrough();
+const snooze_reminder_Body = z
+  .object({ NewReminderTime: microsoft_graph_dateTimeTimeZone })
+  .partial()
+  .passthrough();
+const microsoft_graph_root = z.object({}).passthrough();
+const microsoft_graph_siteArchiveStatus = z.enum([
+  'recentlyArchived',
+  'fullyArchived',
+  'reactivating',
+  'unknownFutureValue',
+]);
+const microsoft_graph_siteArchivalDetails = z
+  .object({ archiveStatus: microsoft_graph_siteArchiveStatus.optional() })
+  .passthrough();
+const microsoft_graph_siteCollection = z
+  .object({
+    archivalDetails: microsoft_graph_siteArchivalDetails.optional(),
+    dataLocationCode: z
+      .string()
+      .describe(
+        'The geographic region code for where this site collection resides. Only present for multi-geo tenants. Read-only.'
+      )
+      .nullish(),
+    hostname: z.string().describe('The hostname for the site collection. Read-only.').nullish(),
+    root: microsoft_graph_root.optional(),
+  })
+  .passthrough();
+const microsoft_graph_baseItem = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdBy: microsoft_graph_identitySet.optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time of item creation. Read-only.')
+      .optional(),
+    description: z
+      .string()
+      .describe('Provides a user-visible description of the item. Optional.')
+      .nullish(),
+    eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
+    lastModifiedBy: microsoft_graph_identitySet.optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time the item was last modified. Read-only.')
+      .optional(),
+    name: z.string().describe('The name of the item. Read-write.').nullish(),
+    parentReference: microsoft_graph_itemReference.optional(),
+    webUrl: z
+      .string()
+      .describe(
+        'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
+      )
+      .nullish(),
+    createdByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    lastModifiedByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_site = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    name: z.string().describe('The name of the item. Read-write.').nullish(),
+    displayName: z.string().describe('The full title for the site. Read-only.').nullish(),
+    description: z
+      .string()
+      .describe('Provides a user-visible description of the item. Optional.')
+      .nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time of item creation. Read-only.')
+      .optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time the item was last modified. Read-only.')
+      .optional(),
+    error: microsoft_graph_publicError.optional(),
+    createdBy: microsoft_graph_identitySet.optional(),
+    eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
+    lastModifiedBy: microsoft_graph_identitySet.optional(),
+    parentReference: microsoft_graph_itemReference.optional(),
+    webUrl: z
+      .string()
+      .describe(
+        'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
+      )
+      .nullish(),
+    createdByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    lastModifiedByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    isPersonalSite: z
+      .boolean()
+      .describe('Identifies whether the site is personal or not. Read-only.')
+      .nullish(),
+    root: microsoft_graph_root.optional(),
+    sharepointIds: microsoft_graph_sharepointIds.optional(),
+    siteCollection: microsoft_graph_siteCollection.optional(),
+    analytics: microsoft_graph_itemAnalytics.optional(),
+    columns: z
+      .array(microsoft_graph_columnDefinition)
+      .describe('The collection of column definitions reusable across lists under this site.')
+      .optional(),
+    contentTypes: z
+      .array(microsoft_graph_contentType)
+      .describe('The collection of content types defined for this site.')
+      .optional(),
+    drive: microsoft_graph_drive.optional(),
+    drives: z
+      .array(microsoft_graph_drive)
+      .describe('The collection of drives (document libraries) under this site.')
+      .optional(),
+    externalColumns: z.array(microsoft_graph_columnDefinition).optional(),
+    items: z
+      .array(microsoft_graph_baseItem)
+      .describe(
+        "Used to address any item contained in this site. This collection can't be enumerated."
+      )
+      .optional(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_siteCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_site),
+  })
+  .partial()
+  .passthrough();
+const follow_site_Body = z
+  .object({ value: z.array(microsoft_graph_site) })
+  .partial()
+  .passthrough();
+const microsoft_graph_inferenceClassificationType = z.enum(['focused', 'other']);
+const microsoft_graph_inferenceClassificationOverride = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    classifyAs: microsoft_graph_inferenceClassificationType.optional(),
+    senderEmailAddress: microsoft_graph_emailAddress.optional(),
+  })
+  .passthrough();
+const microsoft_graph_inferenceClassificationOverrideCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_inferenceClassificationOverride),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_insightIdentity = z
+  .object({
+    address: z.string().describe('The email address of the user who shared the item.').nullish(),
+    displayName: z.string().describe('The display name of the user who shared the item.').nullish(),
+    id: z.string().describe('The ID of the user who shared the item.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_resourceReference = z
+  .object({
+    id: z.string().describe("The item's unique identifier.").nullish(),
+    type: z
+      .string()
+      .describe(
+        "A string value that can be used to classify the item, such as 'microsoft.graph.driveItem'"
+      )
+      .nullish(),
+    webUrl: z.string().describe('A URL leading to the referenced item.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_sharingDetail = z
+  .object({
+    sharedBy: microsoft_graph_insightIdentity.optional(),
+    sharedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date and time the file was last shared. The timestamp represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    sharingReference: microsoft_graph_resourceReference.optional(),
+    sharingSubject: z
+      .string()
+      .describe('The subject with which the document was shared.')
+      .nullish(),
+    sharingType: z
+      .string()
+      .describe(
+        'Determines the way the document was shared. Can be by a 1Link1, 1Attachment1, 1Group1, 1Site1.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_resourceVisualization = z
+  .object({
+    containerDisplayName: z
+      .string()
+      .describe(
+        'A string describing where the item is stored. For example, the name of a SharePoint site or the user name identifying the owner of the OneDrive storing the item.'
+      )
+      .nullish(),
+    containerType: z
+      .string()
+      .describe(
+        'Can be used for filtering by the type of container in which the file is stored. Such as Site or OneDriveBusiness.'
+      )
+      .nullish(),
+    containerWebUrl: z
+      .string()
+      .describe('A path leading to the folder in which the item is stored.')
+      .nullish(),
+    mediaType: z
+      .string()
+      .describe(
+        "The item's media type. Can be used for filtering for a specific type of file based on supported IANA Media Mime Types. Not all Media Mime Types are supported."
+      )
+      .nullish(),
+    previewImageUrl: z
+      .string()
+      .describe('A URL leading to the preview image for the item.')
+      .nullish(),
+    previewText: z.string().describe('A preview text for the item.').nullish(),
+    title: z.string().describe("The item's title text.").nullish(),
+    type: z
+      .string()
+      .describe(
+        "The item's media type. Can be used for filtering for a specific file based on a specific type. See the section Type property values for supported types."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_entity = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_sharedInsight = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    lastShared: microsoft_graph_sharingDetail.optional(),
+    resourceReference: microsoft_graph_resourceReference.optional(),
+    resourceVisualization: microsoft_graph_resourceVisualization.optional(),
+    sharingHistory: z.array(microsoft_graph_sharingDetail).optional(),
+    lastSharedMethod: microsoft_graph_entity.optional(),
+    resource: microsoft_graph_entity.optional(),
+  })
+  .passthrough();
+const microsoft_graph_sharedInsightCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_sharedInsight),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_trending = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    resourceReference: microsoft_graph_resourceReference.optional(),
+    resourceVisualization: microsoft_graph_resourceVisualization.optional(),
+    weight: z
+      .number()
+      .describe(
+        'Value indicating how much the document is currently trending. The larger the number, the more the document is currently trending around the user (the more relevant it is). Returned documents are sorted by this value. [Simplified from 3 options]'
+      )
+      .nullish(),
+    resource: microsoft_graph_entity.optional(),
+  })
+  .passthrough();
+const microsoft_graph_trendingCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_trending),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_usageDetails = z
+  .object({
+    lastAccessedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date and time the resource was last accessed by the user. The timestamp represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date and time the resource was last modified by the user. The timestamp represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_usedInsight = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    lastUsed: microsoft_graph_usageDetails.optional(),
+    resourceReference: microsoft_graph_resourceReference.optional(),
+    resourceVisualization: microsoft_graph_resourceVisualization.optional(),
+    resource: microsoft_graph_entity.optional(),
+  })
+  .passthrough();
+const microsoft_graph_usedInsightCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_usedInsight),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_giphyRatingType = z.enum(['strict', 'moderate', 'unknownFutureValue']);
+const microsoft_graph_teamFunSettings = z
+  .object({
+    allowCustomMemes: z
+      .boolean()
+      .describe('If set to true, enables users to include custom memes.')
+      .nullish(),
+    allowGiphy: z.boolean().describe('If set to true, enables Giphy use.').nullish(),
+    allowStickersAndMemes: z
+      .boolean()
+      .describe('If set to true, enables users to include stickers and memes.')
+      .nullish(),
+    giphyContentRating: microsoft_graph_giphyRatingType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_teamGuestSettings = z
+  .object({
+    allowCreateUpdateChannels: z
+      .boolean()
+      .describe('If set to true, guests can add and update channels.')
+      .nullish(),
+    allowDeleteChannels: z
+      .boolean()
+      .describe('If set to true, guests can delete channels.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamMemberSettings = z
+  .object({
+    allowAddRemoveApps: z
+      .boolean()
+      .describe('If set to true, members can add and remove apps.')
+      .nullish(),
+    allowCreatePrivateChannels: z
+      .boolean()
+      .describe('If set to true, members can add and update private channels.')
+      .nullish(),
+    allowCreateUpdateChannels: z
+      .boolean()
+      .describe('If set to true, members can add and update channels.')
+      .nullish(),
+    allowCreateUpdateRemoveConnectors: z
+      .boolean()
+      .describe('If set to true, members can add, update, and remove connectors.')
+      .nullish(),
+    allowCreateUpdateRemoveTabs: z
+      .boolean()
+      .describe('If set to true, members can add, update, and remove tabs.')
+      .nullish(),
+    allowDeleteChannels: z
+      .boolean()
+      .describe('If set to true, members can delete channels.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamMessagingSettings = z
+  .object({
+    allowChannelMentions: z
+      .boolean()
+      .describe('If set to true, @channel mentions are allowed.')
+      .nullish(),
+    allowOwnerDeleteMessages: z
+      .boolean()
+      .describe('If set to true, owners can delete any message.')
+      .nullish(),
+    allowTeamMentions: z
+      .boolean()
+      .describe('If set to true, @team mentions are allowed.')
+      .nullish(),
+    allowUserDeleteMessages: z
+      .boolean()
+      .describe('If set to true, users can delete their messages.')
+      .nullish(),
+    allowUserEditMessages: z
+      .boolean()
+      .describe('If set to true, users can edit their messages.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamSpecialization = z.enum([
+  'none',
+  'educationStandard',
+  'educationClass',
+  'educationProfessionalLearningCommunity',
+  'educationStaff',
+  'healthcareStandard',
+  'healthcareCareCoordination',
+  'unknownFutureValue',
+]);
+const microsoft_graph_teamSummary = z
+  .object({
+    guestsCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of guests in a team.')
+      .nullish(),
+    membersCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of members in a team.')
+      .nullish(),
+    ownersCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of owners in a team.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamVisibilityType = z.enum([
+  'private',
+  'public',
+  'hiddenMembership',
+  'unknownFutureValue',
+]);
+const microsoft_graph_channelMembershipType = z.enum([
+  'standard',
+  'private',
+  'unknownFutureValue',
+  'shared',
+]);
+const microsoft_graph_channelSummary = z
+  .object({
+    guestsCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of guests in a channel.')
+      .nullish(),
+    hasMembersFromOtherTenants: z
+      .boolean()
+      .describe('Indicates whether external members are included on the channel.')
+      .nullish(),
+    membersCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of members in a channel.')
+      .nullish(),
+    ownersCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Count of owners in a channel.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_sharedWithChannelTeamInfo: z.ZodType<microsoft_graph_sharedWithChannelTeamInfo> =
+  z.lazy(() =>
+    z
+      .object({
+        id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+        displayName: z.string().describe('The name of the team.').nullish(),
+        tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+        team: microsoft_graph_team
+          .describe('[Note: Simplified from 30 properties to 25 most common ones]')
+          .optional(),
+        isHostTeam: z
+          .boolean()
+          .describe('Indicates whether the team is the host of the channel.')
+          .nullish(),
+        allowedMembers: z
+          .array(microsoft_graph_conversationMember)
+          .describe('A collection of team members who have access to the shared channel.')
+          .optional(),
+      })
+      .passthrough()
+  );
+const microsoft_graph_channel: z.ZodType<microsoft_graph_channel> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      createdDateTime: z
+        .string()
+        .regex(
+          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+        )
+        .datetime({ offset: true })
+        .describe('Read only. Timestamp at which the channel was created.')
+        .nullish(),
+      description: z.string().describe('Optional textual description for the channel.').nullish(),
+      displayName: z
+        .string()
+        .describe(
+          'Channel name as it will appear to the user in Microsoft Teams. The maximum length is 50 characters.'
+        )
+        .optional(),
+      email: z
+        .string()
+        .describe('The email address for sending messages to the channel. Read-only.')
+        .nullish(),
+      isArchived: z
+        .boolean()
+        .describe('Indicates whether the channel is archived. Read-only.')
+        .nullish(),
+      isFavoriteByDefault: z
+        .boolean()
+        .describe(
+          'Indicates whether the channel should be marked as recommended for all members of the team to show in their channel list. Note: All recommended channels automatically show in the channels list for education and frontline worker users. The property can only be set programmatically via the Create team method. The default value is false.'
+        )
+        .nullish(),
+      membershipType: microsoft_graph_channelMembershipType.optional(),
+      summary: microsoft_graph_channelSummary.optional(),
+      tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+      webUrl: z
+        .string()
+        .describe(
+          'A hyperlink that will go to the channel in Microsoft Teams. This is the URL that you get when you right-click a channel in Microsoft Teams and select Get link to channel. This URL should be treated as an opaque blob, and not parsed. Read-only.'
+        )
+        .nullish(),
+      allMembers: z
+        .array(microsoft_graph_conversationMember)
+        .describe(
+          'A collection of membership records associated with the channel, including both direct and indirect members of shared channels.'
+        )
+        .optional(),
+      filesFolder: microsoft_graph_driveItem
+        .describe('[Note: Simplified from 45 properties to 25 most common ones]')
+        .optional(),
+      members: z
+        .array(microsoft_graph_conversationMember)
+        .describe('A collection of membership records associated with the channel.')
+        .optional(),
+      messages: z
+        .array(microsoft_graph_chatMessage)
+        .describe(
+          'A collection of all the messages in the channel. A navigation property. Nullable.'
+        )
+        .optional(),
+      sharedWithTeams: z
+        .array(microsoft_graph_sharedWithChannelTeamInfo)
+        .describe('A collection of teams with which a channel is shared.')
+        .optional(),
+      tabs: z
+        .array(microsoft_graph_teamsTab)
+        .describe('A collection of all the tabs in the channel. A navigation property.')
+        .optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_operationError = z
+  .object({
+    code: z.string().describe('Operation error code.').nullish(),
+    message: z.string().describe('Operation error message.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamsAsyncOperationType = z.enum([
+  'invalid',
+  'cloneTeam',
+  'archiveTeam',
+  'unarchiveTeam',
+  'createTeam',
+  'unknownFutureValue',
+  'teamifyGroup',
+  'createChannel',
+  'archiveChannel',
+  'unarchiveChannel',
+]);
+const microsoft_graph_teamsAsyncOperationStatus = z.enum([
+  'invalid',
+  'notStarted',
+  'inProgress',
+  'succeeded',
+  'failed',
+  'unknownFutureValue',
+]);
+const microsoft_graph_teamsAsyncOperation = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    attemptsCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'Number of times the operation was attempted before being marked successful or failed.'
+      )
+      .optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Time when the operation was created.')
+      .optional(),
+    error: microsoft_graph_operationError.optional(),
+    lastActionDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Time when the async operation was last updated.')
+      .optional(),
+    operationType: microsoft_graph_teamsAsyncOperationType.optional(),
+    status: microsoft_graph_teamsAsyncOperationStatus.optional(),
+    targetResourceId: z
+      .string()
+      .describe(
+        "The ID of the object that's created or modified as result of this async operation, typically a team."
+      )
+      .nullish(),
+    targetResourceLocation: z
+      .string()
+      .describe(
+        "The location of the object that's created or modified as result of this async operation. This URL should be treated as an opaque value and not parsed into its component paths."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_team: z.ZodType<microsoft_graph_team> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      displayName: z.string().describe('The name of the team.').nullish(),
+      description: z
+        .string()
+        .describe('An optional description for the team. Maximum length: 1,024 characters.')
+        .nullish(),
+      createdDateTime: z
+        .string()
+        .regex(
+          /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+        )
+        .datetime({ offset: true })
+        .describe('Timestamp at which the team was created.')
+        .nullish(),
+      classification: z
+        .string()
+        .describe(
+          "An optional label. Typically describes the data or business sensitivity of the team. Must match one of a preconfigured set in the tenant's directory."
+        )
+        .nullish(),
+      firstChannelName: z
+        .string()
+        .describe(
+          "The name of the first channel in the team. This is an optional property, only used during team creation and isn't returned in methods to get and list teams."
+        )
+        .nullish(),
+      funSettings: microsoft_graph_teamFunSettings.optional(),
+      guestSettings: microsoft_graph_teamGuestSettings.optional(),
+      internalId: z
+        .string()
+        .describe(
+          'A unique ID for the team that was used in a few places such as the audit log/Office 365 Management Activity API.'
+        )
+        .nullish(),
+      isArchived: z.boolean().describe('Whether this team is in read-only mode.').nullish(),
+      memberSettings: microsoft_graph_teamMemberSettings.optional(),
+      messagingSettings: microsoft_graph_teamMessagingSettings.optional(),
+      specialization: microsoft_graph_teamSpecialization.optional(),
+      summary: microsoft_graph_teamSummary.optional(),
+      tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+      visibility: microsoft_graph_teamVisibilityType.optional(),
+      webUrl: z
+        .string()
+        .describe(
+          'A hyperlink that goes to the team in the Microsoft Teams client. You get this URL when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be treated as an opaque blob, and not parsed.'
+        )
+        .nullish(),
+      allChannels: z
+        .array(microsoft_graph_channel)
+        .describe('List of channels either hosted in or shared with the team (incoming channels).')
+        .optional(),
+      channels: z
+        .array(microsoft_graph_channel)
+        .describe('The collection of channels and messages associated with the team.')
+        .optional(),
+      group: microsoft_graph_group
+        .describe('[Note: Simplified from 73 properties to 25 most common ones]')
+        .optional(),
+      incomingChannels: z
+        .array(microsoft_graph_channel)
+        .describe('List of channels shared with the team.')
+        .optional(),
+      installedApps: z
+        .array(microsoft_graph_teamsAppInstallation)
+        .describe('The apps installed in this team.')
+        .optional(),
+      members: z
+        .array(microsoft_graph_conversationMember)
+        .describe('Members and owners of the team.')
+        .optional(),
+      operations: z
+        .array(microsoft_graph_teamsAsyncOperation)
+        .describe('The async operations that ran or are running on this team.')
+        .optional(),
+      permissionGrants: z
+        .array(microsoft_graph_resourceSpecificPermissionGrant)
+        .describe('A collection of permissions granted to apps to access the team.')
+        .optional(),
+    })
+    .passthrough()
+    .passthrough()
+);
+const microsoft_graph_teamCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_team),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_externalAudienceScope = z.enum(['none', 'contactsOnly', 'all']);
+const microsoft_graph_automaticRepliesStatus = z.enum(['disabled', 'alwaysEnabled', 'scheduled']);
+const microsoft_graph_automaticRepliesSetting = z
+  .object({
+    externalAudience: microsoft_graph_externalAudienceScope.optional(),
+    externalReplyMessage: z
+      .string()
+      .describe(
+        'The automatic reply to send to the specified external audience, if Status is AlwaysEnabled or Scheduled.'
+      )
+      .nullish(),
+    internalReplyMessage: z
+      .string()
+      .describe(
+        "The automatic reply to send to the audience internal to the signed-in user's organization, if Status is AlwaysEnabled or Scheduled."
+      )
+      .nullish(),
+    scheduledEndDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    scheduledStartDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    status: microsoft_graph_automaticRepliesStatus.optional(),
+  })
+  .passthrough();
+const microsoft_graph_delegateMeetingMessageDeliveryOptions = z.enum([
+  'sendToDelegateAndInformationToPrincipal',
+  'sendToDelegateAndPrincipal',
+  'sendToDelegateOnly',
+]);
+const microsoft_graph_localeInfo = z
+  .object({
+    displayName: z
+      .string()
+      .describe(
+        "A name representing the user's locale in natural language, for example, 'English (United States)'."
+      )
+      .nullish(),
+    locale: z
+      .string()
+      .describe(
+        "A locale representation for the user, which includes the user's preferred language and country/region. For example, 'en-us'. The language component follows 2-letter codes as defined in ISO 639-1, and the country component follows 2-letter codes as defined in ISO 3166-1 alpha-2."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_userPurpose = z.enum([
+  'user',
+  'linked',
+  'shared',
+  'room',
+  'equipment',
+  'others',
+  'unknownFutureValue',
+]);
+const microsoft_graph_mailboxSettings = z
+  .object({
+    archiveFolder: z.string().describe('Folder ID of an archive folder for the user.').nullish(),
+    automaticRepliesSetting: microsoft_graph_automaticRepliesSetting.optional(),
+    dateFormat: z.string().describe("The date format for the user's mailbox.").nullish(),
+    delegateMeetingMessageDeliveryOptions:
+      microsoft_graph_delegateMeetingMessageDeliveryOptions.optional(),
+    language: microsoft_graph_localeInfo.optional(),
+    timeFormat: z.string().describe("The time format for the user's mailbox.").nullish(),
+    timeZone: z.string().describe("The default time zone for the user's mailbox.").nullish(),
+    userPurpose: microsoft_graph_userPurpose.optional(),
+    workingHours: microsoft_graph_workingHours.optional(),
+  })
+  .passthrough();
+const microsoft_graph_messageRuleActions = z
+  .object({
+    assignCategories: z
+      .array(z.string().nullable())
+      .describe('A list of categories to be assigned to a message.')
+      .optional(),
+    copyToFolder: z
+      .string()
+      .describe('The ID of a folder that a message is to be copied to.')
+      .nullish(),
+    delete: z
+      .boolean()
+      .describe('Indicates whether a message should be moved to the Deleted Items folder.')
+      .nullish(),
+    forwardAsAttachmentTo: z
+      .array(microsoft_graph_recipient)
+      .describe(
+        'The email addresses of the recipients to which a message should be forwarded as an attachment.'
+      )
+      .optional(),
+    forwardTo: z
+      .array(microsoft_graph_recipient)
+      .describe('The email addresses of the recipients to which a message should be forwarded.')
+      .optional(),
+    markAsRead: z
+      .boolean()
+      .describe('Indicates whether a message should be marked as read.')
+      .nullish(),
+    markImportance: microsoft_graph_importance.optional(),
+    moveToFolder: z
+      .string()
+      .describe('The ID of the folder that a message will be moved to.')
+      .nullish(),
+    permanentDelete: z
+      .boolean()
+      .describe(
+        'Indicates whether a message should be permanently deleted and not saved to the Deleted Items folder.'
+      )
+      .nullish(),
+    redirectTo: z
+      .array(microsoft_graph_recipient)
+      .describe('The email addresses to which a message should be redirected.')
+      .optional(),
+    stopProcessingRules: z
+      .boolean()
+      .describe('Indicates whether subsequent rules should be evaluated.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_messageActionFlag = z.enum([
+  'any',
+  'call',
+  'doNotForward',
+  'followUp',
+  'fyi',
+  'forward',
+  'noResponseNecessary',
+  'read',
+  'reply',
+  'replyToAll',
+  'review',
+]);
+const microsoft_graph_messageRulePredicates = z
+  .object({
+    sensitivity: microsoft_graph_sensitivity.optional(),
+    importance: microsoft_graph_importance.optional(),
+    bodyContains: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the strings that should appear in the body of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    bodyOrSubjectContains: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the strings that should appear in the body or subject of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    categories: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the categories that an incoming message should be labeled with in order for the condition or exception to apply.'
+      )
+      .optional(),
+    fromAddresses: z
+      .array(microsoft_graph_recipient)
+      .describe(
+        'Represents the specific sender email addresses of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    hasAttachments: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must have attachments in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    headerContains: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the strings that appear in the headers of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    isApprovalRequest: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be an approval request in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isAutomaticForward: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be automatically forwarded in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isAutomaticReply: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be an auto reply in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isEncrypted: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be encrypted in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isMeetingRequest: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be a meeting request in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isMeetingResponse: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be a meeting response in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isNonDeliveryReport: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be a non-delivery report in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isPermissionControlled: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be permission controlled (RMS-protected) in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isReadReceipt: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be a read receipt in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isSigned: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be S/MIME-signed in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    isVoicemail: z
+      .boolean()
+      .describe(
+        'Indicates whether an incoming message must be a voice mail in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    messageActionFlag: microsoft_graph_messageActionFlag.optional(),
+    notSentToMe: z
+      .boolean()
+      .describe(
+        'Indicates whether the owner of the mailbox must not be a recipient of an incoming message in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    recipientContains: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the strings that appear in either the toRecipients or ccRecipients properties of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    senderContains: z
+      .array(z.string().nullable())
+      .describe(
+        'Represents the strings that appear in the from property of an incoming message in order for the condition or exception to apply.'
+      )
+      .optional(),
+    sentCcMe: z
+      .boolean()
+      .describe(
+        'Indicates whether the owner of the mailbox must be in the ccRecipients property of an incoming message in order for the condition or exception to apply.'
+      )
+      .nullish(),
+    sentOnlyToMe: z
+      .boolean()
+      .describe(
+        'Indicates whether the owner of the mailbox must be the only recipient in an incoming message in order for the condition or exception to apply.'
+      )
+      .nullish(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_messageRule = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    actions: microsoft_graph_messageRuleActions.optional(),
+    conditions: microsoft_graph_messageRulePredicates
+      .describe('[Note: Simplified from 30 properties to 25 most common ones]')
+      .optional(),
+    displayName: z.string().describe('The display name of the rule.').nullish(),
+    exceptions: microsoft_graph_messageRulePredicates
+      .describe('[Note: Simplified from 30 properties to 25 most common ones]')
+      .optional(),
+    hasError: z
+      .boolean()
+      .describe('Indicates whether the rule is in an error condition. Read-only.')
+      .nullish(),
+    isEnabled: z
+      .boolean()
+      .describe('Indicates whether the rule is enabled to be applied to messages.')
+      .nullish(),
+    isReadOnly: z
+      .boolean()
+      .describe(
+        'Indicates if the rule is read-only and cannot be modified or deleted by the rules REST API.'
+      )
+      .nullish(),
+    sequence: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Indicates the order in which the rule is executed, among other rules.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_followupFlagStatus = z.enum(['notFlagged', 'complete', 'flagged']);
+const microsoft_graph_followupFlag = z
+  .object({
+    completedDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    dueDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    flagStatus: microsoft_graph_followupFlagStatus.optional(),
+    startDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+  })
+  .passthrough();
+const microsoft_graph_internetMessageHeader = z
+  .object({
+    name: z.string().describe('Represents the key in a key-value pair.').nullish(),
+    value: z.string().describe('The value in a key-value pair.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_message = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    body: microsoft_graph_itemBody.optional(),
+    subject: z.string().describe('The subject of the message.').nullish(),
+    attachments: z
+      .array(microsoft_graph_attachment)
+      .describe('The fileAttachment and itemAttachment attachments for the message.')
+      .optional(),
+    singleValueExtendedProperties: z
+      .array(microsoft_graph_singleValueLegacyExtendedProperty)
+      .describe(
+        'The collection of single-value extended properties defined for the message. Nullable.'
+      )
+      .optional(),
+    multiValueExtendedProperties: z
+      .array(microsoft_graph_multiValueLegacyExtendedProperty)
+      .describe(
+        'The collection of multi-value extended properties defined for the message. Nullable.'
+      )
+      .optional(),
+    importance: microsoft_graph_importance.optional(),
+    from: microsoft_graph_recipient.optional(),
+    toRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe('The To: recipients for the message.')
+      .optional(),
+    categories: z
+      .array(z.string().nullable())
+      .describe('The categories associated with the item')
+      .optional(),
+    changeKey: z
+      .string()
+      .describe(
+        'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+      )
+      .nullish(),
+    bccRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe('The Bcc: recipients for the message.')
+      .optional(),
+    bodyPreview: z
+      .string()
+      .describe('The first 255 characters of the message body. It is in text format.')
+      .nullish(),
+    ccRecipients: z
+      .array(microsoft_graph_recipient)
+      .describe('The Cc: recipients for the message.')
+      .optional(),
+    conversationId: z
+      .string()
+      .describe('The ID of the conversation the email belongs to.')
+      .nullish(),
+    conversationIndex: z
+      .string()
+      .describe('Indicates the position of the message within the conversation.')
+      .nullish(),
+    flag: microsoft_graph_followupFlag.optional(),
+    hasAttachments: z
+      .boolean()
+      .describe(
+        "Indicates whether the message has attachments. This property doesn't include inline attachments, so if a message contains only inline attachments, this property is false. To verify the existence of inline attachments, parse the body property to look for a src attribute, such as <IMG src='cid:image001.jpg@01D26CD8.6C05F070'>."
+      )
+      .nullish(),
+    inferenceClassification: microsoft_graph_inferenceClassificationType.optional(),
+    internetMessageHeaders: z
+      .array(microsoft_graph_internetMessageHeader)
+      .describe(
+        'A collection of message headers defined by RFC5322. The set includes message headers indicating the network path taken by a message from the sender to the recipient. It can also contain custom message headers that hold app data for the message.  Returned only on applying a $select query option. Read-only.'
+      )
+      .optional(),
+    internetMessageId: z
+      .string()
+      .describe('The message ID in the format specified by RFC2822.')
+      .nullish(),
+    isDeliveryReceiptRequested: z
+      .boolean()
+      .describe('Indicates whether a read receipt is requested for the message.')
+      .nullish(),
+    isDraft: z
+      .boolean()
+      .describe(
+        "Indicates whether the message is a draft. A message is a draft if it hasn't been sent yet."
+      )
+      .nullish(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_mailFolder: z.ZodType<microsoft_graph_mailFolder> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+      childFolderCount: z
+        .number()
+        .gte(-2147483648)
+        .lte(2147483647)
+        .describe('The number of immediate child mailFolders in the current mailFolder.')
+        .nullish(),
+      displayName: z.string().describe("The mailFolder's display name.").nullish(),
+      isHidden: z
+        .boolean()
+        .describe(
+          'Indicates whether the mailFolder is hidden. This property can be set only when creating the folder. Find more information in Hidden mail folders.'
+        )
+        .nullish(),
+      parentFolderId: z
+        .string()
+        .describe("The unique identifier for the mailFolder's parent mailFolder.")
+        .nullish(),
+      totalItemCount: z
+        .number()
+        .gte(-2147483648)
+        .lte(2147483647)
+        .describe('The number of items in the mailFolder.')
+        .nullish(),
+      unreadItemCount: z
+        .number()
+        .gte(-2147483648)
+        .lte(2147483647)
+        .describe('The number of items in the mailFolder marked as unread.')
+        .nullish(),
+      childFolders: z
+        .array(microsoft_graph_mailFolder)
+        .describe('The collection of child folders in the mailFolder.')
+        .optional(),
+      messageRules: z
+        .array(microsoft_graph_messageRule)
+        .describe("The collection of rules that apply to the user's Inbox folder.")
+        .optional(),
+      messages: z
+        .array(microsoft_graph_message)
+        .describe('The collection of messages in the mailFolder.')
+        .optional(),
+      multiValueExtendedProperties: z
+        .array(microsoft_graph_multiValueLegacyExtendedProperty)
+        .describe(
+          'The collection of multi-value extended properties defined for the mailFolder. Read-only. Nullable.'
+        )
+        .optional(),
+      singleValueExtendedProperties: z
+        .array(microsoft_graph_singleValueLegacyExtendedProperty)
+        .describe(
+          'The collection of single-value extended properties defined for the mailFolder. Read-only. Nullable.'
+        )
+        .optional(),
+    })
+    .passthrough()
+);
+const microsoft_graph_mailFolderCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_mailFolder),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_messageCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_message),
+  })
+  .partial()
+  .passthrough();
+const create_forward_draft_Body = z
+  .object({
+    ToRecipients: z.array(microsoft_graph_recipient),
+    Message: z.union([microsoft_graph_message, z.object({}).partial().passthrough()]),
+    Comment: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const create_reply_draft_Body = z
+  .object({
+    Message: z.union([microsoft_graph_message, z.object({}).partial().passthrough()]),
+    Comment: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const change_password_Body = z
+  .object({ currentPassword: z.string().nullable(), newPassword: z.string().nullable() })
+  .partial()
+  .passthrough();
+const microsoft_graph_attendeeBase = z
+  .object({
+    emailAddress: microsoft_graph_emailAddress.optional(),
+    type: microsoft_graph_attendeeType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_locationConstraintItem = z
+  .object({
+    address: microsoft_graph_physicalAddress.optional(),
+    coordinates: microsoft_graph_outlookGeoCoordinates.optional(),
+    displayName: z.string().describe('The name associated with the location.').nullish(),
+    locationEmailAddress: z.string().describe('Optional email address of the location.').nullish(),
+    locationType: microsoft_graph_locationType.optional(),
+    locationUri: z.string().describe('Optional URI representing the location.').nullish(),
+    uniqueId: z.string().describe('For internal use only.').nullish(),
+    uniqueIdType: microsoft_graph_locationUniqueIdType.optional(),
+    resolveAvailability: z
+      .boolean()
+      .describe(
+        "If set to true and the specified resource is busy, findMeetingTimes looks for another resource that is free. If set to false and the specified resource is busy, findMeetingTimes returns the resource best ranked in the user's cache without checking if it's free. Default is true."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_locationConstraint = z
+  .object({
+    isRequired: z
+      .boolean()
+      .describe(
+        "The client requests the service to include in the response a meeting location for the meeting. If this is true and all the resources are busy, findMeetingTimes won't return any meeting time suggestions. If this is false and all the resources are busy, findMeetingTimes would still look for meeting times without locations."
+      )
+      .nullish(),
+    locations: z
+      .array(microsoft_graph_locationConstraintItem)
+      .describe(
+        'Constraint information for one or more locations that the client requests for the meeting.'
+      )
+      .optional(),
+    suggestLocation: z
+      .boolean()
+      .describe('The client requests the service to suggest one or more meeting locations.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_activityDomain = z.enum(['unknown', 'work', 'personal', 'unrestricted']);
+const microsoft_graph_timeConstraint = z
+  .object({
+    activityDomain: microsoft_graph_activityDomain.optional(),
+    timeSlots: z.array(microsoft_graph_timeSlot).optional(),
+  })
+  .passthrough();
+const find_meeting_times_Body = z
+  .object({
+    attendees: z.array(microsoft_graph_attendeeBase),
+    locationConstraint: z.union([
+      microsoft_graph_locationConstraint,
+      z.object({}).partial().passthrough(),
+    ]),
+    timeConstraint: z.union([microsoft_graph_timeConstraint, z.object({}).partial().passthrough()]),
+    meetingDuration: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .nullable(),
+    maxCandidates: z.number().gte(-2147483648).lte(2147483647).nullable(),
+    isOrganizerOptional: z.boolean().nullable().default(false),
+    returnSuggestionReasons: z.boolean().nullable().default(false),
+    minimumAttendeePercentage: z.union([z.number(), z.string(), ReferenceNumeric]),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_mailTipsType = z.enum([
+  'automaticReplies',
+  'mailboxFullStatus',
+  'customMailTip',
+  'externalMemberCount',
+  'totalMemberCount',
+  'maxMessageSize',
+  'deliveryRestriction',
+  'moderationStatus',
+  'recipientScope',
+  'recipientSuggestions',
+]);
+const get_mail_tips_Body = z
+  .object({
+    EmailAddresses: z.array(z.string()),
+    MailTipsOptions: z.union([microsoft_graph_mailTipsType, z.object({}).partial().passthrough()]),
+  })
+  .partial()
+  .passthrough();
+const send_mail_Body = z
+  .object({
+    Message: microsoft_graph_message.describe(
+      '[Note: Simplified from 35 properties to 25 most common ones]'
+    ),
+    SaveToSentItems: z.boolean().nullable().default(false),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_allowedLobbyAdmitterRoles = z.enum([
+  'organizerAndCoOrganizersAndPresenters',
+  'organizerAndCoOrganizers',
+  'unknownFutureValue',
+]);
+const microsoft_graph_onlineMeetingPresenters = z.enum([
+  'everyone',
+  'organization',
+  'roleIsPresenter',
+  'organizer',
+  'unknownFutureValue',
+]);
+const microsoft_graph_meetingLiveShareOptions = z.enum([
+  'enabled',
+  'disabled',
+  'unknownFutureValue',
+]);
+const microsoft_graph_meetingChatMode = z.enum([
+  'enabled',
+  'disabled',
+  'limited',
+  'unknownFutureValue',
+]);
+const microsoft_graph_audioConferencing = z
+  .object({
+    conferenceId: z.string().describe('The conference id of the online meeting.').nullish(),
+    dialinUrl: z
+      .string()
+      .describe('A URL to the externally-accessible web page that contains dial-in information.')
+      .nullish(),
+    tollFreeNumber: z
+      .string()
+      .describe('The toll-free number that connects to the Audio Conference Provider.')
+      .nullish(),
+    tollFreeNumbers: z
+      .array(z.string().nullable())
+      .describe('List of toll-free numbers that are displayed in the meeting invite.')
+      .optional(),
+    tollNumber: z
+      .string()
+      .describe('The toll number that connects to the Audio Conference Provider.')
+      .nullish(),
+    tollNumbers: z
+      .array(z.string().nullable())
+      .describe('List of toll numbers that are displayed in the meeting invite.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_chatInfo = z
+  .object({
+    messageId: z
+      .string()
+      .describe('The unique identifier of a message in a Microsoft Teams channel.')
+      .nullish(),
+    replyChainMessageId: z.string().describe('The ID of the reply message.').nullish(),
+    threadId: z
+      .string()
+      .describe('The unique identifier for a thread in Microsoft Teams.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_chatRestrictions = z
+  .object({
+    allowTextOnly: z
+      .boolean()
+      .describe('Indicates whether only text is allowed in the meeting chat. Optional.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_joinMeetingIdSettings = z
+  .object({
+    isPasscodeRequired: z
+      .boolean()
+      .describe(
+        'Indicates whether a passcode is required to join a meeting when using joinMeetingId. Optional.'
+      )
+      .nullish(),
+    joinMeetingId: z
+      .string()
+      .describe('The meeting ID to be used to join a meeting. Optional. Read-only.')
+      .nullish(),
+    passcode: z
+      .string()
+      .describe('The passcode to join a meeting.  Optional. Read-only.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_onlineMeeting = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    subject: z.string().describe('The subject of the online meeting.').nullish(),
+    allowAttendeeToEnableCamera: z
+      .boolean()
+      .describe('Indicates whether attendees can turn on their camera.')
+      .nullish(),
+    allowAttendeeToEnableMic: z
+      .boolean()
+      .describe('Indicates whether attendees can turn on their microphone.')
+      .nullish(),
+    allowBreakoutRooms: z
+      .boolean()
+      .describe('Indicates whether breakout rooms are enabled for the meeting.')
+      .nullish(),
+    allowCopyingAndSharingMeetingContent: z
+      .boolean()
+      .describe(
+        'Indicates whether the ability to copy and share meeting content is enabled for the meeting.'
+      )
+      .nullish(),
+    allowedLobbyAdmitters: microsoft_graph_allowedLobbyAdmitterRoles.optional(),
+    allowedPresenters: microsoft_graph_onlineMeetingPresenters.optional(),
+    allowLiveShare: microsoft_graph_meetingLiveShareOptions.optional(),
+    allowMeetingChat: microsoft_graph_meetingChatMode.optional(),
+    allowParticipantsToChangeName: z
+      .boolean()
+      .describe(
+        'Specifies if participants are allowed to rename themselves in an instance of the meeting.'
+      )
+      .nullish(),
+    allowPowerPointSharing: z
+      .boolean()
+      .describe('Indicates whether PowerPoint live is enabled for the meeting.')
+      .nullish(),
+    allowRecording: z
+      .boolean()
+      .describe('Indicates whether recording is enabled for the meeting.')
+      .nullish(),
+    allowTeamworkReactions: z
+      .boolean()
+      .describe('Indicates if Teams reactions are enabled for the meeting.')
+      .nullish(),
+    allowTranscription: z
+      .boolean()
+      .describe('Indicates whether transcription is enabled for the meeting.')
+      .nullish(),
+    allowWhiteboard: z
+      .boolean()
+      .describe('Indicates whether whiteboard is enabled for the meeting.')
+      .nullish(),
+    audioConferencing: microsoft_graph_audioConferencing.optional(),
+    chatInfo: microsoft_graph_chatInfo.optional(),
+    chatRestrictions: microsoft_graph_chatRestrictions.optional(),
+    expiryDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Indicates the date and time when the meeting resource expires. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    isEndToEndEncryptionEnabled: z
+      .boolean()
+      .describe('Indicates whether end-to-end encryption (E2EE) is enabled for the online meeting.')
+      .nullish(),
+    isEntryExitAnnounced: z
+      .boolean()
+      .describe('Indicates whether to announce when callers join or leave.')
+      .nullish(),
+    joinInformation: microsoft_graph_itemBody.optional(),
+    joinMeetingIdSettings: microsoft_graph_joinMeetingIdSettings.optional(),
+    joinWebUrl: z.string().describe('The join URL of the online meeting. Read-only.').nullish(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_onlineMeetingCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_onlineMeeting),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_virtualEventExternalInformation = z
+  .object({
+    applicationId: z
+      .string()
+      .describe('Identifier of the application that hosts the externalEventId. Read-only.')
+      .nullish(),
+    externalEventId: z
+      .string()
+      .describe(
+        'The identifier for a virtualEventExternalInformation object that associates the virtual event with an event ID in an external application. This association bundles all the information (both supported and not supported in virtualEvent) into one virtual event object. Optional. If set, the maximum supported length is 256 characters.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_attendanceInterval = z
+  .object({
+    durationInSeconds: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'Duration of the meeting interval in seconds; that is, the difference between joinDateTime and leaveDateTime.'
+      )
+      .nullish(),
+    joinDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('The time the attendee joined in UTC.')
+      .nullish(),
+    leaveDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('The time the attendee left in UTC.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_virtualEventExternalRegistrationInformation = z
+  .object({
+    referrer: z
+      .string()
+      .describe(
+        'A URL or string that represents the location from which the registrant registered. Optional.'
+      )
+      .nullish(),
+    registrationId: z
+      .string()
+      .describe(
+        'The identifier for a virtualEventExternalRegistrationInformation object. Optional. If set, the maximum supported length is 256 characters.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_attendanceRecord = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    attendanceIntervals: z
+      .array(microsoft_graph_attendanceInterval)
+      .describe('List of time periods between joining and leaving a meeting.')
+      .optional(),
+    emailAddress: z
+      .string()
+      .describe('Email address of the user associated with this attendance record.')
+      .nullish(),
+    externalRegistrationInformation:
+      microsoft_graph_virtualEventExternalRegistrationInformation.optional(),
+    identity: microsoft_graph_identity.optional(),
+    registrationId: z
+      .string()
+      .describe(
+        'Unique identifier of a virtualEventRegistration that is available to all participants registered for the virtualEventWebinar.'
+      )
+      .nullish(),
+    role: z
+      .string()
+      .describe(
+        'Role of the attendee. The possible values are: None, Attendee, Presenter, and Organizer.'
+      )
+      .nullish(),
+    totalAttendanceInSeconds: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Total duration of the attendances in seconds.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_meetingAttendanceReport = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    externalEventInformation: z
+      .array(microsoft_graph_virtualEventExternalInformation)
+      .describe(
+        'The external information of a virtual event. Returned only for event organizers or coorganizers. Read-only.'
+      )
+      .optional(),
+    meetingEndDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('UTC time when the meeting ended. Read-only.')
+      .nullish(),
+    meetingStartDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('UTC time when the meeting started. Read-only.')
+      .nullish(),
+    totalParticipantCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('Total number of participants. Read-only.')
+      .nullish(),
+    attendanceRecords: z
+      .array(microsoft_graph_attendanceRecord)
+      .describe('List of attendance records of an attendance report. Read-only.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_meetingAttendanceReportCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_meetingAttendanceReport),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_callRecording = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    callId: z
+      .string()
+      .describe('The unique identifier for the call that is related to this recording. Read-only.')
+      .nullish(),
+    content: z.string().describe('The content of the recording. Read-only.').nullish(),
+    contentCorrelationId: z
+      .string()
+      .describe(
+        'The unique identifier that links the transcript with its corresponding recording. Read-only.'
+      )
+      .nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Date and time at which the recording was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    endDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Date and time at which the recording ends. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    meetingId: z
+      .string()
+      .describe('The unique identifier of the onlineMeeting related to this recording. Read-only.')
+      .nullish(),
+    meetingOrganizer: microsoft_graph_identitySet.optional(),
+    recordingContentUrl: z
+      .string()
+      .describe('The URL that can be used to access the content of the recording. Read-only.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_callRecordingCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_callRecording),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_callTranscript = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    callId: z
+      .string()
+      .describe('The unique identifier for the call that is related to this transcript. Read-only.')
+      .nullish(),
+    content: z.string().describe('The content of the transcript. Read-only.').nullish(),
+    contentCorrelationId: z
+      .string()
+      .describe(
+        'The unique identifier that links the transcript with its corresponding recording. Read-only.'
+      )
+      .nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Date and time at which the transcript was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    endDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Date and time at which the transcription ends. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only.'
+      )
+      .nullish(),
+    meetingId: z
+      .string()
+      .describe(
+        'The unique identifier of the online meeting related to this transcript. Read-only.'
+      )
+      .nullish(),
+    meetingOrganizer: microsoft_graph_identitySet.optional(),
+    metadataContent: z
+      .string()
+      .describe('The time-aligned metadata of the utterances in the transcript. Read-only.')
+      .nullish(),
+    transcriptContentUrl: z
+      .string()
+      .describe('The URL that can be used to access the content of the transcript. Read-only.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_callTranscriptCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_callTranscript),
+  })
+  .partial()
+  .passthrough();
+const create_or_get_online_meeting_Body = z
+  .object({
+    chatInfo: z.union([microsoft_graph_chatInfo, z.object({}).partial().passthrough()]),
+    endDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .nullable(),
+    externalId: z.string(),
+    participants: z.object({}).partial().passthrough(),
+    startDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .nullable(),
+    subject: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_categoryColor = z.enum([
+  'none',
+  'preset0',
+  'preset1',
+  'preset2',
+  'preset3',
+  'preset4',
+  'preset5',
+  'preset6',
+  'preset7',
+  'preset8',
+  'preset9',
+  'preset10',
+  'preset11',
+  'preset12',
+  'preset13',
+  'preset14',
+  'preset15',
+  'preset16',
+  'preset17',
+  'preset18',
+  'preset19',
+  'preset20',
+  'preset21',
+  'preset22',
+  'preset23',
+  'preset24',
+]);
+const microsoft_graph_outlookCategory = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    color: microsoft_graph_categoryColor.optional(),
+    displayName: z
+      .string()
+      .describe(
+        "A unique name that identifies a category in the user's mailbox. After a category is created, the name cannot be changed. Read-only."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_outlookCategoryCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_outlookCategory),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_personType = z
+  .object({
+    class: z.string().describe('The type of data source, such as Person.').nullish(),
+    subclass: z
+      .string()
+      .describe('The secondary type of data source, such as OrganizationUser.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_phoneType = z.enum([
+  'home',
+  'business',
+  'mobile',
+  'other',
+  'assistant',
+  'homeFax',
+  'businessFax',
+  'otherFax',
+  'pager',
+  'radio',
+]);
+const microsoft_graph_phone = z
+  .object({
+    language: z.string().nullish(),
+    number: z.string().describe('The phone number.').nullish(),
+    region: z.string().nullish(),
+    type: microsoft_graph_phoneType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_selectionLikelihoodInfo = z.enum(['notSpecified', 'high']);
+const microsoft_graph_scoredEmailAddress = z
+  .object({
+    address: z.string().describe('The email address.').nullish(),
+    itemId: z.string().nullish(),
+    relevanceScore: z
+      .number()
+      .describe(
+        'The relevance score of the email address. A relevance score is used as a sort key, in relation to the other returned results. A higher relevance score value corresponds to a more relevant result. Relevance is determined by the user’s communication and collaboration patterns and business relationships. [Simplified from 3 options]'
+      )
+      .nullish(),
+    selectionLikelihood: microsoft_graph_selectionLikelihoodInfo.optional(),
+  })
+  .passthrough();
+const microsoft_graph_websiteType = z.enum(['other', 'home', 'work', 'blog', 'profile']);
+const microsoft_graph_website = z
+  .object({
+    address: z.string().describe('The URL of the website.').nullish(),
+    displayName: z.string().describe('The display name of the web site.').nullish(),
+    type: microsoft_graph_websiteType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_person = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    birthday: z.string().describe("The person's birthday.").nullish(),
+    companyName: z.string().describe("The name of the person's company.").nullish(),
+    department: z.string().describe("The person's department.").nullish(),
+    displayName: z.string().describe("The person's display name.").nullish(),
+    givenName: z.string().describe("The person's given name.").nullish(),
+    imAddress: z
+      .string()
+      .describe(
+        'The instant message voice over IP (VOIP) session initiation protocol (SIP) address for the user. Read-only.'
+      )
+      .nullish(),
+    isFavorite: z
+      .boolean()
+      .describe('True if the user has flagged this person as a favorite.')
+      .nullish(),
+    jobTitle: z.string().describe("The person's job title.").nullish(),
+    officeLocation: z.string().describe("The location of the person's office.").nullish(),
+    personNotes: z
+      .string()
+      .describe('Free-form notes that the user has taken about this person.')
+      .nullish(),
+    personType: microsoft_graph_personType.optional(),
+    phones: z.array(microsoft_graph_phone).describe("The person's phone numbers.").optional(),
+    postalAddresses: z
+      .array(microsoft_graph_location)
+      .describe("The person's addresses.")
+      .optional(),
+    profession: z.string().describe("The person's profession.").nullish(),
+    scoredEmailAddresses: z
+      .array(microsoft_graph_scoredEmailAddress)
+      .describe("The person's email addresses.")
+      .optional(),
+    surname: z.string().describe("The person's surname.").nullish(),
+    userPrincipalName: z
+      .string()
+      .describe(
+        "The user principal name (UPN) of the person. The UPN is an Internet-style login name for the person based on the Internet standard RFC 822. By convention, this should map to the person's email name. The general format is alias@domain."
+      )
+      .nullish(),
+    websites: z.array(microsoft_graph_website).describe("The person's websites.").optional(),
+    yomiCompany: z
+      .string()
+      .describe("The phonetic Japanese name of the person's company.")
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_personCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_person),
+  })
+  .partial()
+  .passthrough();
 const microsoft_graph_plannerTaskCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
     '@odata.nextLink': z.string().nullable(),
     value: z.array(microsoft_graph_plannerTask),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_outOfOfficeSettings = z
+  .object({
+    isOutOfOffice: z
+      .boolean()
+      .describe(
+        "If true, either of the following is met:The current time falls within the out-of-office window configured in Outlook or Teams.An event marked as 'Show as Out of Office' appears on the user's calendar.Otherwise, false."
+      )
+      .nullish(),
+    message: z
+      .string()
+      .describe(
+        'The out-of-office message configured by the user in the Outlook client (Automatic replies) or the Teams client (Schedule out of office).'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_presenceStatusMessage = z
+  .object({
+    expiryDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    message: microsoft_graph_itemBody.optional(),
+    publishedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        "Time in which the status message was published.Read-only.publishedDateTime isn't available when you request the presence of another user."
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workLocationSource = z.enum([
+  'none',
+  'manual',
+  'scheduled',
+  'automatic',
+  'unknownFutureValue',
+]);
+const microsoft_graph_workLocationType = z.enum([
+  'unspecified',
+  'office',
+  'remote',
+  'timeOff',
+  'unknownFutureValue',
+]);
+const microsoft_graph_userWorkLocation = z
+  .object({
+    placeId: z.string().describe('Identifier of the place, if applicable.').nullish(),
+    source: microsoft_graph_workLocationSource.optional(),
+    workLocationType: microsoft_graph_workLocationType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_presence = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    activity: z
+      .string()
+      .describe(
+        "The supplemental information to a user's availability. Possible values are available, away, beRightBack, busy, doNotDisturb, offline, outOfOffice, presenceUnknown."
+      )
+      .nullish(),
+    availability: z
+      .string()
+      .describe(
+        'The base presence information for a user. Possible values are available, away, beRightBack, busy, doNotDisturb, focusing, inACall, inAMeeting, offline, presenting, presenceUnknown.'
+      )
+      .nullish(),
+    outOfOfficeSettings: microsoft_graph_outOfOfficeSettings.optional(),
+    sequenceNumber: z
+      .string()
+      .describe(
+        'The lexicographically sortable String stamp that represents the version of a presence object.'
+      )
+      .nullish(),
+    statusMessage: microsoft_graph_presenceStatusMessage.optional(),
+    workLocation: microsoft_graph_userWorkLocation.optional(),
+  })
+  .passthrough();
+const set_my_presence_Body = z
+  .object({
+    sessionId: z.string().nullable(),
+    availability: z.string(),
+    activity: z.string(),
+    expirationDuration: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .nullable(),
+  })
+  .partial()
+  .passthrough();
+const set_status_message_Body = z
+  .object({
+    statusMessage: z.union([
+      microsoft_graph_presenceStatusMessage,
+      z.object({}).partial().passthrough(),
+    ]),
+  })
+  .partial()
+  .passthrough();
+const set_preferred_presence_Body = z
+  .object({
+    availability: z.string(),
+    activity: z.string(),
+    expirationDuration: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .nullable(),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_userInsightsSettings = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    isEnabled: z
+      .boolean()
+      .describe(
+        "True if the user's itemInsights and meeting hours insights are enabled; false if the user's itemInsights and meeting hours insights are disabled. The default value is true. Optional."
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_maxWorkLocationDetails = z.enum([
+  'unknown',
+  'none',
+  'approximate',
+  'specific',
+  'unknownFutureValue',
+]);
+const microsoft_graph_timeOffDetails = z
+  .object({
+    isAllDay: z
+      .boolean()
+      .describe('Indicates whether the time-off entry spans the entire day.')
+      .optional(),
+    subject: z.string().describe('The subject or reason for the time-off entry.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_workPlanOccurrence = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    end: microsoft_graph_dateTimeTimeZone.optional(),
+    placeId: z
+      .string()
+      .describe(
+        'Identifier of a place from the Microsoft Graph Places Directory API. Only applicable when workLocationType is set to office.'
+      )
+      .nullish(),
+    recurrenceId: z
+      .string()
+      .describe(
+        "The identifier of the parent recurrence pattern that generated this occurrence. The value is null for time-off occurrences because they don't have a parent recurrence."
+      )
+      .nullish(),
+    start: microsoft_graph_dateTimeTimeZone.optional(),
+    timeOffDetails: microsoft_graph_timeOffDetails.optional(),
+    workLocationType: microsoft_graph_workLocationType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workPlanRecurrence = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    end: microsoft_graph_dateTimeTimeZone.optional(),
+    placeId: z
+      .string()
+      .describe(
+        'Identifier of a place from the Microsoft Graph Places Directory API. Only applicable when workLocationType is set to office.'
+      )
+      .nullish(),
+    recurrence: microsoft_graph_patternedRecurrence.optional(),
+    start: microsoft_graph_dateTimeTimeZone.optional(),
+    workLocationType: microsoft_graph_workLocationType.optional(),
+  })
+  .passthrough();
+const microsoft_graph_workHoursAndLocationsSetting = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    maxSharedWorkLocationDetails: microsoft_graph_maxWorkLocationDetails.optional(),
+    occurrences: z
+      .array(microsoft_graph_workPlanOccurrence)
+      .describe('Collection of work plan occurrences.')
+      .optional(),
+    recurrences: z
+      .array(microsoft_graph_workPlanRecurrence)
+      .describe('Collection of recurring work plans defined by the user.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_associatedTeamInfo = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    displayName: z.string().describe('The name of the team.').nullish(),
+    tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+    team: microsoft_graph_team
+      .describe('[Note: Simplified from 30 properties to 25 most common ones]')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_associatedTeamInfoCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_associatedTeamInfo),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_userScopeTeamsAppInstallation = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    consentedPermissionSet: microsoft_graph_teamsAppPermissionSet.optional(),
+    teamsApp: microsoft_graph_teamsApp.optional(),
+    teamsAppDefinition: microsoft_graph_teamsAppDefinition.optional(),
+    chat: microsoft_graph_chat.optional(),
+  })
+  .passthrough();
+const microsoft_graph_userScopeTeamsAppInstallationCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_userScopeTeamsAppInstallation),
+  })
+  .partial()
+  .passthrough();
+const send_me_activity_notification_Body = z
+  .object({
+    topic: z.object({}).partial().passthrough(),
+    activityType: z.string().nullable(),
+    chainId: z.number().nullable(),
+    previewText: z.union([microsoft_graph_itemBody, z.object({}).partial().passthrough()]),
+    teamsAppId: z.string().nullable(),
+    templateParameters: z.array(z.object({}).partial().passthrough()),
+    iconId: z.string().nullable(),
   })
   .partial()
   .passthrough();
@@ -7212,76 +9325,46 @@ const microsoft_graph_todoTaskCollectionResponse = z
   })
   .partial()
   .passthrough();
-const microsoft_graph_plannerContainerType = z.enum(['group', 'unknownFutureValue', 'roster']);
-const microsoft_graph_plannerPlanContainer = z
+const microsoft_graph_attachmentBaseCollectionResponse = z
   .object({
-    containerId: z
-      .string()
-      .describe('The identifier of the resource that contains the plan. Optional.')
-      .nullish(),
-    type: microsoft_graph_plannerContainerType.optional(),
-    url: z.string().describe('The full canonical URL of the container. Optional.').nullish(),
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_attachmentBase),
   })
+  .partial()
   .passthrough();
-const microsoft_graph_plannerBucket = z
+const microsoft_graph_checklistItemCollectionResponse = z
   .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    name: z.string().describe('Name of the bucket.').optional(),
-    orderHint: z
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_checklistItem),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_linkedResourceCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_linkedResource),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_checkInMethod = z.enum([
+  'unspecified',
+  'manual',
+  'inferred',
+  'verified',
+  'unknownFutureValue',
+]);
+const microsoft_graph_checkInClaim = z
+  .object({
+    calendarEventId: z
       .string()
       .describe(
-        'Hint used to order items of this type in a list view. For details about the supported format, see Using order hints in Planner.'
+        'The unique identifier for an Outlook calendar event associated with the checkInClaim object. For more information, see the iCalUId property in event.'
       )
-      .nullish(),
-    planId: z.string().describe('Plan ID to which the bucket belongs.').nullish(),
-    tasks: z
-      .array(microsoft_graph_plannerTask)
-      .describe('Read-only. Nullable. The collection of tasks in the bucket.')
       .optional(),
-  })
-  .passthrough();
-const microsoft_graph_plannerCategoryDescriptions = z
-  .object({
-    category1: z.string().describe('The label associated with Category 1').nullish(),
-    category10: z.string().describe('The label associated with Category 10').nullish(),
-    category11: z.string().describe('The label associated with Category 11').nullish(),
-    category12: z.string().describe('The label associated with Category 12').nullish(),
-    category13: z.string().describe('The label associated with Category 13').nullish(),
-    category14: z.string().describe('The label associated with Category 14').nullish(),
-    category15: z.string().describe('The label associated with Category 15').nullish(),
-    category16: z.string().describe('The label associated with Category 16').nullish(),
-    category17: z.string().describe('The label associated with Category 17').nullish(),
-    category18: z.string().describe('The label associated with Category 18').nullish(),
-    category19: z.string().describe('The label associated with Category 19').nullish(),
-    category2: z.string().describe('The label associated with Category 2').nullish(),
-    category20: z.string().describe('The label associated with Category 20').nullish(),
-    category21: z.string().describe('The label associated with Category 21').nullish(),
-    category22: z.string().describe('The label associated with Category 22').nullish(),
-    category23: z.string().describe('The label associated with Category 23').nullish(),
-    category24: z.string().describe('The label associated with Category 24').nullish(),
-    category25: z.string().describe('The label associated with Category 25').nullish(),
-    category3: z.string().describe('The label associated with Category 3').nullish(),
-    category4: z.string().describe('The label associated with Category 4').nullish(),
-    category5: z.string().describe('The label associated with Category 5').nullish(),
-    category6: z.string().describe('The label associated with Category 6').nullish(),
-    category7: z.string().describe('The label associated with Category 7').nullish(),
-    category8: z.string().describe('The label associated with Category 8').nullish(),
-    category9: z.string().describe('The label associated with Category 9').nullish(),
-  })
-  .passthrough();
-const microsoft_graph_plannerUserIds = z.object({}).passthrough();
-const microsoft_graph_plannerPlanDetails = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    categoryDescriptions: microsoft_graph_plannerCategoryDescriptions.optional(),
-    sharedWith: microsoft_graph_plannerUserIds.optional(),
-  })
-  .passthrough();
-const microsoft_graph_plannerPlan = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    container: microsoft_graph_plannerPlanContainer.optional(),
-    createdBy: microsoft_graph_identitySet.optional(),
+    checkInMethod: microsoft_graph_checkInMethod.optional(),
     createdDateTime: z
       .string()
       .regex(
@@ -7289,26 +9372,195 @@ const microsoft_graph_plannerPlan = z
       )
       .datetime({ offset: true })
       .describe(
-        'Read-only. Date and time at which the plan is created. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+        'The date and time when the checkInClaim object was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
       )
       .nullish(),
-    owner: z
+  })
+  .passthrough();
+const microsoft_graph_resourceLinkType = z.enum(['url', 'unknownFutureValue']);
+const microsoft_graph_resourceLink = z
+  .object({
+    linkType: microsoft_graph_resourceLinkType.optional(),
+    name: z
       .string()
       .describe(
-        "Use the container property instead. ID of the group that owns the plan. After it's set, this property can’t be updated. This property won't return a valid group ID if the container of the plan isn't a group."
+        'The link text that is visible in the Places app. The maximum length is 200 characters.'
       )
       .nullish(),
-    title: z.string().describe('Required. Title of the plan.').optional(),
-    buckets: z
-      .array(microsoft_graph_plannerBucket)
-      .describe('Read-only. Nullable. Collection of buckets in the plan.')
+    value: z
+      .string()
+      .describe('The URL of the resource link. The maximum length is 200 characters.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_placeFeatureEnablement = z.enum([
+  'unknown',
+  'enabled',
+  'disabled',
+  'unknownFutureValue',
+]);
+const microsoft_graph_footprintMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_fixtureMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+    placeId: z
+      .string()
+      .describe('Identifier for the floor to which this fixtureMap belongs.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_sectionMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+    placeId: z
+      .string()
+      .describe('Identifier of the section to which this sectionMap belongs.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_unitMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+    placeId: z
+      .string()
+      .describe('Identifier of the place (such as a room) to which this unitMap belongs.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_levelMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+    placeId: z
+      .string()
+      .describe('Identifier of the floor to which this levelMap belongs.')
+      .nullish(),
+    fixtures: z
+      .array(microsoft_graph_fixtureMap)
+      .describe(
+        'Collection of fixtures (such as furniture or equipment) on this level. Supports upsert.'
+      )
       .optional(),
-    details: microsoft_graph_plannerPlanDetails.optional(),
-    tasks: z
-      .array(microsoft_graph_plannerTask)
-      .describe('Read-only. Nullable. Collection of tasks in the plan.')
+    sections: z
+      .array(microsoft_graph_sectionMap)
+      .describe(
+        'Collection of sections (such as zones or partitions) on this level. Supports upsert.'
+      )
+      .optional(),
+    units: z
+      .array(microsoft_graph_unitMap)
+      .describe('Collection of units (such as rooms or offices) on this level. Supports upsert.')
       .optional(),
   })
+  .passthrough();
+const microsoft_graph_buildingMap = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    properties: z
+      .string()
+      .describe(
+        'Concatenated key-value pair of all properties of a GeoJSON file for this baseMapFeature.'
+      )
+      .nullish(),
+    placeId: z
+      .string()
+      .describe('Identifier for the building to which this buildingMap belongs.')
+      .nullish(),
+    footprints: z
+      .array(microsoft_graph_footprintMap)
+      .describe(
+        'Represents the approximate physical extent of a referenced building. It corresponds to footprint.geojson in IMDF format.'
+      )
+      .optional(),
+    levels: z
+      .array(microsoft_graph_levelMap)
+      .describe(
+        'Represents a physical floor structure within a building. It corresponds to level.geojson in IMDF format.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_building = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    address: microsoft_graph_physicalAddress.optional(),
+    displayName: z.string().describe('The name that is associated with the place.').optional(),
+    geoCoordinates: microsoft_graph_outlookGeoCoordinates.optional(),
+    isWheelChairAccessible: z
+      .boolean()
+      .describe('Indicates whether the place is wheelchair accessible.')
+      .nullish(),
+    label: z.string().describe('User-defined description of the place.').nullish(),
+    parentId: z.string().describe('The ID of a parent place.').nullish(),
+    phone: z.string().describe('The phone number of the place.').nullish(),
+    tags: z
+      .array(z.string())
+      .describe('Custom tags that are associated with the place for categorization or filtering.')
+      .optional(),
+    checkIns: z
+      .array(microsoft_graph_checkInClaim)
+      .describe(
+        'A subresource of a place object that indicates the check-in status of an Outlook calendar event booked at the place.'
+      )
+      .optional(),
+    resourceLinks: z
+      .array(microsoft_graph_resourceLink)
+      .describe(
+        'A set of links to external resources that are associated with the building. Inherited from place.'
+      )
+      .optional(),
+    wifiState: microsoft_graph_placeFeatureEnablement.optional(),
+    map: microsoft_graph_buildingMap.optional(),
+  })
+  .passthrough();
+const microsoft_graph_buildingCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_building),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_plannerBucketCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_plannerBucket),
+  })
+  .partial()
   .passthrough();
 const microsoft_graph_bucketAggregationRange = z
   .object({
@@ -7552,10 +9804,6 @@ const search_query_Body = z
   .object({ requests: z.array(microsoft_graph_searchRequest) })
   .partial()
   .passthrough();
-const BaseCollectionPaginationCountResponse = z
-  .object({ '@odata.count': z.number().int().nullable(), '@odata.nextLink': z.string().nullable() })
-  .partial()
-  .passthrough();
 const microsoft_graph_searchBucket = z
   .object({
     aggregationFilterToken: z
@@ -7583,9 +9831,6 @@ const microsoft_graph_searchAggregation = z
     buckets: z.array(microsoft_graph_searchBucket).optional(),
     field: z.string().nullish(),
   })
-  .passthrough();
-const microsoft_graph_entity = z
-  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
   .passthrough();
 const microsoft_graph_searchHit = z
   .object({
@@ -7706,149 +9951,11 @@ const microsoft_graph_searchResponse = z
       .optional(),
   })
   .passthrough();
-const microsoft_graph_root = z.object({}).passthrough();
-const microsoft_graph_siteArchiveStatus = z.enum([
-  'recentlyArchived',
-  'fullyArchived',
-  'reactivating',
-  'unknownFutureValue',
-]);
-const microsoft_graph_siteArchivalDetails = z
-  .object({ archiveStatus: microsoft_graph_siteArchiveStatus.optional() })
-  .passthrough();
-const microsoft_graph_siteCollection = z
-  .object({
-    archivalDetails: microsoft_graph_siteArchivalDetails.optional(),
-    dataLocationCode: z
-      .string()
-      .describe(
-        'The geographic region code for where this site collection resides. Only present for multi-geo tenants. Read-only.'
-      )
-      .nullish(),
-    hostname: z.string().describe('The hostname for the site collection. Read-only.').nullish(),
-    root: microsoft_graph_root.optional(),
-  })
-  .passthrough();
-const microsoft_graph_baseItem = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    createdBy: microsoft_graph_identitySet.optional(),
-    createdDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Date and time of item creation. Read-only.')
-      .optional(),
-    description: z
-      .string()
-      .describe('Provides a user-visible description of the item. Optional.')
-      .nullish(),
-    eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
-    lastModifiedBy: microsoft_graph_identitySet.optional(),
-    lastModifiedDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Date and time the item was last modified. Read-only.')
-      .optional(),
-    name: z.string().describe('The name of the item. Read-write.').nullish(),
-    parentReference: microsoft_graph_itemReference.optional(),
-    webUrl: z
-      .string()
-      .describe(
-        'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
-      )
-      .nullish(),
-    createdByUser: microsoft_graph_user
-      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
-      .optional(),
-    lastModifiedByUser: microsoft_graph_user
-      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
-      .optional(),
-  })
-  .passthrough();
-const microsoft_graph_site = z
-  .object({
-    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
-    name: z.string().describe('The name of the item. Read-write.').nullish(),
-    displayName: z.string().describe('The full title for the site. Read-only.').nullish(),
-    description: z
-      .string()
-      .describe('Provides a user-visible description of the item. Optional.')
-      .nullish(),
-    createdDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Date and time of item creation. Read-only.')
-      .optional(),
-    lastModifiedDateTime: z
-      .string()
-      .regex(
-        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
-      )
-      .datetime({ offset: true })
-      .describe('Date and time the item was last modified. Read-only.')
-      .optional(),
-    error: microsoft_graph_publicError.optional(),
-    createdBy: microsoft_graph_identitySet.optional(),
-    eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
-    lastModifiedBy: microsoft_graph_identitySet.optional(),
-    parentReference: microsoft_graph_itemReference.optional(),
-    webUrl: z
-      .string()
-      .describe(
-        'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
-      )
-      .nullish(),
-    createdByUser: microsoft_graph_user
-      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
-      .optional(),
-    lastModifiedByUser: microsoft_graph_user
-      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
-      .optional(),
-    isPersonalSite: z
-      .boolean()
-      .describe('Identifies whether the site is personal or not. Read-only.')
-      .nullish(),
-    root: microsoft_graph_root.optional(),
-    sharepointIds: microsoft_graph_sharepointIds.optional(),
-    siteCollection: microsoft_graph_siteCollection.optional(),
-    analytics: microsoft_graph_itemAnalytics.optional(),
-    columns: z
-      .array(microsoft_graph_columnDefinition)
-      .describe('The collection of column definitions reusable across lists under this site.')
-      .optional(),
-    contentTypes: z
-      .array(microsoft_graph_contentType)
-      .describe('The collection of content types defined for this site.')
-      .optional(),
-    drive: microsoft_graph_drive.optional(),
-    drives: z
-      .array(microsoft_graph_drive)
-      .describe('The collection of drives (document libraries) under this site.')
-      .optional(),
-    externalColumns: z.array(microsoft_graph_columnDefinition).optional(),
-    items: z
-      .array(microsoft_graph_baseItem)
-      .describe(
-        "Used to address any item contained in this site. This collection can't be enumerated."
-      )
-      .optional(),
-  })
-  .passthrough()
-  .passthrough();
-const microsoft_graph_siteCollectionResponse = z
+const microsoft_graph_contentTypeCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
     '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_site),
+    value: z.array(microsoft_graph_contentType),
   })
   .partial()
   .passthrough();
@@ -7868,6 +9975,14 @@ const microsoft_graph_listCollectionResponse = z
   })
   .partial()
   .passthrough();
+const microsoft_graph_columnDefinitionCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_columnDefinition),
+  })
+  .partial()
+  .passthrough();
 const microsoft_graph_listItemCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
@@ -7876,8 +9991,698 @@ const microsoft_graph_listItemCollectionResponse = z
   })
   .partial()
   .passthrough();
+const microsoft_graph_pageLayoutType = z.enum([
+  'microsoftReserved',
+  'article',
+  'home',
+  'unknownFutureValue',
+]);
+const microsoft_graph_baseSitePage = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdBy: microsoft_graph_identitySet.optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time of item creation. Read-only.')
+      .optional(),
+    description: z
+      .string()
+      .describe('Provides a user-visible description of the item. Optional.')
+      .nullish(),
+    eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
+    lastModifiedBy: microsoft_graph_identitySet.optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe('Date and time the item was last modified. Read-only.')
+      .optional(),
+    name: z.string().describe('The name of the item. Read-write.').nullish(),
+    parentReference: microsoft_graph_itemReference.optional(),
+    webUrl: z
+      .string()
+      .describe(
+        'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
+      )
+      .nullish(),
+    createdByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    lastModifiedByUser: microsoft_graph_user
+      .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+      .optional(),
+    pageLayout: microsoft_graph_pageLayoutType.optional(),
+    publishingState: microsoft_graph_publicationFacet.optional(),
+    title: z.string().describe('Title of the sitePage.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_baseSitePageCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_baseSitePage),
+  })
+  .partial()
+  .passthrough();
 const BaseDeltaFunctionResponse = z
   .object({ '@odata.nextLink': z.string().nullable(), '@odata.deltaLink': z.string().nullable() })
+  .partial()
+  .passthrough();
+const microsoft_graph_bookingPageAccessControl = z.enum([
+  'unrestricted',
+  'restrictedToOrganization',
+  'unknownFutureValue',
+]);
+const microsoft_graph_bookingPageSettings = z
+  .object({
+    accessControl: microsoft_graph_bookingPageAccessControl.optional(),
+    bookingPageColorCode: z
+      .string()
+      .describe(
+        'Custom color for the booking page. The value should be in Hex format. For example, #123456.'
+      )
+      .optional(),
+    businessTimeZone: z
+      .string()
+      .describe(
+        'The time zone of the customer. For a list of possible values, see dateTimeTimeZone.'
+      )
+      .optional(),
+    customerConsentMessage: z
+      .string()
+      .describe('The personal data collection and usage consent message in the booking page.')
+      .optional(),
+    enforceOneTimePassword: z
+      .boolean()
+      .describe(
+        'Determines whether the one-time password is required to create an appointment. The default value is false.'
+      )
+      .optional(),
+    isBusinessLogoDisplayEnabled: z
+      .boolean()
+      .describe(
+        'Indicates whether the business logo is displayed on the booking page. The default value is false.'
+      )
+      .optional(),
+    isCustomerConsentEnabled: z
+      .boolean()
+      .describe(
+        'Enables personal data collection and the usage consent toggle on the booking page. The default value is false.'
+      )
+      .optional(),
+    isSearchEngineIndexabilityDisabled: z
+      .boolean()
+      .describe('Indicates whether web crawlers index this page. The defaults value is false.')
+      .optional(),
+    isTimeSlotTimeZoneSetToBusinessTimeZone: z
+      .boolean()
+      .describe(
+        'Indicates whether the time zone of the time slot is set to the time zone of the business. The default value is false.'
+      )
+      .optional(),
+    privacyPolicyWebUrl: z
+      .string()
+      .describe(
+        "URL of a webpage that provides the terms and conditions of the business. If a privacy policy isn't included, the following text appears on the booking page as default: 'The policies and practices of {bookingbusinessname} apply to the use of your data.'"
+      )
+      .optional(),
+    termsAndConditionsWebUrl: z
+      .string()
+      .describe('URL of a webpage that provides the terms and conditions of the business.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingWorkTimeSlot = z
+  .object({
+    endTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('The time of the day when work stops. For example, 17:00:00.0000000.')
+      .optional(),
+    startTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('The time of the day when work starts. For example, 08:00:00.0000000.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingWorkHours = z
+  .object({
+    day: microsoft_graph_dayOfWeek.optional(),
+    timeSlots: z
+      .array(microsoft_graph_bookingWorkTimeSlot)
+      .describe('A list of start/end times during a day.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingsServiceAvailabilityType = z.enum([
+  'bookWhenStaffAreFree',
+  'notBookable',
+  'customWeeklyHours',
+  'unknownFutureValue',
+]);
+const microsoft_graph_bookingsAvailabilityWindow = z
+  .object({
+    availabilityType: microsoft_graph_bookingsServiceAvailabilityType.optional(),
+    businessHours: z
+      .array(microsoft_graph_bookingWorkHours)
+      .describe(
+        "The hours of operation in a week. The business hours value is set to null if the availability type isn't customWeeklyHours."
+      )
+      .optional(),
+    endDate: z
+      .string()
+      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
+      .describe('End date of the availability window.')
+      .nullish(),
+    startDate: z
+      .string()
+      .regex(/^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)
+      .describe('Start date of the availability window.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_bookingsAvailability = z
+  .object({
+    availabilityType: microsoft_graph_bookingsServiceAvailabilityType.optional(),
+    businessHours: z
+      .array(microsoft_graph_bookingWorkHours)
+      .describe(
+        "The hours of operation in a week. The business hours value is set to null if the availability type isn't customWeeklyHours."
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingSchedulingPolicy = z
+  .object({
+    allowStaffSelection: z
+      .boolean()
+      .describe('True to allow customers to choose a specific person for the booking.')
+      .optional(),
+    customAvailabilities: z
+      .array(microsoft_graph_bookingsAvailabilityWindow)
+      .describe('Custom availability of the service in a given time frame.')
+      .optional(),
+    generalAvailability: microsoft_graph_bookingsAvailability.optional(),
+    isMeetingInviteToCustomersEnabled: z
+      .boolean()
+      .describe(
+        'Indicates whether the meeting invite is sent to the customers. The default value is false.'
+      )
+      .nullish(),
+    maximumAdvance: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'Maximum number of days in advance that a booking can be made. It follows the ISO 8601 format.'
+      )
+      .optional(),
+    minimumLeadTime: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'The minimum amount of time before which bookings and cancellations must be made. It follows the ISO 8601 format.'
+      )
+      .optional(),
+    sendConfirmationsToOwner: z
+      .boolean()
+      .describe(
+        'True to notify the business via email when a booking is created or changed. Use the email address specified in the email property of the bookingBusiness entity for the business.'
+      )
+      .optional(),
+    timeSlotInterval: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe('Duration of each time slot, denoted in ISO 8601 format.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingCustomerInformationBase = z.object({}).passthrough();
+const microsoft_graph_bookingPriceType = z.enum([
+  'undefined',
+  'fixedPrice',
+  'startingAt',
+  'hourly',
+  'free',
+  'priceVaries',
+  'callUs',
+  'notSet',
+  'unknownFutureValue',
+]);
+const microsoft_graph_bookingReminderRecipients = z.enum([
+  'allAttendees',
+  'staff',
+  'customer',
+  'unknownFutureValue',
+]);
+const microsoft_graph_bookingReminder = z
+  .object({
+    message: z.string().describe('The message in the reminder.').optional(),
+    offset: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        "The amount of time before the start of an appointment that the reminder should be sent. It's denoted in ISO 8601 format."
+      )
+      .optional(),
+    recipients: microsoft_graph_bookingReminderRecipients.optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingAppointment = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the appointment was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    additionalInformation: z
+      .string()
+      .describe(
+        'Additional information that is sent to the customer when an appointment is confirmed.'
+      )
+      .nullish(),
+    anonymousJoinWebUrl: z
+      .string()
+      .describe('The URL of the meeting to join anonymously.')
+      .nullish(),
+    appointmentLabel: z
+      .string()
+      .describe('The custom label that can be stamped on this appointment by users.')
+      .nullish(),
+    customerEmailAddress: z
+      .string()
+      .describe('The SMTP address of the bookingCustomer who books the appointment.')
+      .nullish(),
+    customerName: z.string().describe("The customer's name.").nullish(),
+    customerNotes: z
+      .string()
+      .describe(
+        'Notes from the customer associated with this appointment. You can get the value only when you read this bookingAppointment by its ID. You can set this property only when you initially create an appointment with a new customer.'
+      )
+      .nullish(),
+    customerPhone: z.string().describe("The customer's phone number.").nullish(),
+    customers: z
+      .array(microsoft_graph_bookingCustomerInformationBase)
+      .describe(
+        'A collection of customer properties for an appointment. An appointment contains a list of customer information and each unit will indicate the properties of a customer who is part of that appointment. Optional.'
+      )
+      .optional(),
+    customerTimeZone: z
+      .string()
+      .describe(
+        'The time zone of the customer. For a list of possible values, see dateTimeTimeZone.'
+      )
+      .nullish(),
+    duration: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe('The length of the appointment, denoted in ISO8601 format.')
+      .optional(),
+    endDateTime: microsoft_graph_dateTimeTimeZone.optional(),
+    filledAttendeesCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The current number of customers in the appointment.')
+      .optional(),
+    isCustomerAllowedToManageBooking: z
+      .boolean()
+      .describe(
+        'Indicates that the customer can manage bookings created by the staff. The default value is false.'
+      )
+      .nullish(),
+    isLocationOnline: z
+      .boolean()
+      .describe('Indicates that the appointment is held online. The default value is false.')
+      .optional(),
+    joinWebUrl: z.string().describe('The URL of the online meeting for the appointment.').nullish(),
+    lastUpdatedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the booking business was last updated. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    maximumAttendeesCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The maximum number of customers allowed in an appointment. If maximumAttendeesCount of the service is greater than 1, pass valid customer IDs while creating or updating an appointment. To create a customer, use the Create bookingCustomer operation.'
+      )
+      .optional(),
+    optOutOfCustomerEmail: z
+      .boolean()
+      .describe(
+        "If true indicates that the bookingCustomer for this appointment doesn't wish to receive a confirmation for this appointment."
+      )
+      .optional(),
+    postBuffer: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'The amount of time to reserve after the appointment ends, for cleaning up, as an example. The value is expressed in ISO8601 format.'
+      )
+      .optional(),
+    preBuffer: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'The amount of time to reserve before the appointment begins, for preparation, as an example. The value is expressed in ISO8601 format.'
+      )
+      .optional(),
+    price: z
+      .number()
+      .describe(
+        'The regular price for an appointment for the specified bookingService. [Simplified from 3 options]'
+      )
+      .nullish(),
+    priceType: microsoft_graph_bookingPriceType
+      .describe('Represents the type of pricing of a booking service.')
+      .optional(),
+    reminders: z
+      .array(microsoft_graph_bookingReminder)
+      .describe(
+        'The collection of customer reminders sent for this appointment. The value of this property is available only when reading this bookingAppointment by its ID.'
+      )
+      .optional(),
+  })
+  .passthrough()
+  .passthrough();
+const microsoft_graph_bookingCustomerBase = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_answerInputType = z.enum(['text', 'radioButton', 'unknownFutureValue']);
+const microsoft_graph_bookingCustomQuestion = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    answerInputType: microsoft_graph_answerInputType.optional(),
+    answerOptions: z
+      .array(z.string().nullable())
+      .describe('List of possible answer values.')
+      .optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the custom question was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    displayName: z.string().describe('The question.').optional(),
+    lastUpdatedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the custom question was last updated. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_bookingQuestionAssignment = z
+  .object({
+    isRequired: z
+      .boolean()
+      .describe("Indicates whether it's mandatory to answer the custom question.")
+      .optional(),
+    questionId: z.string().describe('The ID of the custom question.').optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingService = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    additionalInformation: z
+      .string()
+      .describe(
+        'Additional information that is sent to the customer when an appointment is confirmed.'
+      )
+      .nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the service was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    customQuestions: z
+      .array(microsoft_graph_bookingQuestionAssignment)
+      .describe('Contains the set of custom questions associated with a particular service.')
+      .optional(),
+    defaultDuration: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'The default length of the service, represented in numbers of days, hours, minutes, and seconds. For example, P11D23H59M59.999999999999S.'
+      )
+      .optional(),
+    defaultLocation: microsoft_graph_location.optional(),
+    defaultPrice: z
+      .number()
+      .describe('The default monetary price for the service. [Simplified from 3 options]')
+      .nullish(),
+    defaultPriceType: microsoft_graph_bookingPriceType
+      .describe('Represents the type of pricing of a booking service.')
+      .optional(),
+    defaultReminders: z
+      .array(microsoft_graph_bookingReminder)
+      .describe(
+        'The default set of reminders for an appointment of this service. The value of this property is available only when reading this bookingService by its ID.'
+      )
+      .optional(),
+    description: z.string().describe('A text description for the service.').nullish(),
+    displayName: z.string().describe('A service name.').optional(),
+    isAnonymousJoinEnabled: z
+      .boolean()
+      .describe(
+        'Indicates if an anonymousJoinWebUrl(webrtcUrl) is generated for the appointment booked for this service. The default value is false.'
+      )
+      .optional(),
+    isCustomerAllowedToManageBooking: z
+      .boolean()
+      .describe(
+        'Indicates that the customer can manage bookings created by the staff. The default value is false.'
+      )
+      .nullish(),
+    isHiddenFromCustomers: z
+      .boolean()
+      .describe("True indicates that this service isn't available to customers for booking.")
+      .optional(),
+    isLocationOnline: z
+      .boolean()
+      .describe(
+        'Indicates that the appointments for the service are held online. The default value is false.'
+      )
+      .optional(),
+    languageTag: z.string().describe('The language of the self-service booking page.').optional(),
+    lastUpdatedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the service was last updated. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    maximumAttendeesCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe(
+        'The maximum number of customers allowed in a service. If maximumAttendeesCount of the service is greater than 1, pass valid customer IDs while creating or updating an appointment. To create a customer, use the Create bookingCustomer operation.'
+      )
+      .optional(),
+    notes: z.string().describe('Additional information about this service.').nullish(),
+    postBuffer: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe(
+        'The time to buffer after an appointment for this service ends, and before the next customer appointment can be booked.'
+      )
+      .optional(),
+    preBuffer: z
+      .string()
+      .regex(/^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+([.][0-9]+)?S)?)?$/)
+      .describe('The time to buffer before an appointment for this service can start.')
+      .optional(),
+    schedulingPolicy: microsoft_graph_bookingSchedulingPolicy
+      .describe(
+        'This type represents the set of policies that dictate how bookings can be created in a Booking Calendar.'
+      )
+      .optional(),
+    smsNotificationsEnabled: z
+      .boolean()
+      .describe(
+        'True indicates SMS notifications can be sent to the customers for the appointment of the service. Default value is false.'
+      )
+      .optional(),
+    staffMemberIds: z
+      .array(z.string().nullable())
+      .describe('Represents those staff members who provide this service.')
+      .optional(),
+    webUrl: z.string().describe('The URL a customer uses to access the service.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_bookingStaffMemberBase = z
+  .object({ id: z.string().describe('The unique identifier for an entity. Read-only.').optional() })
+  .passthrough();
+const microsoft_graph_bookingBusiness = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    address: microsoft_graph_physicalAddress.optional(),
+    bookingPageSettings: microsoft_graph_bookingPageSettings.optional(),
+    businessHours: z
+      .array(microsoft_graph_bookingWorkHours)
+      .describe('The hours of operation for the business.')
+      .optional(),
+    businessType: z.string().describe('The type of business.').nullish(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the booking business was created. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    defaultCurrencyIso: z
+      .string()
+      .describe('The code for the currency that the business operates in on Microsoft Bookings.')
+      .nullish(),
+    displayName: z
+      .string()
+      .describe(
+        'The name of the business, which interfaces with customers. This name appears at the top of the business scheduling page.'
+      )
+      .optional(),
+    email: z.string().describe('The email address for the business.').nullish(),
+    isPublished: z
+      .boolean()
+      .describe(
+        'The scheduling page has been made available to external customers. Use the publish and unpublish actions to set this property. Read-only.'
+      )
+      .nullish(),
+    languageTag: z.string().describe('The language of the self-service booking page.').nullish(),
+    lastUpdatedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The date, time, and time zone when the booking business was last updated. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+      )
+      .nullish(),
+    phone: z
+      .string()
+      .describe(
+        'The telephone number for the business. The phone property, together with address and webSiteUrl, appear in the footer of a business scheduling page.'
+      )
+      .nullish(),
+    publicUrl: z
+      .string()
+      .describe(
+        'The URL for the scheduling page, which is set after you publish or unpublish the page. Read-only.'
+      )
+      .nullish(),
+    schedulingPolicy: microsoft_graph_bookingSchedulingPolicy
+      .describe(
+        'This type represents the set of policies that dictate how bookings can be created in a Booking Calendar.'
+      )
+      .optional(),
+    webSiteUrl: z
+      .string()
+      .describe(
+        'The URL of the business web site. The webSiteUrl property, together with address, phone, appear in the footer of a business scheduling page.'
+      )
+      .nullish(),
+    appointments: z
+      .array(microsoft_graph_bookingAppointment)
+      .describe('All the appointments of this business. Read-only. Nullable.')
+      .optional(),
+    calendarView: z
+      .array(microsoft_graph_bookingAppointment)
+      .describe(
+        'The set of appointments of this business in a specified date range. Read-only. Nullable.'
+      )
+      .optional(),
+    customers: z
+      .array(microsoft_graph_bookingCustomerBase)
+      .describe('All the customers of this business. Read-only. Nullable.')
+      .optional(),
+    customQuestions: z
+      .array(microsoft_graph_bookingCustomQuestion)
+      .describe('All the custom questions of this business. Read-only. Nullable.')
+      .optional(),
+    services: z
+      .array(microsoft_graph_bookingService)
+      .describe('All the services offered by this business. Read-only. Nullable.')
+      .optional(),
+    staffMembers: z
+      .array(microsoft_graph_bookingStaffMemberBase)
+      .describe(
+        'All the staff members that provide services in this business. Read-only. Nullable.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingBusinessCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_bookingBusiness),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_bookingCurrency = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    symbol: z
+      .string()
+      .describe(
+        'The currency symbol. For example, the currency symbol for the US dollar and for the Australian dollar is $.'
+      )
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_bookingCurrencyCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_bookingCurrency),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_subscriptionCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_subscription),
+  })
   .partial()
   .passthrough();
 const microsoft_graph_channelCollectionResponse = z
@@ -7888,11 +10693,91 @@ const microsoft_graph_channelCollectionResponse = z
   })
   .partial()
   .passthrough();
-const microsoft_graph_conversationMemberCollectionResponse = z
+const upgrade_team_app_Body = z
+  .object({
+    consentedPermissionSet: z.union([
+      microsoft_graph_teamsAppPermissionSet,
+      z.object({}).partial().passthrough(),
+    ]),
+  })
+  .partial()
+  .passthrough();
+const clone_team_Body = z
+  .object({
+    displayName: z.string().nullable(),
+    description: z.string().nullable(),
+    mailNickname: z.string().nullable(),
+    classification: z.string().nullable(),
+    visibility: microsoft_graph_teamVisibilityType,
+    partsToClone: z.object({}).partial().passthrough(),
+  })
+  .partial()
+  .passthrough();
+const send_team_activity_notification_Body = z
+  .object({
+    topic: z.object({}).partial().passthrough(),
+    activityType: z.string().nullable(),
+    chainId: z.number().nullable(),
+    previewText: z.union([microsoft_graph_itemBody, z.object({}).partial().passthrough()]),
+    teamsAppId: z.string().nullable(),
+    templateParameters: z.array(z.object({}).partial().passthrough()),
+    recipient: z.object({}).partial().passthrough(),
+    iconId: z.string().nullable(),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_teamworkTagType = z.enum(['standard', 'unknownFutureValue']);
+const microsoft_graph_teamworkTagMember = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    displayName: z.string().describe("The member's display name.").nullish(),
+    tenantId: z
+      .string()
+      .describe('The ID of the tenant that the tag member is a part of.')
+      .nullish(),
+    userId: z.string().describe('The user ID of the member.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_teamworkTag = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    description: z
+      .string()
+      .describe(
+        "The description of the tag as it appears to the user in Microsoft Teams. A teamworkTag can't have more than 200 teamworkTagMembers."
+      )
+      .nullish(),
+    displayName: z
+      .string()
+      .describe('The name of the tag as it appears to the user in Microsoft Teams.')
+      .nullish(),
+    memberCount: z
+      .number()
+      .gte(-2147483648)
+      .lte(2147483647)
+      .describe('The number of users assigned to the tag.')
+      .nullish(),
+    tagType: microsoft_graph_teamworkTagType.optional(),
+    teamId: z.string().describe('ID of the team in which the tag is defined.').nullish(),
+    members: z
+      .array(microsoft_graph_teamworkTagMember)
+      .describe('Users assigned to the tag.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_teamworkTagCollectionResponse = z
   .object({
     '@odata.count': z.number().int().nullable(),
     '@odata.nextLink': z.string().nullable(),
-    value: z.array(microsoft_graph_conversationMember),
+    value: z.array(microsoft_graph_teamworkTag),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_teamworkTagMemberCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_teamworkTagMember),
   })
   .partial()
   .passthrough();
@@ -7904,17 +10789,244 @@ const microsoft_graph_userCollectionResponse = z
   })
   .partial()
   .passthrough();
+const microsoft_graph_servicePlanInfo = z
+  .object({
+    appliesTo: z
+      .string()
+      .describe(
+        'The object the service plan can be assigned to. The possible values are:User - service plan can be assigned to individual users.Company - service plan can be assigned to the entire tenant.'
+      )
+      .nullish(),
+    provisioningStatus: z
+      .string()
+      .describe(
+        "The provisioning status of the service plan. The possible values are:Success - Service is fully provisioned.Disabled - Service is disabled.Error - The service plan isn't provisioned and is in an error state.PendingInput - The service isn't provisioned and is awaiting service confirmation.PendingActivation - The service is provisioned but requires explicit activation by an administrator (for example, Intune_O365 service plan)PendingProvisioning - Microsoft has added a new service to the product SKU and it isn't activated in the tenant."
+      )
+      .nullish(),
+    servicePlanId: z
+      .string()
+      .regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+      .uuid()
+      .describe('The unique identifier of the service plan.')
+      .nullish(),
+    servicePlanName: z.string().describe('The name of the service plan.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_licenseDetails = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    servicePlans: z
+      .array(microsoft_graph_servicePlanInfo)
+      .describe(
+        'Information about the service plans assigned with the license. Read-only. Not nullable.'
+      )
+      .optional(),
+    skuId: z
+      .string()
+      .regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+      .uuid()
+      .describe(
+        'Unique identifier (GUID) for the service SKU. Equal to the skuId property on the related subscribedSku object. Read-only.'
+      )
+      .nullish(),
+    skuPartNumber: z
+      .string()
+      .describe(
+        'Unique SKU display name. Equal to the skuPartNumber on the related subscribedSku object; for example, AAD_Premium. Read-only.'
+      )
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_licenseDetailsCollectionResponse = z
+  .object({
+    '@odata.count': z.number().int().nullable(),
+    '@odata.nextLink': z.string().nullable(),
+    value: z.array(microsoft_graph_licenseDetails),
+  })
+  .partial()
+  .passthrough();
+const ReferenceUpdate = z.object({ '@odata.id': z.string() }).partial().passthrough();
+const assign_user_license_Body = z
+  .object({
+    addLicenses: z.array(microsoft_graph_assignedLicense),
+    removeLicenses: z.array(
+      z
+        .string()
+        .regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+        .uuid()
+    ),
+  })
+  .partial()
+  .passthrough();
+const microsoft_graph_timeRange = z
+  .object({
+    endTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('End time for the time range.')
+      .nullish(),
+    startTime: z
+      .string()
+      .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?$/)
+      .describe('Start time for the time range.')
+      .nullish(),
+  })
+  .passthrough();
+const microsoft_graph_shiftAvailability = z
+  .object({
+    recurrence: microsoft_graph_patternedRecurrence.optional(),
+    timeSlots: z
+      .array(microsoft_graph_timeRange)
+      .describe('The time slot(s) preferred by the user.')
+      .optional(),
+    timeZone: z.string().describe('Specifies the time zone for the indicated time.').nullish(),
+  })
+  .passthrough();
+const microsoft_graph_shiftPreferences = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdBy: microsoft_graph_identitySet.optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    lastModifiedBy: microsoft_graph_identitySet.optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+      )
+      .nullish(),
+    availability: z
+      .array(microsoft_graph_shiftAvailability)
+      .describe('Availability of the user to be scheduled for work and its recurrence pattern.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_serviceStorageQuotaBreakdown = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    displayName: z.string().nullish(),
+    manageWebUrl: z.string().nullish(),
+    used: z.number().nullish(),
+  })
+  .passthrough();
+const microsoft_graph_unifiedStorageQuota = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    deleted: z.number().nullish(),
+    manageWebUrl: z.string().nullish(),
+    remaining: z.number().nullish(),
+    state: z.string().nullish(),
+    total: z.number().nullish(),
+    used: z.number().nullish(),
+    services: z.array(microsoft_graph_serviceStorageQuotaBreakdown).optional(),
+  })
+  .passthrough();
+const microsoft_graph_userStorage = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    quota: microsoft_graph_unifiedStorageQuota.optional(),
+  })
+  .passthrough();
+const microsoft_graph_windowsSettingType = z.enum(['roaming', 'backup', 'unknownFutureValue']);
+const microsoft_graph_windowsSettingInstance = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    createdDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Set by the server. Represents the dateTime in UTC when the object was created on the server.'
+      )
+      .optional(),
+    expirationDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        'Set by the server. The object expires at the specified dateTime in UTC, making it unavailable after that time.'
+      )
+      .optional(),
+    lastModifiedDateTime: z
+      .string()
+      .regex(
+        /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+      )
+      .datetime({ offset: true })
+      .describe(
+        "Set by the server if not provided in the request from the Windows client device. Refers to the user's Windows device that modified the object at the specified dateTime in UTC."
+      )
+      .nullish(),
+    payload: z.string().describe('Base64-encoded JSON setting value.').optional(),
+  })
+  .passthrough();
+const microsoft_graph_windowsSetting = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    payloadType: z
+      .string()
+      .describe('The type of setting payloads contained in the instances navigation property.')
+      .nullish(),
+    settingType: microsoft_graph_windowsSettingType.optional(),
+    windowsDeviceId: z
+      .string()
+      .describe(
+        'A unique identifier for the device the setting might belong to if it is of the settingType backup.'
+      )
+      .nullish(),
+    instances: z
+      .array(microsoft_graph_windowsSettingInstance)
+      .describe('A collection of setting values for a given windowsSetting.')
+      .optional(),
+  })
+  .passthrough();
+const microsoft_graph_userSettings = z
+  .object({
+    id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+    contributionToContentDiscoveryAsOrganizationDisabled: z
+      .boolean()
+      .describe(
+        "Reflects the organization level setting controlling delegate access to the trending API. When set to true, the organization doesn't have access to Office Delve. The relevancy of the content displayed in Microsoft 365, for example in Suggested sites in SharePoint Home and the Discover view in OneDrive for work or school is affected for the whole organization. This setting is read-only and can only be changed by administrators in the SharePoint admin center."
+      )
+      .optional(),
+    contributionToContentDiscoveryDisabled: z
+      .boolean()
+      .describe(
+        "When set to true, the delegate access to the user's trending API is disabled. When set to true, documents in the user's Office Delve are disabled. When set to true, the relevancy of the content displayed in Microsoft 365, for example in Suggested sites in SharePoint Home and the Discover view in OneDrive for work or school is affected. Users can control this setting in Office Delve."
+      )
+      .optional(),
+    itemInsights: microsoft_graph_userInsightsSettings.optional(),
+    shiftPreferences: microsoft_graph_shiftPreferences.optional(),
+    storage: microsoft_graph_userStorage.optional(),
+    windows: z
+      .array(microsoft_graph_windowsSetting)
+      .describe('The Windows settings of the user stored in the cloud.')
+      .optional(),
+    workHoursAndLocations: microsoft_graph_workHoursAndLocationsSetting.optional(),
+  })
+  .passthrough();
 
 export const schemas = {
-  microsoft_graph_chatType,
-  microsoft_graph_teamworkUserIdentityType,
-  microsoft_graph_teamworkUserIdentity,
-  microsoft_graph_teamworkOnlineMeetingInfo,
-  microsoft_graph_chatViewpoint,
+  microsoft_graph_teamsAppDistributionMethod,
   microsoft_graph_teamsAppResourceSpecificPermissionType,
   microsoft_graph_teamsAppResourceSpecificPermission,
   microsoft_graph_teamsAppPermissionSet,
-  microsoft_graph_teamsAppDistributionMethod,
   microsoft_graph_teamsAppAuthorization,
   microsoft_graph_identity,
   microsoft_graph_identitySet,
@@ -7922,6 +11034,16 @@ export const schemas = {
   microsoft_graph_teamworkBot,
   microsoft_graph_teamsAppDefinition,
   microsoft_graph_teamsApp,
+  microsoft_graph_teamsAppCollectionResponse,
+  microsoft_graph_ODataErrors_ErrorDetails,
+  microsoft_graph_ODataErrors_InnerError,
+  microsoft_graph_ODataErrors_MainError,
+  microsoft_graph_ODataErrors_ODataError,
+  microsoft_graph_chatType,
+  microsoft_graph_teamworkUserIdentityType,
+  microsoft_graph_teamworkUserIdentity,
+  microsoft_graph_teamworkOnlineMeetingInfo,
+  microsoft_graph_chatViewpoint,
   microsoft_graph_teamsAppInstallation,
   microsoft_graph_bodyType,
   microsoft_graph_itemBody,
@@ -7953,12 +11075,10 @@ export const schemas = {
   microsoft_graph_teamsTabConfiguration,
   microsoft_graph_teamsTab,
   microsoft_graph_chat,
-  microsoft_graph_ODataErrors_ErrorDetails,
-  microsoft_graph_ODataErrors_InnerError,
-  microsoft_graph_ODataErrors_MainError,
-  microsoft_graph_ODataErrors_ODataError,
+  microsoft_graph_teamsAppInstallationCollectionResponse,
+  microsoft_graph_conversationMemberCollectionResponse,
   microsoft_graph_chatMessageCollectionResponse,
-  microsoft_graph_geoCoordinates,
+  microsoft_graph_teamsTabCollectionResponse,
   microsoft_graph_sharepointIds,
   microsoft_graph_itemReference,
   microsoft_graph_assignedLicense,
@@ -7966,6 +11086,10 @@ export const schemas = {
   microsoft_graph_authorizationInfo,
   microsoft_graph_customSecurityAttributeValue,
   microsoft_graph_user,
+  microsoft_graph_storagePlanInformation,
+  microsoft_graph_quota,
+  microsoft_graph_systemFacet,
+  microsoft_graph_geoCoordinates,
   microsoft_graph_audio,
   microsoft_graph_album,
   microsoft_graph_bundle,
@@ -7981,99 +11105,6 @@ export const schemas = {
   microsoft_graph_pendingContentUpdate,
   microsoft_graph_pendingOperations,
   microsoft_graph_driveItem,
-  microsoft_graph_driveItemCollectionResponse,
-  microsoft_graph_workbookChartFont,
-  microsoft_graph_workbookChartLineFormat,
-  microsoft_graph_workbookChartAxisFormat,
-  microsoft_graph_workbookChartGridlinesFormat,
-  microsoft_graph_workbookChartGridlines,
-  microsoft_graph_workbookChartAxisTitleFormat,
-  microsoft_graph_workbookChartAxisTitle,
-  microsoft_graph_workbookChartAxis,
-  microsoft_graph_workbookChartAxes,
-  microsoft_graph_workbookChartFill,
-  microsoft_graph_workbookChartDataLabelFormat,
-  microsoft_graph_workbookChartDataLabels,
-  microsoft_graph_workbookChartAreaFormat,
-  microsoft_graph_workbookChartLegendFormat,
-  microsoft_graph_workbookChartLegend,
-  microsoft_graph_workbookChartSeriesFormat,
-  microsoft_graph_workbookChartPointFormat,
-  microsoft_graph_workbookChartPoint,
-  microsoft_graph_workbookChartSeries,
-  microsoft_graph_workbookChartTitleFormat,
-  microsoft_graph_workbookChartTitle,
-  microsoft_graph_workbookChart,
-  microsoft_graph_workbookNamedItem,
-  microsoft_graph_workbookPivotTable,
-  microsoft_graph_workbookWorksheetProtectionOptions,
-  microsoft_graph_workbookWorksheetProtection,
-  microsoft_graph_workbookIcon,
-  microsoft_graph_workbookFilterCriteria,
-  microsoft_graph_workbookFilter,
-  microsoft_graph_workbookTableColumn,
-  microsoft_graph_workbookTableRow,
-  microsoft_graph_workbookSortField,
-  microsoft_graph_workbookTableSort,
-  microsoft_graph_workbookTable,
-  microsoft_graph_workbookWorksheet,
-  microsoft_graph_workbookWorksheetCollectionResponse,
-  create_excel_chart_Body,
-  microsoft_graph_workbookRangeBorder,
-  microsoft_graph_workbookRangeFill,
-  microsoft_graph_workbookRangeFont,
-  microsoft_graph_workbookFormatProtection,
-  microsoft_graph_workbookRangeFormat,
-  microsoft_graph_workbookRangeSort,
-  microsoft_graph_workbookRange,
-  microsoft_graph_emailAddress,
-  microsoft_graph_recipient,
-  microsoft_graph_attachment,
-  microsoft_graph_extension,
-  microsoft_graph_multiValueLegacyExtendedProperty,
-  microsoft_graph_singleValueLegacyExtendedProperty,
-  microsoft_graph_post,
-  microsoft_graph_conversationThread,
-  microsoft_graph_conversation,
-  microsoft_graph_conversationCollectionResponse,
-  microsoft_graph_conversationThreadCollectionResponse,
-  reply_to_group_thread_Body,
-  microsoft_graph_onlineMeetingProviderType,
-  microsoft_graph_calendarColor,
-  microsoft_graph_calendarRoleType,
-  microsoft_graph_calendarPermission,
-  microsoft_graph_eventType,
-  microsoft_graph_dateTimeTimeZone,
-  microsoft_graph_physicalAddress,
-  microsoft_graph_outlookGeoCoordinates,
-  microsoft_graph_locationType,
-  microsoft_graph_locationUniqueIdType,
-  microsoft_graph_location,
-  microsoft_graph_freeBusyStatus,
-  microsoft_graph_sensitivity,
-  microsoft_graph_importance,
-  microsoft_graph_attendeeType,
-  microsoft_graph_timeSlot,
-  microsoft_graph_responseType,
-  microsoft_graph_responseStatus,
-  microsoft_graph_attendee,
-  microsoft_graph_dayOfWeek,
-  microsoft_graph_weekIndex,
-  microsoft_graph_recurrencePatternType,
-  microsoft_graph_recurrencePattern,
-  microsoft_graph_recurrenceRangeType,
-  microsoft_graph_recurrenceRange,
-  microsoft_graph_patternedRecurrence,
-  microsoft_graph_event,
-  microsoft_graph_calendar,
-  microsoft_graph_calendarCollectionResponse,
-  microsoft_graph_eventCollectionResponse,
-  microsoft_graph_chatCollectionResponse,
-  microsoft_graph_contact,
-  microsoft_graph_contactCollectionResponse,
-  microsoft_graph_storagePlanInformation,
-  microsoft_graph_quota,
-  microsoft_graph_systemFacet,
   microsoft_graph_listInfo,
   microsoft_graph_columnTypes,
   microsoft_graph_booleanColumn,
@@ -8115,51 +11146,116 @@ export const schemas = {
   microsoft_graph_subscription,
   microsoft_graph_list,
   microsoft_graph_drive,
-  microsoft_graph_driveCollectionResponse,
-  microsoft_graph_giphyRatingType,
-  microsoft_graph_teamFunSettings,
-  microsoft_graph_teamGuestSettings,
-  microsoft_graph_teamMemberSettings,
-  microsoft_graph_teamMessagingSettings,
-  microsoft_graph_teamSpecialization,
-  microsoft_graph_teamSummary,
-  microsoft_graph_teamVisibilityType,
-  microsoft_graph_channelMembershipType,
-  microsoft_graph_channelSummary,
-  microsoft_graph_sharedWithChannelTeamInfo,
-  microsoft_graph_channel,
+  microsoft_graph_driveItemCollectionResponse,
+  checkin_drive_item_Body,
+  copy_drive_item_Body,
+  create_drive_item_link_Body,
+  microsoft_graph_sharePointIdentity,
+  microsoft_graph_sharePointIdentitySet,
+  microsoft_graph_sharingInvitation,
+  microsoft_graph_sharingLink,
+  microsoft_graph_permission,
+  create_upload_session_Body,
+  microsoft_graph_uploadSession,
+  share_drive_item_Body,
+  BaseCollectionPaginationCountResponse,
+  ReferenceNumeric,
+  preview_drive_item_Body,
+  microsoft_graph_itemPreviewInfo,
+  microsoft_graph_permissionCollectionResponse,
+  microsoft_graph_thumbnail,
+  microsoft_graph_thumbnailSet,
+  microsoft_graph_thumbnailSetCollectionResponse,
+  microsoft_graph_driveItemVersion,
+  microsoft_graph_driveItemVersionCollectionResponse,
+  microsoft_graph_workbookSessionInfo,
+  microsoft_graph_workbookChartFont,
+  microsoft_graph_workbookChartLineFormat,
+  microsoft_graph_workbookChartAxisFormat,
+  microsoft_graph_workbookChartGridlinesFormat,
+  microsoft_graph_workbookChartGridlines,
+  microsoft_graph_workbookChartAxisTitleFormat,
+  microsoft_graph_workbookChartAxisTitle,
+  microsoft_graph_workbookChartAxis,
+  microsoft_graph_workbookChartAxes,
+  microsoft_graph_workbookChartFill,
+  microsoft_graph_workbookChartDataLabelFormat,
+  microsoft_graph_workbookChartDataLabels,
+  microsoft_graph_workbookChartAreaFormat,
+  microsoft_graph_workbookChartLegendFormat,
+  microsoft_graph_workbookChartLegend,
+  microsoft_graph_workbookChartSeriesFormat,
+  microsoft_graph_workbookChartPointFormat,
+  microsoft_graph_workbookChartPoint,
+  microsoft_graph_workbookChartSeries,
+  microsoft_graph_workbookChartTitleFormat,
+  microsoft_graph_workbookChartTitle,
+  microsoft_graph_workbookChart,
+  microsoft_graph_workbookPivotTable,
+  microsoft_graph_workbookWorksheetProtectionOptions,
+  microsoft_graph_workbookWorksheetProtection,
+  microsoft_graph_workbookIcon,
+  microsoft_graph_workbookFilterCriteria,
+  microsoft_graph_workbookFilter,
+  microsoft_graph_workbookTableColumn,
+  microsoft_graph_workbookTableRow,
+  microsoft_graph_workbookSortField,
+  microsoft_graph_workbookTableSort,
+  microsoft_graph_workbookTable,
+  microsoft_graph_workbookWorksheet,
+  microsoft_graph_workbookNamedItem,
+  microsoft_graph_workbookNamedItemCollectionResponse,
+  microsoft_graph_workbookWorksheetCollectionResponse,
+  create_excel_chart_Body,
+  microsoft_graph_workbookRangeBorder,
+  microsoft_graph_workbookRangeFill,
+  microsoft_graph_workbookRangeFont,
+  microsoft_graph_workbookFormatProtection,
+  microsoft_graph_workbookRangeFormat,
+  microsoft_graph_workbookRangeSort,
+  microsoft_graph_workbookRange,
+  microsoft_graph_workbookTableCollectionResponse,
   microsoft_graph_assignedLabel,
   microsoft_graph_licenseProcessingState,
   microsoft_graph_group,
-  microsoft_graph_operationError,
-  microsoft_graph_teamsAsyncOperationType,
-  microsoft_graph_teamsAsyncOperationStatus,
-  microsoft_graph_teamsAsyncOperation,
-  microsoft_graph_team,
-  microsoft_graph_teamCollectionResponse,
-  microsoft_graph_messageRuleActions,
-  microsoft_graph_messageActionFlag,
-  microsoft_graph_messageRulePredicates,
-  microsoft_graph_messageRule,
-  microsoft_graph_followupFlagStatus,
-  microsoft_graph_followupFlag,
-  microsoft_graph_inferenceClassificationType,
-  microsoft_graph_internetMessageHeader,
-  microsoft_graph_message,
-  microsoft_graph_mailFolder,
-  microsoft_graph_mailFolderCollectionResponse,
-  microsoft_graph_messageCollectionResponse,
-  microsoft_graph_attachmentCollectionResponse,
-  create_forward_draft_Body,
-  create_reply_draft_Body,
-  microsoft_graph_attendeeBase,
-  microsoft_graph_locationConstraintItem,
-  microsoft_graph_locationConstraint,
-  microsoft_graph_activityDomain,
-  microsoft_graph_timeConstraint,
-  ReferenceNumeric,
-  find_meeting_times_Body,
-  send_mail_Body,
+  microsoft_graph_groupCollectionResponse,
+  microsoft_graph_eventType,
+  microsoft_graph_attachment,
+  microsoft_graph_singleValueLegacyExtendedProperty,
+  microsoft_graph_multiValueLegacyExtendedProperty,
+  microsoft_graph_dateTimeTimeZone,
+  microsoft_graph_physicalAddress,
+  microsoft_graph_outlookGeoCoordinates,
+  microsoft_graph_locationType,
+  microsoft_graph_locationUniqueIdType,
+  microsoft_graph_location,
+  microsoft_graph_freeBusyStatus,
+  microsoft_graph_sensitivity,
+  microsoft_graph_importance,
+  microsoft_graph_emailAddress,
+  microsoft_graph_attendeeType,
+  microsoft_graph_timeSlot,
+  microsoft_graph_responseType,
+  microsoft_graph_responseStatus,
+  microsoft_graph_attendee,
+  microsoft_graph_dayOfWeek,
+  microsoft_graph_weekIndex,
+  microsoft_graph_recurrencePatternType,
+  microsoft_graph_recurrencePattern,
+  microsoft_graph_recurrenceRangeType,
+  microsoft_graph_recurrenceRange,
+  microsoft_graph_patternedRecurrence,
+  microsoft_graph_event,
+  microsoft_graph_recipient,
+  microsoft_graph_extension,
+  microsoft_graph_post,
+  microsoft_graph_conversationThread,
+  microsoft_graph_conversation,
+  microsoft_graph_conversationCollectionResponse,
+  microsoft_graph_eventCollectionResponse,
+  microsoft_graph_directoryObject,
+  microsoft_graph_directoryObjectCollectionResponse,
+  ReferenceCreate,
   microsoft_graph_externalLink,
   microsoft_graph_notebookLinks,
   microsoft_graph_onenoteUserRole,
@@ -8172,6 +11268,8 @@ export const schemas = {
   microsoft_graph_notebookCollectionResponse,
   microsoft_graph_onenoteSectionCollectionResponse,
   microsoft_graph_onenotePageCollectionResponse,
+  microsoft_graph_plannerContainerType,
+  microsoft_graph_plannerPlanContainer,
   microsoft_graph_plannerChecklistItems,
   microsoft_graph_plannerPreviewType,
   microsoft_graph_plannerExternalReferences,
@@ -8182,7 +11280,170 @@ export const schemas = {
   microsoft_graph_plannerAssignedToTaskBoardTaskFormat,
   microsoft_graph_plannerBucketTaskBoardTaskFormat,
   microsoft_graph_plannerTask,
+  microsoft_graph_plannerBucket,
+  microsoft_graph_plannerCategoryDescriptions,
+  microsoft_graph_plannerUserIds,
+  microsoft_graph_plannerPlanDetails,
+  microsoft_graph_plannerPlan,
+  microsoft_graph_plannerPlanCollectionResponse,
+  microsoft_graph_settingValue,
+  microsoft_graph_groupSetting,
+  microsoft_graph_groupSettingCollectionResponse,
+  microsoft_graph_conversationThreadCollectionResponse,
+  reply_to_group_thread_Body,
+  microsoft_graph_invitedUserMessageInfo,
+  microsoft_graph_invitation,
+  microsoft_graph_onlineMeetingProviderType,
+  microsoft_graph_calendarColor,
+  microsoft_graph_calendarRoleType,
+  microsoft_graph_calendarPermission,
+  microsoft_graph_calendar,
+  get_schedule_Body,
+  microsoft_graph_freeBusyError,
+  microsoft_graph_scheduleItem,
+  microsoft_graph_timeZoneBase,
+  microsoft_graph_workingHours,
+  microsoft_graph_scheduleInformation,
+  microsoft_graph_calendarGroup,
+  microsoft_graph_calendarGroupCollectionResponse,
+  microsoft_graph_calendarCollectionResponse,
+  microsoft_graph_calendarPermissionCollectionResponse,
+  microsoft_graph_chatCollectionResponse,
+  microsoft_graph_contact,
+  microsoft_graph_contactFolder,
+  microsoft_graph_contactFolderCollectionResponse,
+  microsoft_graph_contactCollectionResponse,
+  microsoft_graph_driveCollectionResponse,
+  microsoft_graph_attachmentCollectionResponse,
+  accept_calendar_event_Body,
+  decline_calendar_event_Body,
+  forward_calendar_event_Body,
+  snooze_reminder_Body,
+  microsoft_graph_root,
+  microsoft_graph_siteArchiveStatus,
+  microsoft_graph_siteArchivalDetails,
+  microsoft_graph_siteCollection,
+  microsoft_graph_baseItem,
+  microsoft_graph_site,
+  microsoft_graph_siteCollectionResponse,
+  follow_site_Body,
+  microsoft_graph_inferenceClassificationType,
+  microsoft_graph_inferenceClassificationOverride,
+  microsoft_graph_inferenceClassificationOverrideCollectionResponse,
+  microsoft_graph_insightIdentity,
+  microsoft_graph_resourceReference,
+  microsoft_graph_sharingDetail,
+  microsoft_graph_resourceVisualization,
+  microsoft_graph_entity,
+  microsoft_graph_sharedInsight,
+  microsoft_graph_sharedInsightCollectionResponse,
+  microsoft_graph_trending,
+  microsoft_graph_trendingCollectionResponse,
+  microsoft_graph_usageDetails,
+  microsoft_graph_usedInsight,
+  microsoft_graph_usedInsightCollectionResponse,
+  microsoft_graph_giphyRatingType,
+  microsoft_graph_teamFunSettings,
+  microsoft_graph_teamGuestSettings,
+  microsoft_graph_teamMemberSettings,
+  microsoft_graph_teamMessagingSettings,
+  microsoft_graph_teamSpecialization,
+  microsoft_graph_teamSummary,
+  microsoft_graph_teamVisibilityType,
+  microsoft_graph_channelMembershipType,
+  microsoft_graph_channelSummary,
+  microsoft_graph_sharedWithChannelTeamInfo,
+  microsoft_graph_channel,
+  microsoft_graph_operationError,
+  microsoft_graph_teamsAsyncOperationType,
+  microsoft_graph_teamsAsyncOperationStatus,
+  microsoft_graph_teamsAsyncOperation,
+  microsoft_graph_team,
+  microsoft_graph_teamCollectionResponse,
+  microsoft_graph_externalAudienceScope,
+  microsoft_graph_automaticRepliesStatus,
+  microsoft_graph_automaticRepliesSetting,
+  microsoft_graph_delegateMeetingMessageDeliveryOptions,
+  microsoft_graph_localeInfo,
+  microsoft_graph_userPurpose,
+  microsoft_graph_mailboxSettings,
+  microsoft_graph_messageRuleActions,
+  microsoft_graph_messageActionFlag,
+  microsoft_graph_messageRulePredicates,
+  microsoft_graph_messageRule,
+  microsoft_graph_followupFlagStatus,
+  microsoft_graph_followupFlag,
+  microsoft_graph_internetMessageHeader,
+  microsoft_graph_message,
+  microsoft_graph_mailFolder,
+  microsoft_graph_mailFolderCollectionResponse,
+  microsoft_graph_messageCollectionResponse,
+  create_forward_draft_Body,
+  create_reply_draft_Body,
+  change_password_Body,
+  microsoft_graph_attendeeBase,
+  microsoft_graph_locationConstraintItem,
+  microsoft_graph_locationConstraint,
+  microsoft_graph_activityDomain,
+  microsoft_graph_timeConstraint,
+  find_meeting_times_Body,
+  microsoft_graph_mailTipsType,
+  get_mail_tips_Body,
+  send_mail_Body,
+  microsoft_graph_allowedLobbyAdmitterRoles,
+  microsoft_graph_onlineMeetingPresenters,
+  microsoft_graph_meetingLiveShareOptions,
+  microsoft_graph_meetingChatMode,
+  microsoft_graph_audioConferencing,
+  microsoft_graph_chatInfo,
+  microsoft_graph_chatRestrictions,
+  microsoft_graph_joinMeetingIdSettings,
+  microsoft_graph_onlineMeeting,
+  microsoft_graph_onlineMeetingCollectionResponse,
+  microsoft_graph_virtualEventExternalInformation,
+  microsoft_graph_attendanceInterval,
+  microsoft_graph_virtualEventExternalRegistrationInformation,
+  microsoft_graph_attendanceRecord,
+  microsoft_graph_meetingAttendanceReport,
+  microsoft_graph_meetingAttendanceReportCollectionResponse,
+  microsoft_graph_callRecording,
+  microsoft_graph_callRecordingCollectionResponse,
+  microsoft_graph_callTranscript,
+  microsoft_graph_callTranscriptCollectionResponse,
+  create_or_get_online_meeting_Body,
+  microsoft_graph_categoryColor,
+  microsoft_graph_outlookCategory,
+  microsoft_graph_outlookCategoryCollectionResponse,
+  microsoft_graph_personType,
+  microsoft_graph_phoneType,
+  microsoft_graph_phone,
+  microsoft_graph_selectionLikelihoodInfo,
+  microsoft_graph_scoredEmailAddress,
+  microsoft_graph_websiteType,
+  microsoft_graph_website,
+  microsoft_graph_person,
+  microsoft_graph_personCollectionResponse,
   microsoft_graph_plannerTaskCollectionResponse,
+  microsoft_graph_outOfOfficeSettings,
+  microsoft_graph_presenceStatusMessage,
+  microsoft_graph_workLocationSource,
+  microsoft_graph_workLocationType,
+  microsoft_graph_userWorkLocation,
+  microsoft_graph_presence,
+  set_my_presence_Body,
+  set_status_message_Body,
+  set_preferred_presence_Body,
+  microsoft_graph_userInsightsSettings,
+  microsoft_graph_maxWorkLocationDetails,
+  microsoft_graph_timeOffDetails,
+  microsoft_graph_workPlanOccurrence,
+  microsoft_graph_workPlanRecurrence,
+  microsoft_graph_workHoursAndLocationsSetting,
+  microsoft_graph_associatedTeamInfo,
+  microsoft_graph_associatedTeamInfoCollectionResponse,
+  microsoft_graph_userScopeTeamsAppInstallation,
+  microsoft_graph_userScopeTeamsAppInstallationCollectionResponse,
+  send_me_activity_notification_Body,
   microsoft_graph_wellknownListName,
   microsoft_graph_taskStatus,
   microsoft_graph_attachmentBase,
@@ -8193,13 +11454,23 @@ export const schemas = {
   microsoft_graph_todoTaskList,
   microsoft_graph_todoTaskListCollectionResponse,
   microsoft_graph_todoTaskCollectionResponse,
-  microsoft_graph_plannerContainerType,
-  microsoft_graph_plannerPlanContainer,
-  microsoft_graph_plannerBucket,
-  microsoft_graph_plannerCategoryDescriptions,
-  microsoft_graph_plannerUserIds,
-  microsoft_graph_plannerPlanDetails,
-  microsoft_graph_plannerPlan,
+  microsoft_graph_attachmentBaseCollectionResponse,
+  microsoft_graph_checklistItemCollectionResponse,
+  microsoft_graph_linkedResourceCollectionResponse,
+  microsoft_graph_checkInMethod,
+  microsoft_graph_checkInClaim,
+  microsoft_graph_resourceLinkType,
+  microsoft_graph_resourceLink,
+  microsoft_graph_placeFeatureEnablement,
+  microsoft_graph_footprintMap,
+  microsoft_graph_fixtureMap,
+  microsoft_graph_sectionMap,
+  microsoft_graph_unitMap,
+  microsoft_graph_levelMap,
+  microsoft_graph_buildingMap,
+  microsoft_graph_building,
+  microsoft_graph_buildingCollectionResponse,
+  microsoft_graph_plannerBucketCollectionResponse,
   microsoft_graph_bucketAggregationRange,
   microsoft_graph_bucketAggregationSortProperty,
   microsoft_graph_bucketAggregationDefinition,
@@ -8214,10 +11485,8 @@ export const schemas = {
   microsoft_graph_sortProperty,
   microsoft_graph_searchRequest,
   search_query_Body,
-  BaseCollectionPaginationCountResponse,
   microsoft_graph_searchBucket,
   microsoft_graph_searchAggregation,
-  microsoft_graph_entity,
   microsoft_graph_searchHit,
   microsoft_graph_searchHitsContainer,
   microsoft_graph_alteredQueryToken,
@@ -8226,23 +11495,153 @@ export const schemas = {
   microsoft_graph_alterationResponse,
   microsoft_graph_resultTemplateDictionary,
   microsoft_graph_searchResponse,
-  microsoft_graph_root,
-  microsoft_graph_siteArchiveStatus,
-  microsoft_graph_siteArchivalDetails,
-  microsoft_graph_siteCollection,
-  microsoft_graph_baseItem,
-  microsoft_graph_site,
-  microsoft_graph_siteCollectionResponse,
+  microsoft_graph_contentTypeCollectionResponse,
   microsoft_graph_baseItemCollectionResponse,
   microsoft_graph_listCollectionResponse,
+  microsoft_graph_columnDefinitionCollectionResponse,
   microsoft_graph_listItemCollectionResponse,
+  microsoft_graph_pageLayoutType,
+  microsoft_graph_baseSitePage,
+  microsoft_graph_baseSitePageCollectionResponse,
   BaseDeltaFunctionResponse,
+  microsoft_graph_bookingPageAccessControl,
+  microsoft_graph_bookingPageSettings,
+  microsoft_graph_bookingWorkTimeSlot,
+  microsoft_graph_bookingWorkHours,
+  microsoft_graph_bookingsServiceAvailabilityType,
+  microsoft_graph_bookingsAvailabilityWindow,
+  microsoft_graph_bookingsAvailability,
+  microsoft_graph_bookingSchedulingPolicy,
+  microsoft_graph_bookingCustomerInformationBase,
+  microsoft_graph_bookingPriceType,
+  microsoft_graph_bookingReminderRecipients,
+  microsoft_graph_bookingReminder,
+  microsoft_graph_bookingAppointment,
+  microsoft_graph_bookingCustomerBase,
+  microsoft_graph_answerInputType,
+  microsoft_graph_bookingCustomQuestion,
+  microsoft_graph_bookingQuestionAssignment,
+  microsoft_graph_bookingService,
+  microsoft_graph_bookingStaffMemberBase,
+  microsoft_graph_bookingBusiness,
+  microsoft_graph_bookingBusinessCollectionResponse,
+  microsoft_graph_bookingCurrency,
+  microsoft_graph_bookingCurrencyCollectionResponse,
+  microsoft_graph_subscriptionCollectionResponse,
   microsoft_graph_channelCollectionResponse,
-  microsoft_graph_conversationMemberCollectionResponse,
+  upgrade_team_app_Body,
+  clone_team_Body,
+  send_team_activity_notification_Body,
+  microsoft_graph_teamworkTagType,
+  microsoft_graph_teamworkTagMember,
+  microsoft_graph_teamworkTag,
+  microsoft_graph_teamworkTagCollectionResponse,
+  microsoft_graph_teamworkTagMemberCollectionResponse,
   microsoft_graph_userCollectionResponse,
+  microsoft_graph_servicePlanInfo,
+  microsoft_graph_licenseDetails,
+  microsoft_graph_licenseDetailsCollectionResponse,
+  ReferenceUpdate,
+  assign_user_license_Body,
+  microsoft_graph_timeRange,
+  microsoft_graph_shiftAvailability,
+  microsoft_graph_shiftPreferences,
+  microsoft_graph_serviceStorageQuotaBreakdown,
+  microsoft_graph_unifiedStorageQuota,
+  microsoft_graph_userStorage,
+  microsoft_graph_windowsSettingType,
+  microsoft_graph_windowsSettingInstance,
+  microsoft_graph_windowsSetting,
+  microsoft_graph_userSettings,
 };
 
 const endpoints = makeApi([
+  {
+    method: 'get',
+    path: '/appCatalogs/teamsApps',
+    alias: 'list-teams-app-catalog',
+    description: `List apps from the Microsoft Teams app catalog, including apps from the Microsoft Teams store and apps from your organization's app catalog (the tenant app catalog). To get apps from your organization's app catalog only, specify organization as the distributionMethod in the request.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/appCatalogs/teamsApps/:teamsAppId',
+    alias: 'get-teams-app-catalog-app',
+    description: `Get teamsApps from appCatalogs`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/chats',
+    alias: 'create-chat',
+    description: `Create a new chat object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: microsoft_graph_chat,
+      },
+    ],
+    response: z.void()
+  },
   {
     method: 'get',
     path: '/chats/:chatId',
@@ -8250,6 +11649,138 @@ const endpoints = makeApi([
     description: `Retrieve a single chat (without its messages). This method supports federation. To access a chat, at least one chat member must belong to the tenant the request initiated from.`,
     requestFormat: 'json',
     parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/chats/:chatId',
+    alias: 'update-chat',
+    description: `Update the properties of a chat object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: microsoft_graph_chat,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/chats/:chatId/installedApps',
+    alias: 'list-chat-apps',
+    description: `List all app installations within a chat.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/chats/:chatId/installedApps',
+    alias: 'install-chat-app',
+    description: `Install a teamsApp to the specified chat.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_teamsAppInstallation,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/chats/:chatId/members',
+    alias: 'list-chat-members',
+    description: `List all conversation members in a chat or channel.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
       {
         name: '$select',
         type: 'Query',
@@ -8416,6 +11947,175 @@ const endpoints = makeApi([
     response: z.void()
   },
   {
+    method: 'get',
+    path: '/chats/:chatId/tabs',
+    alias: 'list-chat-tabs',
+    description: `Retrieve the list of tabs in the specified chat.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId',
+    alias: 'get-drive',
+    description: `Get entity from drives by key`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId',
+    alias: 'get-drive-item',
+    description: `All items contained in the drive. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/drives/:driveId/items/:driveItemId',
+    alias: 'move-drive-item',
+    description: `Update the navigation property items in drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            name: z.string().describe('The name of the item. Read-write.').nullish(),
+            description: z
+              .string()
+              .describe('Provides a user-visible description of the item. Optional.')
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Date and time of item creation. Read-only.')
+              .optional(),
+            lastModifiedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Date and time the item was last modified. Read-only.')
+              .optional(),
+            content: z
+              .string()
+              .describe('The content stream, if the item represents a file.')
+              .nullish(),
+            location: microsoft_graph_geoCoordinates.optional(),
+            createdBy: microsoft_graph_identitySet.optional(),
+            eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
+            lastModifiedBy: microsoft_graph_identitySet.optional(),
+            parentReference: microsoft_graph_itemReference.optional(),
+            webUrl: z
+              .string()
+              .describe(
+                'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
+              )
+              .nullish(),
+            createdByUser: microsoft_graph_user
+              .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+              .optional(),
+            lastModifiedByUser: microsoft_graph_user
+              .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+              .optional(),
+            audio: microsoft_graph_audio.optional(),
+            bundle: microsoft_graph_bundle.optional(),
+            cTag: z
+              .string()
+              .describe(
+                "An eTag for the content of the item. This eTag isn't changed if only the metadata is changed. Note This property isn't returned if the item is a folder. Read-only."
+              )
+              .nullish(),
+            deleted: microsoft_graph_deleted.optional(),
+            file: microsoft_graph_file.optional(),
+            fileSystemInfo: microsoft_graph_fileSystemInfo.optional(),
+            folder: microsoft_graph_folder.optional(),
+            image: microsoft_graph_image.optional(),
+            malware: microsoft_graph_malware.optional(),
+            package: microsoft_graph_package.optional(),
+            pendingOperations: microsoft_graph_pendingOperations.optional(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'delete',
     path: '/drives/:driveId/items/:driveItemId',
     alias: 'delete-onedrive-file',
@@ -8428,6 +12128,30 @@ const endpoints = makeApi([
         schema: z.string().describe('ETag').optional(),
       },
     ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/checkin',
+    alias: 'checkin-drive-item',
+    description: `Check in a checked out driveItem resource, which makes the version of the document available to others.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: checkin_drive_item_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/checkout',
+    alias: 'checkout-drive-item',
+    description: `Check out a driveItem resource to prevent others from editing the document, and prevent your changes from being visible until the documented is checked in.`,
+    requestFormat: 'json',
     response: z.void()
   },
   {
@@ -8481,6 +12205,85 @@ const endpoints = makeApi([
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/children',
+    alias: 'create-folder',
+    description: `Create new navigation property to children for drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            name: z.string().describe('The name of the item. Read-write.').nullish(),
+            description: z
+              .string()
+              .describe('Provides a user-visible description of the item. Optional.')
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Date and time of item creation. Read-only.')
+              .optional(),
+            lastModifiedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Date and time the item was last modified. Read-only.')
+              .optional(),
+            content: z
+              .string()
+              .describe('The content stream, if the item represents a file.')
+              .nullish(),
+            location: microsoft_graph_geoCoordinates.optional(),
+            createdBy: microsoft_graph_identitySet.optional(),
+            eTag: z.string().describe('ETag for the item. Read-only.').nullish(),
+            lastModifiedBy: microsoft_graph_identitySet.optional(),
+            parentReference: microsoft_graph_itemReference.optional(),
+            webUrl: z
+              .string()
+              .describe(
+                'URL that either displays the resource in the browser (for Office file formats), or is a direct link to the file (for other formats). Read-only.'
+              )
+              .nullish(),
+            createdByUser: microsoft_graph_user
+              .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+              .optional(),
+            lastModifiedByUser: microsoft_graph_user
+              .describe('[Note: Simplified from 135 properties to 25 most common ones]')
+              .optional(),
+            audio: microsoft_graph_audio.optional(),
+            bundle: microsoft_graph_bundle.optional(),
+            cTag: z
+              .string()
+              .describe(
+                "An eTag for the content of the item. This eTag isn't changed if only the metadata is changed. Note This property isn't returned if the item is a folder. Read-only."
+              )
+              .nullish(),
+            deleted: microsoft_graph_deleted.optional(),
+            file: microsoft_graph_file.optional(),
+            fileSystemInfo: microsoft_graph_fileSystemInfo.optional(),
+            folder: microsoft_graph_folder.optional(),
+            image: microsoft_graph_image.optional(),
+            malware: microsoft_graph_malware.optional(),
+            package: microsoft_graph_package.optional(),
+            pendingOperations: microsoft_graph_pendingOperations.optional(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/drives/:driveId/items/:driveItemId/content',
     alias: 'download-onedrive-file-content',
@@ -8507,6 +12310,408 @@ const endpoints = makeApi([
         description: `New media content.`,
         type: 'Body',
         schema: z.instanceof(File),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/copy',
+    alias: 'copy-drive-item',
+    description: `Invoke action copy`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: copy_drive_item_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/createLink',
+    alias: 'create-drive-item-link',
+    description: `Create a link to share a driveItem driveItem. The createLink action creates a new sharing link if the specified link type doesn't already exist for the calling application.
+If a sharing link of the specified type already exists for the app, the existing sharing link is returned. DriveItem resources inherit sharing permissions from their ancestors.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: create_drive_item_link_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/createUploadSession',
+    alias: 'create-upload-session',
+    description: `Invoke action createUploadSession`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: create_upload_session_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/invite',
+    alias: 'share-drive-item',
+    description: `Send a sharing invitation for a driveItem. A sharing invitation provides permissions to the recipients and, optionally, sends them an email to notify them that the item was shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: share_drive_item_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/permissions',
+    alias: 'list-drive-item-permissions',
+    description: `The set of permissions for the item. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/permissions/:permissionId',
+    alias: 'get-drive-item-permission',
+    description: `The set of permissions for the item. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/drives/:driveId/items/:driveItemId/permissions/:permissionId',
+    alias: 'remove-drive-item-permission',
+    description: `Delete navigation property permissions for drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/preview',
+    alias: 'preview-drive-item',
+    description: `Invoke action preview`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: preview_drive_item_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: `/drives/:driveId/items/:driveItemId/search(q=':q')`,
+    alias: 'search-drive-folder',
+    description: `Search the hierarchy of items for items matching a query.
+You can search within a folder hierarchy, a whole drive, or files shared with the current user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/thumbnails',
+    alias: 'list-drive-item-thumbnails',
+    description: `Collection of thumbnailSet objects associated with the item. For more information, see getting thumbnails. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/versions',
+    alias: 'list-drive-item-versions',
+    description: `The list of previous versions of the item. For more info, see getting previous versions. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/versions/:driveItemVersionId/restoreVersion',
+    alias: 'restore-drive-item-version',
+    description: `Restore a previous version of a driveItem to be the current version. This operation creates a new version with the contents of the previous version, and it preserves all existing versions of the file.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/workbook/closeSession',
+    alias: 'close-excel-session',
+    description: `Use this API to close an existing workbook session.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/workbook/createSession',
+    alias: 'create-excel-session',
+    description: `Create a new workbook session.  Excel APIs can be called in one of two modes:  To represent the session in the API, use the workbook-session-id: {session-id} header.  In some cases, creating a new session requires an indeterminate time to complete. Microsoft Graph also provides a long running operations pattern. This pattern provides a way to poll for creation status updates, without waiting for the creation to complete. The following are the steps:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z
+          .object({ persistChanges: z.boolean().default(false) })
+          .partial()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/workbook/names',
+    alias: 'list-excel-named-items',
+    description: `Represents a collection of workbooks scoped named items (named ranges and constants). Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
     response: z.void()
@@ -8557,6 +12762,57 @@ const endpoints = makeApi([
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/workbook/worksheets',
+    alias: 'create-excel-worksheet',
+    description: `Create new navigation property to worksheets for drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_workbookWorksheet,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/workbook/worksheets/:workbookWorksheetId',
+    alias: 'get-excel-worksheet',
+    description: `Represents a collection of worksheets associated with the workbook. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/drives/:driveId/items/:driveItemId/workbook/worksheets/:workbookWorksheetId',
+    alias: 'delete-excel-worksheet',
+    description: `Delete navigation property worksheets for drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
       },
     ],
     response: z.void()
@@ -8623,6 +12879,72 @@ const endpoints = makeApi([
   },
   {
     method: 'get',
+    path: '/drives/:driveId/items/:driveItemId/workbook/worksheets/:workbookWorksheetId/tables',
+    alias: 'list-excel-tables',
+    description: `The list of tables that are part of the worksheet. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/drives/:driveId/items/:driveItemId/workbook/worksheets/:workbookWorksheetId/tables',
+    alias: 'create-excel-table',
+    description: `Create new navigation property to tables for drives`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_workbookTable,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/drives/:driveId/root',
     alias: 'get-drive-root-item',
     description: `The root folder of the drive. Read-only.`,
@@ -8643,9 +12965,1277 @@ const endpoints = makeApi([
   },
   {
     method: 'get',
+    path: `/drives/:driveId/search(q=':q')`,
+    alias: 'search-drive',
+    description: `Search the hierarchy of items for items matching a query.
+You can search within a folder hierarchy, a whole drive, or files shared with the current user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups',
+    alias: 'list-groups',
+    description: `List all the groups available in an organization, excluding dynamic distribution groups. To retrieve dynamic distribution groups, use the Exchange admin center. This operation returns by default only a subset of the properties for each group. These default properties are noted in the Properties section. To get properties that are not returned by default, do a GET operation for the group and specify the properties in a $select OData query option. The hasMembersWithLicenseErrors and isArchived properties are an exception and are not returned in the $select query.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups',
+    alias: 'create-group',
+    description: `Create a new group as specified in the request body. You can create the following types of groups: This operation returns by default only a subset of the properties for each group. These default properties are noted in the Properties section. To get properties that are not returned by default, do a GET operation and specify the properties in a $select OData query option.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z
+              .string()
+              .describe(
+                "The display name for the group. This property is required when a group is created and can't be cleared during updates. Maximum length is 256 characters. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values), $search, and $orderby."
+              )
+              .nullish(),
+            description: z
+              .string()
+              .describe(
+                'An optional description for the group. Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith) and $search.'
+              )
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Timestamp of when the group was created. The value can't be modified and is automatically populated when the group is created. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on January 1, 2014 is 2014-01-01T00:00:00Z. Returned by default. Read-only."
+              )
+              .nullish(),
+            deletedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Date and time when this object was deleted. Always null when the object hasn't been deleted."
+              )
+              .nullish(),
+            allowExternalSenders: z
+              .boolean()
+              .describe(
+                'Indicates if people external to the organization can send messages to the group. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID}).'
+              )
+              .nullish(),
+            assignedLabels: z
+              .array(microsoft_graph_assignedLabel)
+              .describe(
+                'The list of sensitivity label pairs (label ID, label name) associated with a Microsoft 365 group. Returned only on $select. This property can be updated only in delegated scenarios where the caller requires both the Microsoft Graph permission and a supported administrator role.'
+              )
+              .optional(),
+            assignedLicenses: z
+              .array(microsoft_graph_assignedLicense)
+              .describe(
+                'The licenses that are assigned to the group. Returned only on $select. Supports $filter (eq). Read-only.'
+              )
+              .optional(),
+            autoSubscribeNewMembers: z
+              .boolean()
+              .describe(
+                "Indicates if new members added to the group are autosubscribed to receive email notifications. You can set this property in a PATCH request for the group; don't set it in the initial POST request that creates the group. Default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            classification: z
+              .string()
+              .describe(
+                'Describes a classification for the group (such as low, medium, or high business impact). Valid values for this property are defined by creating a ClassificationList setting value, based on the template definition.Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith).'
+              )
+              .nullish(),
+            expirationDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Timestamp of when the group is set to expire. It's null for security groups, but for Microsoft 365 groups, it represents when the group is set to expire as defined in the groupLifecyclePolicy. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on January 1, 2014 is 2014-01-01T00:00:00Z. Returned by default. Supports $filter (eq, ne, not, ge, le, in). Read-only."
+              )
+              .nullish(),
+            groupTypes: z
+              .array(z.string())
+              .describe(
+                "Specifies the group type and its membership. If the collection contains Unified, the group is a Microsoft 365 group; otherwise, it's either a security group or a distribution group. For details, see groups overview.If the collection includes DynamicMembership, the group has dynamic membership; otherwise, membership is static. Returned by default. Supports $filter (eq, not)."
+              )
+              .optional(),
+            hasMembersWithLicenseErrors: z
+              .boolean()
+              .describe(
+                'Indicates whether there are members in this group that have license errors from its group-based license assignment. This property is never returned on a GET operation. You can use it as a $filter argument to get groups that have members with license errors (that is, filter for this property being true). See an example. Supports $filter (eq).'
+              )
+              .nullish(),
+            hideFromAddressLists: z
+              .boolean()
+              .describe(
+                "True if the group isn't displayed in certain parts of the Outlook UI: the Address Book, address lists for selecting message recipients, and the Browse Groups dialog for searching groups; otherwise, false. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            hideFromOutlookClients: z
+              .boolean()
+              .describe(
+                "True if the group isn't displayed in Outlook clients, such as Outlook for Windows and Outlook on the web; otherwise, false. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            isArchived: z
+              .boolean()
+              .describe(
+                'When a group is associated with a team, this property determines whether the team is in read-only mode.To read this property, use the /group/{groupId}/team endpoint or the Get team API. To update this property, use the archiveTeam and unarchiveTeam APIs.'
+              )
+              .nullish(),
+            isAssignableToRole: z
+              .boolean()
+              .describe(
+                "Indicates whether this group can be assigned to a Microsoft Entra role. Optional. This property can only be set while creating the group and is immutable. If set to true, the securityEnabled property must also be set to true, visibility must be Hidden, and the group can't be a dynamic group (that is, groupTypes can't contain DynamicMembership). Only callers with at least the Privileged Role Administrator role can set this property. The caller must also be assigned the RoleManagement.ReadWrite.Directory permission to set this property or update the membership of such groups. For more, see Using a group to manage Microsoft Entra role assignmentsUsing this feature requires a Microsoft Entra ID P1 license. Returned by default. Supports $filter (eq, ne, not)."
+              )
+              .nullish(),
+            isManagementRestricted: z
+              .boolean()
+              .describe(
+                'Indicates whether the group is a member of a restricted management administrative unit. If not set, the default value is null and the default behavior is false. Read-only.  To manage a group member of a restricted management administrative unit, the administrator or calling app must be assigned a Microsoft Entra role at the scope of the restricted management administrative unit. Returned only on $select.'
+              )
+              .nullish(),
+            isSubscribedByMail: z
+              .boolean()
+              .describe(
+                'Indicates whether the signed-in user is subscribed to receive email conversations. The default value is true. Returned only on $select. Supported only on the Get group API (GET /groups/{ID}).'
+              )
+              .nullish(),
+            licenseProcessingState: microsoft_graph_licenseProcessingState.optional(),
+            mail: z
+              .string()
+              .describe(
+                "The SMTP address for the group, for example, 'serviceadmins@contoso.com'. Returned by default. Read-only. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            mailEnabled: z
+              .boolean()
+              .describe(
+                'Specifies whether the group is mail-enabled. Required. Returned by default. Supports $filter (eq, ne, not).'
+              )
+              .nullish(),
+            mailNickname: z
+              .string()
+              .describe(
+                "The mail alias for the group, unique for Microsoft 365 groups in the organization. Maximum length is 64 characters. This property can contain only characters in the ASCII character set 0 - 127 except the following characters: @ () / [] ' ; : <> , SPACE. Required. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            membershipRule: z
+              .string()
+              .describe(
+                'The rule that determines members for this group if the group is a dynamic group (groupTypes contains DynamicMembership). For more information about the syntax of the membership rule, see Membership Rules syntax. Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith).'
+              )
+              .nullish(),
+            membershipRuleProcessingState: z
+              .string()
+              .describe(
+                'Indicates whether the dynamic membership processing is on or paused. Possible values are On or Paused. Returned by default. Supports $filter (eq, ne, not, in).'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId',
+    alias: 'get-group',
+    description: `Get the properties and relationships of a group object. This operation returns by default only a subset of all the available properties, as noted in the Properties section. To get properties that aren't_ returned by default, specify them in a $select OData query option. The hasMembersWithLicenseErrors and isArchived properties are an exception and aren't returned in the $select query.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/groups/:groupId',
+    alias: 'update-group',
+    description: `Create a new group object if it doesn't exist, or update the properties of an existing group object.
+You can create or update the following types of group: By default, this operation returns only a subset of the properties for each group. For a list of properties that are returned by default, see the Properties section of the group resource. To get properties that are not returned by default, do a GET operation and specify the properties in a $select OData query option.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z
+              .string()
+              .describe(
+                "The display name for the group. This property is required when a group is created and can't be cleared during updates. Maximum length is 256 characters. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values), $search, and $orderby."
+              )
+              .nullish(),
+            description: z
+              .string()
+              .describe(
+                'An optional description for the group. Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith) and $search.'
+              )
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Timestamp of when the group was created. The value can't be modified and is automatically populated when the group is created. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on January 1, 2014 is 2014-01-01T00:00:00Z. Returned by default. Read-only."
+              )
+              .nullish(),
+            deletedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Date and time when this object was deleted. Always null when the object hasn't been deleted."
+              )
+              .nullish(),
+            allowExternalSenders: z
+              .boolean()
+              .describe(
+                'Indicates if people external to the organization can send messages to the group. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID}).'
+              )
+              .nullish(),
+            assignedLabels: z
+              .array(microsoft_graph_assignedLabel)
+              .describe(
+                'The list of sensitivity label pairs (label ID, label name) associated with a Microsoft 365 group. Returned only on $select. This property can be updated only in delegated scenarios where the caller requires both the Microsoft Graph permission and a supported administrator role.'
+              )
+              .optional(),
+            assignedLicenses: z
+              .array(microsoft_graph_assignedLicense)
+              .describe(
+                'The licenses that are assigned to the group. Returned only on $select. Supports $filter (eq). Read-only.'
+              )
+              .optional(),
+            autoSubscribeNewMembers: z
+              .boolean()
+              .describe(
+                "Indicates if new members added to the group are autosubscribed to receive email notifications. You can set this property in a PATCH request for the group; don't set it in the initial POST request that creates the group. Default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            classification: z
+              .string()
+              .describe(
+                'Describes a classification for the group (such as low, medium, or high business impact). Valid values for this property are defined by creating a ClassificationList setting value, based on the template definition.Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith).'
+              )
+              .nullish(),
+            expirationDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Timestamp of when the group is set to expire. It's null for security groups, but for Microsoft 365 groups, it represents when the group is set to expire as defined in the groupLifecyclePolicy. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on January 1, 2014 is 2014-01-01T00:00:00Z. Returned by default. Supports $filter (eq, ne, not, ge, le, in). Read-only."
+              )
+              .nullish(),
+            groupTypes: z
+              .array(z.string())
+              .describe(
+                "Specifies the group type and its membership. If the collection contains Unified, the group is a Microsoft 365 group; otherwise, it's either a security group or a distribution group. For details, see groups overview.If the collection includes DynamicMembership, the group has dynamic membership; otherwise, membership is static. Returned by default. Supports $filter (eq, not)."
+              )
+              .optional(),
+            hasMembersWithLicenseErrors: z
+              .boolean()
+              .describe(
+                'Indicates whether there are members in this group that have license errors from its group-based license assignment. This property is never returned on a GET operation. You can use it as a $filter argument to get groups that have members with license errors (that is, filter for this property being true). See an example. Supports $filter (eq).'
+              )
+              .nullish(),
+            hideFromAddressLists: z
+              .boolean()
+              .describe(
+                "True if the group isn't displayed in certain parts of the Outlook UI: the Address Book, address lists for selecting message recipients, and the Browse Groups dialog for searching groups; otherwise, false. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            hideFromOutlookClients: z
+              .boolean()
+              .describe(
+                "True if the group isn't displayed in Outlook clients, such as Outlook for Windows and Outlook on the web; otherwise, false. The default value is false. Returned only on $select. Supported only on the Get group API (GET /groups/{ID})."
+              )
+              .nullish(),
+            isArchived: z
+              .boolean()
+              .describe(
+                'When a group is associated with a team, this property determines whether the team is in read-only mode.To read this property, use the /group/{groupId}/team endpoint or the Get team API. To update this property, use the archiveTeam and unarchiveTeam APIs.'
+              )
+              .nullish(),
+            isAssignableToRole: z
+              .boolean()
+              .describe(
+                "Indicates whether this group can be assigned to a Microsoft Entra role. Optional. This property can only be set while creating the group and is immutable. If set to true, the securityEnabled property must also be set to true, visibility must be Hidden, and the group can't be a dynamic group (that is, groupTypes can't contain DynamicMembership). Only callers with at least the Privileged Role Administrator role can set this property. The caller must also be assigned the RoleManagement.ReadWrite.Directory permission to set this property or update the membership of such groups. For more, see Using a group to manage Microsoft Entra role assignmentsUsing this feature requires a Microsoft Entra ID P1 license. Returned by default. Supports $filter (eq, ne, not)."
+              )
+              .nullish(),
+            isManagementRestricted: z
+              .boolean()
+              .describe(
+                'Indicates whether the group is a member of a restricted management administrative unit. If not set, the default value is null and the default behavior is false. Read-only.  To manage a group member of a restricted management administrative unit, the administrator or calling app must be assigned a Microsoft Entra role at the scope of the restricted management administrative unit. Returned only on $select.'
+              )
+              .nullish(),
+            isSubscribedByMail: z
+              .boolean()
+              .describe(
+                'Indicates whether the signed-in user is subscribed to receive email conversations. The default value is true. Returned only on $select. Supported only on the Get group API (GET /groups/{ID}).'
+              )
+              .nullish(),
+            licenseProcessingState: microsoft_graph_licenseProcessingState.optional(),
+            mail: z
+              .string()
+              .describe(
+                "The SMTP address for the group, for example, 'serviceadmins@contoso.com'. Returned by default. Read-only. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            mailEnabled: z
+              .boolean()
+              .describe(
+                'Specifies whether the group is mail-enabled. Required. Returned by default. Supports $filter (eq, ne, not).'
+              )
+              .nullish(),
+            mailNickname: z
+              .string()
+              .describe(
+                "The mail alias for the group, unique for Microsoft 365 groups in the organization. Maximum length is 64 characters. This property can contain only characters in the ASCII character set 0 - 127 except the following characters: @ () / [] ' ; : <> , SPACE. Required. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            membershipRule: z
+              .string()
+              .describe(
+                'The rule that determines members for this group if the group is a dynamic group (groupTypes contains DynamicMembership). For more information about the syntax of the membership rule, see Membership Rules syntax. Returned by default. Supports $filter (eq, ne, not, ge, le, startsWith).'
+              )
+              .nullish(),
+            membershipRuleProcessingState: z
+              .string()
+              .describe(
+                'Indicates whether the dynamic membership processing is on or paused. Possible values are On or Paused. Returned by default. Supports $filter (eq, ne, not, in).'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/groups/:groupId',
+    alias: 'delete-group',
+    description: `Delete a group. When deleted, both Microsoft 365 and security groups are moved to a temporary container and can be restored within 30 days. After that time, they're permanently deleted. This doesn't apply to Distribution groups which are permanently deleted immediately. To learn more, see deletedItems.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups/:groupId/calendar/events',
+    alias: 'create-group-calendar-event',
+    description: `Create new navigation property to events for groups`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+              )
+              .nullish(),
+            lastModifiedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+              )
+              .nullish(),
+            type: microsoft_graph_eventType.optional(),
+            body: microsoft_graph_itemBody.optional(),
+            subject: z.string().describe("The text of the event's subject line.").nullish(),
+            attachments: z
+              .array(microsoft_graph_attachment)
+              .describe(
+                'The collection of FileAttachment, ItemAttachment, and referenceAttachment attachments for the event. Navigation property. Read-only. Nullable.'
+              )
+              .optional(),
+            singleValueExtendedProperties: z
+              .array(microsoft_graph_singleValueLegacyExtendedProperty)
+              .describe(
+                'The collection of single-value extended properties defined for the event. Read-only. Nullable.'
+              )
+              .optional(),
+            multiValueExtendedProperties: z
+              .array(microsoft_graph_multiValueLegacyExtendedProperty)
+              .describe(
+                'The collection of multi-value extended properties defined for the event. Read-only. Nullable.'
+              )
+              .optional(),
+            start: microsoft_graph_dateTimeTimeZone.optional(),
+            end: microsoft_graph_dateTimeTimeZone.optional(),
+            location: microsoft_graph_location.optional(),
+            showAs: microsoft_graph_freeBusyStatus.optional(),
+            sensitivity: microsoft_graph_sensitivity.optional(),
+            isAllDay: z
+              .boolean()
+              .describe(
+                "Set to true if the event lasts all day. If true, regardless of whether it's a single-day or multi-day event, start, and endtime must be set to midnight and be in the same time zone."
+              )
+              .nullish(),
+            importance: microsoft_graph_importance.optional(),
+            isOnlineMeeting: z
+              .boolean()
+              .describe(
+                'True if this event has online meeting information (that is, onlineMeeting points to an onlineMeetingInfo resource), false otherwise. Default is false (onlineMeeting is null). Optional.  After you set isOnlineMeeting to true, Microsoft Graph initializes onlineMeeting. Subsequently, Outlook ignores any further changes to isOnlineMeeting, and the meeting remains available online.'
+              )
+              .nullish(),
+            isReminderOn: z
+              .boolean()
+              .describe('Set to true if an alert is set to remind the user of the event.')
+              .nullish(),
+            attendees: z
+              .array(microsoft_graph_attendee)
+              .describe('The collection of attendees for the event.')
+              .optional(),
+            recurrence: microsoft_graph_patternedRecurrence.optional(),
+            reminderMinutesBeforeStart: z
+              .number()
+              .gte(-2147483648)
+              .lte(2147483647)
+              .describe(
+                'The number of minutes before the event start time that the reminder alert occurs.'
+              )
+              .nullish(),
+            allowNewTimeProposals: z
+              .boolean()
+              .describe(
+                'true if the meeting organizer allows invitees to propose a new time when responding; otherwise, false. Optional. The default is true.'
+              )
+              .nullish(),
+            responseRequested: z
+              .boolean()
+              .describe(
+                'Default is true, which represents the organizer would like an invitee to send a response to the event.'
+              )
+              .nullish(),
+            categories: z
+              .array(z.string().nullable())
+              .describe('The categories associated with the item')
+              .optional(),
+            changeKey: z
+              .string()
+              .describe(
+                'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/calendar/events/:eventId',
+    alias: 'get-group-calendar-event',
+    description: `The events in the calendar. Navigation property. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/groups/:groupId/calendar/events/:eventId',
+    alias: 'update-group-calendar-event',
+    description: `Update an event object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+              )
+              .nullish(),
+            lastModifiedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z'
+              )
+              .nullish(),
+            type: microsoft_graph_eventType.optional(),
+            body: microsoft_graph_itemBody.optional(),
+            subject: z.string().describe("The text of the event's subject line.").nullish(),
+            attachments: z
+              .array(microsoft_graph_attachment)
+              .describe(
+                'The collection of FileAttachment, ItemAttachment, and referenceAttachment attachments for the event. Navigation property. Read-only. Nullable.'
+              )
+              .optional(),
+            singleValueExtendedProperties: z
+              .array(microsoft_graph_singleValueLegacyExtendedProperty)
+              .describe(
+                'The collection of single-value extended properties defined for the event. Read-only. Nullable.'
+              )
+              .optional(),
+            multiValueExtendedProperties: z
+              .array(microsoft_graph_multiValueLegacyExtendedProperty)
+              .describe(
+                'The collection of multi-value extended properties defined for the event. Read-only. Nullable.'
+              )
+              .optional(),
+            start: microsoft_graph_dateTimeTimeZone.optional(),
+            end: microsoft_graph_dateTimeTimeZone.optional(),
+            location: microsoft_graph_location.optional(),
+            showAs: microsoft_graph_freeBusyStatus.optional(),
+            sensitivity: microsoft_graph_sensitivity.optional(),
+            isAllDay: z
+              .boolean()
+              .describe(
+                "Set to true if the event lasts all day. If true, regardless of whether it's a single-day or multi-day event, start, and endtime must be set to midnight and be in the same time zone."
+              )
+              .nullish(),
+            importance: microsoft_graph_importance.optional(),
+            isOnlineMeeting: z
+              .boolean()
+              .describe(
+                'True if this event has online meeting information (that is, onlineMeeting points to an onlineMeetingInfo resource), false otherwise. Default is false (onlineMeeting is null). Optional.  After you set isOnlineMeeting to true, Microsoft Graph initializes onlineMeeting. Subsequently, Outlook ignores any further changes to isOnlineMeeting, and the meeting remains available online.'
+              )
+              .nullish(),
+            isReminderOn: z
+              .boolean()
+              .describe('Set to true if an alert is set to remind the user of the event.')
+              .nullish(),
+            attendees: z
+              .array(microsoft_graph_attendee)
+              .describe('The collection of attendees for the event.')
+              .optional(),
+            recurrence: microsoft_graph_patternedRecurrence.optional(),
+            reminderMinutesBeforeStart: z
+              .number()
+              .gte(-2147483648)
+              .lte(2147483647)
+              .describe(
+                'The number of minutes before the event start time that the reminder alert occurs.'
+              )
+              .nullish(),
+            allowNewTimeProposals: z
+              .boolean()
+              .describe(
+                'true if the meeting organizer allows invitees to propose a new time when responding; otherwise, false. Optional. The default is true.'
+              )
+              .nullish(),
+            responseRequested: z
+              .boolean()
+              .describe(
+                'Default is true, which represents the organizer would like an invitee to send a response to the event.'
+              )
+              .nullish(),
+            categories: z
+              .array(z.string().nullable())
+              .describe('The categories associated with the item')
+              .optional(),
+            changeKey: z
+              .string()
+              .describe(
+                'Identifies the version of the item. Every time the item is changed, changeKey changes as well. This allows Exchange to apply changes to the correct version of the object. Read-only.'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/groups/:groupId/calendar/events/:eventId',
+    alias: 'delete-group-calendar-event',
+    description: `Delete navigation property events for groups`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/groups/:groupId/conversations',
     alias: 'list-group-conversations',
     description: `Retrieve the list of conversations in this group.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/drive',
+    alias: 'get-group-drive',
+    description: `The group's default drive. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/events',
+    alias: 'list-group-events',
+    description: `Retrieve a list of event objects.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/members',
+    alias: 'list-group-members',
+    description: `Get a list of the group's direct members. A group can have users, organizational contacts, devices, service principals and other groups as members. This operation is not transitive.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups/:groupId/members/$ref',
+    alias: 'add-group-member',
+    description: `Add a member to a security or Microsoft 365 group. When using the API to add multiple members in one request, you can add up to only 20 members.  The following table shows the types of members that can be added to either security groups or Microsoft 365 groups.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property ref value`,
+        type: 'Body',
+        schema: z.record(z.object({}).partial().passthrough()),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/onenote/notebooks',
+    alias: 'list-group-onenote-notebooks',
+    description: `The collection of OneNote notebooks that are owned by the user or group. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/onenote/notebooks/:notebookId/sections',
+    alias: 'list-group-onenote-sections',
+    description: `The sections in the notebook. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/onenote/pages/:onenotePageId/content',
+    alias: 'get-group-onenote-page-content',
+    description: `The page's HTML content.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/onenote/sections/:onenoteSectionId/pages',
+    alias: 'list-group-onenote-section-pages',
+    description: `The collection of pages in the section.  Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups/:groupId/onenote/sections/:onenoteSectionId/pages',
+    alias: 'create-group-onenote-page',
+    description: `Create new navigation property to pages for groups`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_onenotePage,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/owners',
+    alias: 'list-group-owners',
+    description: `Retrieve a list of the group's owners. The owners are a set of users or service principals who are allowed to modify the group object. Owners are currently not available in Microsoft Graph for groups that were created in Exchange, distribution groups, or groups that are synchronized from an on-premises environment.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups/:groupId/owners/$ref',
+    alias: 'add-group-owner',
+    description: `Add a user or service principal to a Microsoft 365 or security group's owners. The owners are a set of users or service principals who are allowed to modify the group object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property ref value`,
+        type: 'Body',
+        schema: z.record(z.object({}).partial().passthrough()),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/planner/plans',
+    alias: 'list-group-planner-plans',
+    description: `Retrieve a list of plannerPlan objects owned by a group object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/groups/:groupId/renew',
+    alias: 'renew-group',
+    description: `Renew a group's expiration. When a group is renewed, the group expiration is extended by the number of days defined in the policy.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/groups/:groupId/settings',
+    alias: 'list-group-settings',
+    description: `Retrieve a list of tenant-level or group-specific group settings objects.`,
     requestFormat: 'json',
     parameters: [
       {
@@ -8758,6 +14348,22 @@ const endpoints = makeApi([
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/invitations',
+    alias: 'create-guest-invitation',
+    description: `Use this API to create a new invitation or reset the redemption status for a guest user who already redeemed their invitation. The invitation adds the external user to the organization as part of B2B collaboration. B2B collaboration is supported in both Microsoft Entra External ID in workforce and external tenants. When creating a new invitation, you have several options available:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: microsoft_graph_invitation,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/me',
     alias: 'get-current-user',
@@ -8783,6 +14389,160 @@ const endpoints = makeApi([
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendar',
+    alias: 'get-default-calendar',
+    description: `Get the properties and relationships of a calendar object. The calendar can be one for a user,
+or the default calendar of a Microsoft 365 group. There are two scenarios where an app can get another user's calendar:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/calendar/getSchedule',
+    alias: 'get-schedule',
+    description: `Get the free/busy availability information for a collection of users, distributions lists, or resources (rooms or equipment) for a specified time period.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: get_schedule_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendarGroups',
+    alias: 'list-calendar-groups',
+    description: `Get the user's calendar groups.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/calendarGroups',
+    alias: 'create-calendar-group',
+    description: `Use this API to create a new CalendarGroup.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_calendarGroup,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendarGroups/:calendarGroupId',
+    alias: 'get-calendar-group',
+    description: `Retrieve the properties and relationships of a calendar group object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/calendarGroups/:calendarGroupId',
+    alias: 'update-calendar-group',
+    description: `Update the properties of calendargroup object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_calendarGroup,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/calendarGroups/:calendarGroupId',
+    alias: 'delete-calendar-group',
+    description: `Delete a calendar group other than the default calendar group.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
       },
     ],
     response: z.void()
@@ -8833,6 +14593,190 @@ const endpoints = makeApi([
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/calendars',
+    alias: 'create-calendar',
+    description: `Create a new calendar for a user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_calendar,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendars/:calendarId',
+    alias: 'get-calendar',
+    description: `The user's calendars. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/calendars/:calendarId',
+    alias: 'update-calendar',
+    description: `Update the navigation property calendars in me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_calendar,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/calendars/:calendarId',
+    alias: 'delete-calendar',
+    description: `Delete a calendar other than the default calendar.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendars/:calendarId/calendarPermissions',
+    alias: 'list-calendar-permissions',
+    description: `The permissions of the users with whom the calendar is shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/calendars/:calendarId/calendarPermissions',
+    alias: 'create-calendar-permission',
+    description: `Create new navigation property to calendarPermissions for me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_calendarPermission,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/calendars/:calendarId/calendarPermissions/:calendarPermissionId',
+    alias: 'get-calendar-permission',
+    description: `The permissions of the users with whom the calendar is shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/calendars/:calendarId/calendarPermissions/:calendarPermissionId',
+    alias: 'update-calendar-permission',
+    description: `Update the navigation property calendarPermissions in me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_calendarPermission,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/calendars/:calendarId/calendarPermissions/:calendarPermissionId',
+    alias: 'delete-calendar-permission',
+    description: `Delete navigation property calendarPermissions for me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
       },
     ],
     response: z.void()
@@ -9366,10 +15310,194 @@ or from some other calendar of the user.`,
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/me/changePassword',
+    alias: 'change-password',
+    description: `Update the signed-in user's password. Any user can update their password without belonging to any administrator role.
+To update another user's password in either delegated or app-only scenarios, update the passwordProfile property of the user instead. See Example 3: Update the passwordProfile of a user and reset their password.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: change_password_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/me/chats',
     alias: 'list-chats',
     description: `Get chats from me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/contactFolders',
+    alias: 'list-contact-folders',
+    description: `Get the contact folder collection in the default Contacts folder of the signed-in user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/contactFolders',
+    alias: 'create-contact-folder',
+    description: `Create a new contactFolder under the user's default contacts folder. You can also create a new contactfolder as a child of any specified contact folder.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_contactFolder,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/contactFolders/:contactFolderId',
+    alias: 'get-contact-folder',
+    description: `Get a contact folder by using the contact folder ID. There are two scenarios where an app can get another user's contact folder:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/contactFolders/:contactFolderId',
+    alias: 'update-contact-folder',
+    description: `Update the properties of contactfolder object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_contactFolder,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/contactFolders/:contactFolderId',
+    alias: 'delete-contact-folder',
+    description: `Delete contactFolder other than the default contactFolder.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/contactFolders/:contactFolderId/contacts',
+    alias: 'list-contact-folder-contacts',
+    description: `Get a contact collection from the default Contacts folder of the signed-in user (.../me/contacts), or from the specified contact folder.`,
     requestFormat: 'json',
     parameters: [
       {
@@ -9722,6 +15850,26 @@ or from some other calendar of the user.`,
         name: 'If-Match',
         type: 'Header',
         schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/drive',
+    alias: 'get-my-drive',
+    description: `Retrieve the properties and relationships of a Drive resource. A Drive is the top-level container for a file system, such as OneDrive or SharePoint document libraries.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
     response: z.void()
@@ -10104,6 +16252,286 @@ open extensions or extended properties, and how to specify extended properties.`
   },
   {
     method: 'post',
+    path: '/me/events/:eventId/accept',
+    alias: 'accept-calendar-event',
+    description: `Accept the specified event in a user calendar.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: accept_calendar_event_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/events/:eventId/attachments',
+    alias: 'list-event-attachments',
+    description: `Retrieve a list of attachment objects attached to an event.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/attachments',
+    alias: 'add-event-attachment',
+    description: `Use this API to add an attachment to an existing event. This operation limits the size of the attachment you can add to under 3 MB. If an organizer adds an attachment to a meeting event, the organizer can subsequently update the event to send the attachment and update the event for each attendee as well.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_attachment,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/events/:eventId/attachments/:attachmentId',
+    alias: 'get-event-attachment',
+    description: `The collection of FileAttachment, ItemAttachment, and referenceAttachment attachments for the event. Navigation property. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/events/:eventId/attachments/:attachmentId',
+    alias: 'delete-event-attachment',
+    description: `Delete an attachment from a user calendar event, mail message, or group post.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/cancel',
+    alias: 'cancel-calendar-event',
+    description: `This action allows the organizer of a meeting to send a cancellation message and cancel the event.  The action moves the event to the Deleted Items folder. The organizer can also cancel an occurrence of a recurring meeting 
+by providing the occurrence event ID. An attendee calling this action gets an error (HTTP 400 Bad Request), with the following
+error message: 'Your request can't be completed. You need to be an organizer to cancel a meeting.' This action differs from Delete in that Cancel is available to only the organizer, and lets
+the organizer send a custom message to the attendees about the cancellation.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z.object({ Comment: z.string().nullable() }).partial().passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/decline',
+    alias: 'decline-calendar-event',
+    description: `Decline invitation to the specified event in a user calendar. If the event allows proposals for new times, on declining the event, an invitee can choose to suggest an alternative time by including the proposedNewTime parameter. For more information on how to propose a time, and how to receive and accept a new time proposal, see Propose new meeting times.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: decline_calendar_event_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/dismissReminder',
+    alias: 'dismiss-reminder',
+    description: `Dismiss a reminder that has been triggered for an event in a user calendar.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/forward',
+    alias: 'forward-calendar-event',
+    description: `This action allows the organizer or attendee of a meeting event to forward the
+meeting request to a new recipient. If the meeting event is forwarded from an attendee's Microsoft 365 mailbox to another recipient, this action
+also sends a message to notify the organizer of the forwarding, and adds the recipient to the organizer's
+copy of the meeting event. This convenience is not available when forwarding from an Outlook.com account.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: forward_calendar_event_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/events/:eventId/instances',
+    alias: 'list-event-instances',
+    description: `Get the instances (occurrences) of an event for a specified time range.  If the event is a seriesMaster type, this API returns the 
+occurrences and exceptions of the event in the specified time range.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'startDateTime',
+        type: 'Query',
+        schema: z
+          .string()
+          .describe(
+            'The start date and time of the time range, represented in ISO 8601 format. For example, 2019-11-08T19:00:00-08:00'
+          ),
+      },
+      {
+        name: 'endDateTime',
+        type: 'Query',
+        schema: z
+          .string()
+          .describe(
+            'The end date and time of the time range, represented in ISO 8601 format. For example, 2019-11-08T20:00:00-08:00'
+          ),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/snoozeReminder',
+    alias: 'snooze-reminder',
+    description: `Postpone a reminder for an event in a user calendar until a new time.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: snooze_reminder_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/events/:eventId/tentativelyAccept',
+    alias: 'tentatively-accept-calendar-event',
+    description: `Tentatively accept the specified event in a user calendar. If the event allows proposals for new times, on responding tentative to the event, an invitee can choose to suggest an alternative time by including the proposedNewTime parameter. For more information on how to propose a time, and how to receive and accept a new time proposal, see Propose new meeting times.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: decline_calendar_event_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
     path: '/me/findMeetingTimes',
     alias: 'find-meeting-times',
     description: `Suggest meeting times and locations based on organizer and attendee availability, and time or location constraints specified as parameters. If findMeetingTimes cannot return any meeting suggestions, the response would indicate a reason in the emptySuggestionsReason property.
@@ -10115,6 +16543,343 @@ Based on this value, you can better adjust the parameters and call findMeetingTi
         description: `Action parameters`,
         type: 'Body',
         schema: find_meeting_times_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/followedSites',
+    alias: 'list-followed-sites',
+    description: `List the sites that have been followed by the signed in user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/followedSites/add',
+    alias: 'follow-site',
+    description: `Follow a user's site or multiple sites.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: follow_site_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/followedSites/remove',
+    alias: 'unfollow-site',
+    description: `Unfollow a user's site or multiple sites.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: follow_site_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/getMailTips',
+    alias: 'get-mail-tips',
+    description: `Get the MailTips of one or more recipients as available to the signed-in user. Note that by making a POST call to the getMailTips action, you can request specific types of MailTips to
+be returned for more than one recipient at one time. The requested MailTips are returned in a mailTips collection.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: get_mail_tips_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/getMemberGroups',
+    alias: 'check-member-groups',
+    description: `Return all the group IDs for the groups that the specified user, group, service principal, organizational contact, device, or directory object is a member of. This function is transitive. This API returns up to 11,000 group IDs. If more than 11,000 results are available, it returns a 400 Bad Request error with the DirectoryResultSizeLimitExceeded error code. If you get the DirectoryResultSizeLimitExceeded error code, use the List group transitive memberOf API instead.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z
+          .object({ securityEnabledOnly: z.boolean().nullable().default(false) })
+          .partial()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/inferenceClassification/overrides',
+    alias: 'list-focused-inbox-overrides',
+    description: `Get the overrides that a user has set up to always classify messages from certain senders in specific ways. Each override corresponds to an SMTP address of a sender. Initially, a user does not have any overrides.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/inferenceClassification/overrides',
+    alias: 'create-focused-inbox-override',
+    description: `Create an override for a sender identified by an SMTP address. Future messages from that SMTP address will be consistently classified
+as specified in the override. Note`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_inferenceClassificationOverride,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/insights/shared',
+    alias: 'list-shared-insights',
+    description: `Calculated insight that includes the list of documents shared with a user. This insight includes documents hosted on OneDrive/SharePoint in the user's Microsoft 365 tenant that are shared with the user, and documents that are attached as files and sent to the user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/insights/trending',
+    alias: 'list-trending-files',
+    description: `Calculated insight that includes a list of documents trending around the user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/insights/used',
+    alias: 'list-used-files',
+    description: `Calculate and list the documents that a user has viewed or modified.  For the signed-in user:
+- This method includes documents that the user has modified; see example 1. 
+- Using an $orderby query parameter on the lastAccessedDateTime property returns the most recently viewed documents that the user might or might not not have modified; see example 2. For other users, this method includes only documents that the user has modified.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
     response: z.void()
@@ -10171,6 +16936,42 @@ Based on this value, you can better adjust the parameters and call findMeetingTi
   },
   {
     method: 'get',
+    path: '/me/mailboxSettings',
+    alias: 'get-mailbox-settings',
+    description: `Get the user's mailboxSettings. You can view all mailbox settings, or get specific settings. Users can set the following settings for their mailboxes through an Outlook client: Users can set their preferred date and time formats using Outlook on the web. Users can choose one of the supported short date or short time formats. This GET operation returns the format the user has chosen. Users can set the time zone they prefer on any Outlook client, by choosing from the supported time zones that their administrator has set up for their mailbox server. The administrator can set up time zones in the Windows time zone format or  Internet Assigned Numbers Authority (IANA) time zone (also known as Olson time zone) format. The Windows format is the default. This GET operation returns the user's preferred time zone in the format that the administrator has set up. If you want that time zone to be in a specific format (Windows or IANA), you can first update the preferred time zone in that format as a mailbox setting. Subsequently you will be able to get the time zone in that format. Alternatively, you can manage the format conversion separately in your app.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/mailboxSettings',
+    alias: 'update-mailbox-settings',
+    description: `Enable, configure, or disable one or more of the following settings as part of a user's mailboxSettings: When updating the preferred date or time format for a user, specify it in respectively, the short date or short time format. When updating the preferred time zone for a user, specify it in the Windows or Internet Assigned Numbers Authority (IANA) time zone (also known as Olson time zone) format. You can also further customize the time zone as shown in example 2 below.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: microsoft_graph_mailboxSettings,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/me/mailFolders',
     alias: 'list-mail-folders',
     description: `Get the mail folder collection directly under the root folder of the signed-in user. The returned collection includes any mail search folders directly under the root. By default, this operation does not return hidden folders. Use a query parameter includeHiddenFolders to include them in the response. This operation does not return all mail folders in a mailbox, only the child folders of the root folder. To return all mail folders in a mailbox, each child folder must be traversed separately.`,
@@ -10220,6 +17021,73 @@ Based on this value, you can better adjust the parameters and call findMeetingTi
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/mailFolders',
+    alias: 'create-mail-folder',
+    description: `Use this API to create a new mail folder in the root folder of the user's mailbox. If you intend a new folder to be hidden, you must set the isHidden property to true on creation.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_mailFolder,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/mailFolders/:mailFolderId',
+    alias: 'get-mail-folder',
+    description: `Retrieve the properties and relationships of a message folder object. The following list shows the two existing scenarios where an app can get another user's mail folder:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/mailFolders/:mailFolderId',
+    alias: 'update-mail-folder',
+    description: `Update the properties of mailfolder object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_mailFolder,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/mailFolders/:mailFolderId',
+    alias: 'delete-mail-folder',
+    description: `Delete the specified mailFolder. The folder can be a mailSearchFolder. You can specify a mail folder by its folder ID, or by its well-known folder name, if one exists.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
       },
     ],
     response: z.void()
@@ -10281,12 +17149,88 @@ folder collection and navigate to another folder. By default, this operation doe
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/me/mailFolders/:mailFolderId/childFolders',
+    alias: 'create-mail-child-folder',
+    description: `Use this API to create a new child mailFolder. If you intend a new folder to be hidden, you must set the isHidden property to true on creation.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_mailFolder,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/me/mailFolders/:mailFolderId/messages',
     alias: 'list-mail-folder-messages',
     description: `Get all the messages in the specified user's mailbox, or those messages in a specified folder in the mailbox.`,
     requestFormat: 'json',
     parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/memberOf',
+    alias: 'list-member-of',
+    description: `The groups and directory roles that the user is a member of. Read-only. Nullable. Supports $expand.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
       {
         name: '$top',
         type: 'Query',
@@ -10668,6 +17612,21 @@ folder collection and navigate to another folder. By default, this operation doe
   },
   {
     method: 'get',
+    path: '/me/messages/:messageId/$value',
+    alias: 'get-mail-mime-content',
+    description: `Get an open extension (openTypeExtension object) identified by name or fully qualified name. The table in the Permissions section lists the resources that support open extensions. The following table lists the three scenarios where you can get an open extension from a supported resource instance.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'includeHiddenMessages',
+        type: 'Query',
+        schema: z.string().describe('Include Hidden Messages').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/me/messages/:messageId/attachments',
     alias: 'list-mail-attachments',
     description: `Retrieve a list of attachment objects.`,
@@ -10764,6 +17723,41 @@ resource.`,
         name: 'If-Match',
         type: 'Header',
         schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/messages/:messageId/attachments/createUploadSession',
+    alias: 'create-mail-attachment-upload-session',
+    description: `Create an upload session that allows an app to iteratively upload ranges of a file, so as to attach the file to the specified Outlook item. The item can be a message or event. Use this approach to attach a file if the file size is between 3 MB and 150 MB. To attach a file that's smaller than 3 MB, do a POST operation on the attachments navigation property of the Outlook item; see how to do this for a message or for an event. As part of the response, this action returns an upload URL that you can use in subsequent sequential PUT queries. Request headers for each PUT operation let you specify the exact range of bytes to be uploaded. This allows transfer to be resumed, in case the network connection is dropped during upload. The following are the steps to attach a file to an Outlook item using an upload session: See attach large files to Outlook messages or events for an example.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z
+          .object({ AttachmentItem: z.object({}).partial().passthrough() })
+          .partial()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/messages/:messageId/copy',
+    alias: 'copy-mail-message',
+    description: `Copy a message to a folder within the user's mailbox.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z.object({ DestinationId: z.string() }).partial().passthrough(),
       },
     ],
     response: z.void()
@@ -11033,6 +18027,41 @@ resource.`,
   },
   {
     method: 'get',
+    path: '/me/onenote/pages/:onenotePageId',
+    alias: 'get-onenote-page',
+    description: `Retrieve the properties and relationships of a page object. Getting page information Access a page's metadata by page identifier: Getting page content You can use the page's content endpoint to get the HTML content of a page: The includeIDs=true query option is used to update pages.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/onenote/pages/:onenotePageId',
+    alias: 'delete-onenote-page',
+    description: `Delete a OneNote page.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/me/onenote/pages/:onenotePageId/content',
     alias: 'get-onenote-page-content',
     description: `The page's HTML content.`,
@@ -11107,6 +18136,735 @@ resource.`,
   },
   {
     method: 'get',
+    path: '/me/onlineMeetings',
+    alias: 'list-online-meetings',
+    description: `Retrieve the properties and relationships of an onlineMeeting object. For example, you can: Teams live event attendee report (deprecated) and Teams live event recordings (deprecated) are online meeting artifacts. For more information, see Online meeting artifacts and permissions.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/onlineMeetings',
+    alias: 'create-online-meeting',
+    description: `Create an online meeting on behalf of a user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            subject: z.string().describe('The subject of the online meeting.').nullish(),
+            allowAttendeeToEnableCamera: z
+              .boolean()
+              .describe('Indicates whether attendees can turn on their camera.')
+              .nullish(),
+            allowAttendeeToEnableMic: z
+              .boolean()
+              .describe('Indicates whether attendees can turn on their microphone.')
+              .nullish(),
+            allowBreakoutRooms: z
+              .boolean()
+              .describe('Indicates whether breakout rooms are enabled for the meeting.')
+              .nullish(),
+            allowCopyingAndSharingMeetingContent: z
+              .boolean()
+              .describe(
+                'Indicates whether the ability to copy and share meeting content is enabled for the meeting.'
+              )
+              .nullish(),
+            allowedLobbyAdmitters: microsoft_graph_allowedLobbyAdmitterRoles.optional(),
+            allowedPresenters: microsoft_graph_onlineMeetingPresenters.optional(),
+            allowLiveShare: microsoft_graph_meetingLiveShareOptions.optional(),
+            allowMeetingChat: microsoft_graph_meetingChatMode.optional(),
+            allowParticipantsToChangeName: z
+              .boolean()
+              .describe(
+                'Specifies if participants are allowed to rename themselves in an instance of the meeting.'
+              )
+              .nullish(),
+            allowPowerPointSharing: z
+              .boolean()
+              .describe('Indicates whether PowerPoint live is enabled for the meeting.')
+              .nullish(),
+            allowRecording: z
+              .boolean()
+              .describe('Indicates whether recording is enabled for the meeting.')
+              .nullish(),
+            allowTeamworkReactions: z
+              .boolean()
+              .describe('Indicates if Teams reactions are enabled for the meeting.')
+              .nullish(),
+            allowTranscription: z
+              .boolean()
+              .describe('Indicates whether transcription is enabled for the meeting.')
+              .nullish(),
+            allowWhiteboard: z
+              .boolean()
+              .describe('Indicates whether whiteboard is enabled for the meeting.')
+              .nullish(),
+            audioConferencing: microsoft_graph_audioConferencing.optional(),
+            chatInfo: microsoft_graph_chatInfo.optional(),
+            chatRestrictions: microsoft_graph_chatRestrictions.optional(),
+            expiryDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'Indicates the date and time when the meeting resource expires. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+              )
+              .nullish(),
+            isEndToEndEncryptionEnabled: z
+              .boolean()
+              .describe(
+                'Indicates whether end-to-end encryption (E2EE) is enabled for the online meeting.'
+              )
+              .nullish(),
+            isEntryExitAnnounced: z
+              .boolean()
+              .describe('Indicates whether to announce when callers join or leave.')
+              .nullish(),
+            joinInformation: microsoft_graph_itemBody.optional(),
+            joinMeetingIdSettings: microsoft_graph_joinMeetingIdSettings.optional(),
+            joinWebUrl: z
+              .string()
+              .describe('The join URL of the online meeting. Read-only.')
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId',
+    alias: 'get-online-meeting',
+    description: `Retrieve the properties and relationships of an onlineMeeting object. For example, you can: Teams live event attendee report (deprecated) and Teams live event recordings (deprecated) are online meeting artifacts. For more information, see Online meeting artifacts and permissions.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/onlineMeetings/:onlineMeetingId',
+    alias: 'update-online-meeting',
+    description: `Update the properties of the specified onlineMeeting object. For the list of properties that support updating, see the Request body section.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            subject: z.string().describe('The subject of the online meeting.').nullish(),
+            allowAttendeeToEnableCamera: z
+              .boolean()
+              .describe('Indicates whether attendees can turn on their camera.')
+              .nullish(),
+            allowAttendeeToEnableMic: z
+              .boolean()
+              .describe('Indicates whether attendees can turn on their microphone.')
+              .nullish(),
+            allowBreakoutRooms: z
+              .boolean()
+              .describe('Indicates whether breakout rooms are enabled for the meeting.')
+              .nullish(),
+            allowCopyingAndSharingMeetingContent: z
+              .boolean()
+              .describe(
+                'Indicates whether the ability to copy and share meeting content is enabled for the meeting.'
+              )
+              .nullish(),
+            allowedLobbyAdmitters: microsoft_graph_allowedLobbyAdmitterRoles.optional(),
+            allowedPresenters: microsoft_graph_onlineMeetingPresenters.optional(),
+            allowLiveShare: microsoft_graph_meetingLiveShareOptions.optional(),
+            allowMeetingChat: microsoft_graph_meetingChatMode.optional(),
+            allowParticipantsToChangeName: z
+              .boolean()
+              .describe(
+                'Specifies if participants are allowed to rename themselves in an instance of the meeting.'
+              )
+              .nullish(),
+            allowPowerPointSharing: z
+              .boolean()
+              .describe('Indicates whether PowerPoint live is enabled for the meeting.')
+              .nullish(),
+            allowRecording: z
+              .boolean()
+              .describe('Indicates whether recording is enabled for the meeting.')
+              .nullish(),
+            allowTeamworkReactions: z
+              .boolean()
+              .describe('Indicates if Teams reactions are enabled for the meeting.')
+              .nullish(),
+            allowTranscription: z
+              .boolean()
+              .describe('Indicates whether transcription is enabled for the meeting.')
+              .nullish(),
+            allowWhiteboard: z
+              .boolean()
+              .describe('Indicates whether whiteboard is enabled for the meeting.')
+              .nullish(),
+            audioConferencing: microsoft_graph_audioConferencing.optional(),
+            chatInfo: microsoft_graph_chatInfo.optional(),
+            chatRestrictions: microsoft_graph_chatRestrictions.optional(),
+            expiryDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'Indicates the date and time when the meeting resource expires. The timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.'
+              )
+              .nullish(),
+            isEndToEndEncryptionEnabled: z
+              .boolean()
+              .describe(
+                'Indicates whether end-to-end encryption (E2EE) is enabled for the online meeting.'
+              )
+              .nullish(),
+            isEntryExitAnnounced: z
+              .boolean()
+              .describe('Indicates whether to announce when callers join or leave.')
+              .nullish(),
+            joinInformation: microsoft_graph_itemBody.optional(),
+            joinMeetingIdSettings: microsoft_graph_joinMeetingIdSettings.optional(),
+            joinWebUrl: z
+              .string()
+              .describe('The join URL of the online meeting. Read-only.')
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/onlineMeetings/:onlineMeetingId',
+    alias: 'delete-online-meeting',
+    description: `Delete an onlineMeeting object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/attendanceReports',
+    alias: 'list-meeting-attendance-reports',
+    description: `Get a list of meetingAttendanceReport objects for an onlineMeeting or a virtualEvent. Each time an online meeting or a virtual event ends, an attendance report is generated for that session.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/recordings',
+    alias: 'list-meeting-recordings',
+    description: `Get a callRecording object associated with a scheduled online meeting and an ad hoc call. This API supports the retrieval of call recordings from all meeting types except live events. For a recording, this API returns the metadata of the single recording associated with the online meeting or an ad hoc call. For the content of a recording, this API returns the stream of bytes associated with the recording.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/recordings/:callRecordingId',
+    alias: 'get-meeting-recording',
+    description: `The recordings of an online meeting. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/recordings/:callRecordingId/content',
+    alias: 'get-meeting-recording-content',
+    description: `The content of the recording. Read-only.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/transcripts',
+    alias: 'list-meeting-transcripts',
+    description: `The transcripts of an online meeting. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/onlineMeetings/:onlineMeetingId/transcripts/:callTranscriptId/content',
+    alias: 'get-meeting-transcript-content',
+    description: `The content of the transcript. Read-only.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/onlineMeetings/createOrGet',
+    alias: 'create-or-get-online-meeting',
+    description: `Create an onlineMeeting object with a custom specified external ID. If the external ID already exists, this API will return the onlineMeeting object with that external ID. `,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: create_or_get_online_meeting_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/outlook/masterCategories',
+    alias: 'list-outlook-categories',
+    description: `Get all the categories that have been defined for a user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/outlook/masterCategories',
+    alias: 'create-outlook-category',
+    description: `Create an outlookCategory object in the user's master list of categories.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_outlookCategory,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/outlook/masterCategories/:outlookCategoryId',
+    alias: 'get-outlook-category',
+    description: `Get the properties and relationships of the specified outlookCategory object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/outlook/masterCategories/:outlookCategoryId',
+    alias: 'update-outlook-category',
+    description: `Update the writable property, color, of the specified outlookCategory object. You can't modify the displayName property once you have created the category.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_outlookCategory,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/outlook/masterCategories/:outlookCategoryId',
+    alias: 'delete-outlook-category',
+    description: `Delete the specified outlookCategory object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/people',
+    alias: 'list-people',
+    description: `Retrieve a collection of person objects ordered by their relevance to the user, which is determined by the user's communication and collaboration patterns, and business relationships. You can get this information via the People API. For examples, see the Examples section and the article Use the People API to get information about the people most relevant to you.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/photo/$value',
+    alias: 'get-profile-photo',
+    description: `Get the specified profilePhoto or its metadata (profilePhoto properties). The supported sizes of HD photos on Microsoft 365 are as follows: 48x48, 64x64, 96x96, 120x120, 240x240,
+360x360, 432x432, 504x504, and 648x648. Photos can be any dimension if they're stored in Microsoft Entra ID. You can get the metadata of the largest available photo or specify a size to get the metadata for that photo size.
+If the size you request is unavailable, you can still get a smaller size that the user has uploaded and made available.
+For example, if the user uploads a photo that is 504x504 pixels, all but the 648x648 size of the photo is available for download.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'put',
+    path: '/me/photo/$value',
+    alias: 'update-profile-photo',
+    description: `Update the photo for the specified contact, group, team, or user in a tenant. The size of the photo you can update to is limited to 4 MB. You can use either PATCH or PUT for this operation.`,
+    requestFormat: 'binary',
+    parameters: [
+      {
+        name: 'body',
+        description: `New media content.`,
+        type: 'Body',
+        schema: z.instanceof(File),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/planner/plans',
+    alias: 'list-planner-plans',
+    description: `Retrieve a list of plannerplan objects shared with a user object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/me/planner/tasks',
     alias: 'list-planner-tasks',
     description: `Retrieve a list of plannertask objects assigned to a User.`,
@@ -11156,6 +18914,106 @@ resource.`,
     response: z.void()
   },
   {
+    method: 'get',
+    path: '/me/presence',
+    alias: 'get-my-presence',
+    description: `Get a user's presence information.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/presence/clearPresence',
+    alias: 'clear-me-presence',
+    description: `Clear the application's presence session for a user. If it is the user's only presence session, the user's presence will change to Offline/Offline. For details about presences sessions, see presence: setPresence.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z.object({ sessionId: z.string().nullable() }).partial().passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/presence/clearUserPreferredPresence',
+    alias: 'clear-preferred-presence',
+    description: `Clear the preferred availability and activity status for a user.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/presence/setPresence',
+    alias: 'set-my-presence',
+    description: `Set the state of a user's presence session as an application. For more information about presence sessions, states permutations, and timeouts, see Manage presence state using the Microsoft Graph API.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: set_my_presence_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/presence/setStatusMessage',
+    alias: 'set-status-message',
+    description: `Set a presence status message for a user. An optional expiration date and time can be supplied.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: set_status_message_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/presence/setUserPreferredPresence',
+    alias: 'set-preferred-presence',
+    description: `Set the preferred availability and activity status for a user. If the preferred presence of a user is set, the user's presence shows as the preferred status. Preferred presence takes effect only when at least one presence session exists for the user. Otherwise, the user's presence shows as Offline. A presence session is created as a result of a successful setPresence operation, or if the user is signed in on a Microsoft Teams client. For more details, see presence sessions and time-out and expiration.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: set_preferred_presence_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/revokeSignInSessions',
+    alias: 'revoke-sign-in-sessions',
+    description: `Invalidates all the refresh tokens issued to applications for a user (and session cookies in a user's browser), by resetting the signInSessionsValidFromDateTime user property to the current date-time. Typically, this operation is performed (by the user or an administrator) if the user has a lost or stolen device. This operation prevents access to the organization's data through applications on the device by requiring the user to sign in again to all applications that they consented to previously, independent of device.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
     method: 'post',
     path: '/me/sendMail',
     alias: 'send-mail',
@@ -11167,6 +19025,211 @@ resource.`,
         description: `Action parameters`,
         type: 'Body',
         schema: send_mail_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/settings/itemInsights',
+    alias: 'get-item-insights-settings',
+    description: `Get the user-customizable privacy settings for itemInsights and meeting hours insights.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/settings/itemInsights',
+    alias: 'update-item-insights-settings',
+    description: `Update the navigation property itemInsights in me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_userInsightsSettings,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/settings/workHoursAndLocations',
+    alias: 'get-work-hours',
+    description: `Get the properties and relationships of your own workHoursAndLocationsSetting.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/settings/workHoursAndLocations',
+    alias: 'update-work-hours',
+    description: `Update the properties of your own workHoursAndLocationsSetting.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_workHoursAndLocationsSetting,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/teamwork/associatedTeams',
+    alias: 'list-associated-teams',
+    description: `Get the list of teams in Microsoft Teams that a user is associated with.
+Currently, a user can be associated with a team in two different ways:`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/teamwork/installedApps',
+    alias: 'list-personal-apps',
+    description: `The apps installed in the personal scope of this user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/teamwork/installedApps',
+    alias: 'install-personal-app',
+    description: `Create new navigation property to installedApps for me`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_userScopeTeamsAppInstallation,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/teamwork/sendActivityNotification',
+    alias: 'send-me-activity-notification',
+    description: `Send an activity feed notification to a user. For more information, see sending Teams activity notifications.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: send_me_activity_notification_Body,
       },
     ],
     response: z.void()
@@ -11225,7 +19288,7 @@ resource.`,
     method: 'post',
     path: '/me/todo/lists',
     alias: 'create-todo-task-list',
-    description: `Create a new todoTaskList object.`,
+    description: `Create a new lists object.`,
     requestFormat: 'json',
     parameters: [
       {
@@ -11233,6 +19296,26 @@ resource.`,
         description: `New navigation property`,
         type: 'Body',
         schema: microsoft_graph_todoTaskList,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId',
+    alias: 'get-todo-task-list',
+    description: `Read the properties and relationships of a todoTaskList object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
     response: z.void()
@@ -11246,7 +19329,7 @@ resource.`,
     parameters: [
       {
         name: 'body',
-        description: `Properties to update`,
+        description: `New navigation property values`,
         type: 'Body',
         schema: microsoft_graph_todoTaskList,
       },
@@ -11257,9 +19340,15 @@ resource.`,
     method: 'delete',
     path: '/me/todo/lists/:todoTaskListId',
     alias: 'delete-todo-task-list',
-    description: `Delete a todoTaskList object.`,
+    description: `Deletes a todoTaskList object.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
     response: z.void()
   },
   {
@@ -11365,56 +19454,6 @@ resource.`,
     response: z.void()
   },
   {
-    method: 'post',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
-    alias: 'create-todo-checklist-item',
-    description: `Create a new checklistItem object.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        description: `New checklist item`,
-        type: 'Body',
-        schema: microsoft_graph_checklistItem,
-      },
-    ],
-    response: z.void()
-  },
-  {
-    method: 'get',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
-    alias: 'list-todo-checklist-items',
-    description: `Get the checklistItem resources from a todoTask.`,
-    requestFormat: 'json',
-    parameters: [],
-    response: z.void()
-  },
-  {
-    method: 'delete',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
-    alias: 'delete-todo-checklist-item',
-    description: `Delete a checklistItem object.`,
-    requestFormat: 'json',
-    parameters: [],
-    response: z.void()
-  },
-  {
-    method: 'patch',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
-    alias: 'update-todo-checklist-item',
-    description: `Update the properties of a checklistItem object.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        description: `Properties to update`,
-        type: 'Body',
-        schema: microsoft_graph_checklistItem,
-      },
-    ],
-    response: z.void()
-  },
-  {
     method: 'delete',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId',
     alias: 'delete-todo-task',
@@ -11431,52 +19470,304 @@ resource.`,
   },
   {
     method: 'get',
-    path: '/me/todo/lists/:todoTaskListId',
-    alias: 'get-todo-task-list',
-    description: `Get a todoTaskList object.`,
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
+    alias: 'list-todo-attachments',
+    description: `Get a list of the taskFileAttachment objects and their properties. The contentBytes property will not be returned in the response. Use the Get attachment API to view the contentBytes.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
+    alias: 'create-todo-attachment',
+    description: `Add a new taskFileAttachment object to a todoTask. This operation limits the size of the attachment you can add to under 3 MB. If the size of the file attachments is more than 3 MB, create an upload session to upload the attachments.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_attachmentBase,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
+    alias: 'get-todo-attachment',
+    description: `Read the properties and relationships of a taskFileAttachment object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
+    alias: 'delete-todo-attachment',
+    description: `Delete a taskFileAttachment object from a todoTask resource.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
+    alias: 'list-todo-checklist-items',
+    description: `Get the checklistItem resources associated to a todoTask from the checklistItems navigation property.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems',
+    alias: 'create-todo-checklist-item',
+    description: `Create a new checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_checklistItem,
+      },
+    ],
     response: z.void()
   },
   {
     method: 'get',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
     alias: 'get-todo-checklist-item',
-    description: `Get a checklistItem object.`,
+    description: `Read the properties and relationships of a checklistItem object.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
+    alias: 'update-todo-checklist-item',
+    description: `Update the properties of a checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_checklistItem,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/checklistItems/:checklistItemId',
+    alias: 'delete-todo-checklist-item',
+    description: `Delete a checklistItem object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'get',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources',
     alias: 'list-todo-linked-resources',
-    description: `Get the linkedResource resources from a todoTask.`,
+    description: `Get information of one or more items in a partner application, based on which a specified task was created. The information is represented in a linkedResource object for each item. It includes an external ID for the item in the partner application, and if applicable, a deep link to that item in the application.`,
     requestFormat: 'json',
-    parameters: [],
-    response: z.void()
-  },
-  {
-    method: 'get',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources/:linkedResourceId',
-    alias: 'get-todo-linked-resource',
-    description: `Get a linkedResource object.`,
-    requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'post',
     path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources',
     alias: 'create-todo-linked-resource',
-    description: `Create a new linkedResource object.`,
+    description: `Create a linkedResource object to associate a specified task with an item in a partner application. For example, you can associate a task with an email item in Outlook that spurred the task, and you can create a linkedResource object to track its association. You can also create a linkedResource object while creating a task.`,
     requestFormat: 'json',
     parameters: [
       {
         name: 'body',
-        description: `New linked resource`,
+        description: `New navigation property`,
         type: 'Body',
         schema: microsoft_graph_linkedResource,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/linkedResources/:linkedResourceId',
+    alias: 'get-todo-linked-resource',
+    description: `Read the properties and relationships of a linkedResource object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
     response: z.void()
@@ -11490,7 +19781,7 @@ resource.`,
     parameters: [
       {
         name: 'body',
-        description: `Properties to update`,
+        description: `New navigation property values`,
         type: 'Body',
         schema: microsoft_graph_linkedResource,
       },
@@ -11503,68 +19794,270 @@ resource.`,
     alias: 'delete-todo-linked-resource',
     description: `Delete a linkedResource object.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'get',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
-    alias: 'list-todo-attachments',
-    description: `Get the attachmentBase resources from a todoTask.`,
+    path: '/me/transitiveMemberOf',
+    alias: 'list-transitive-member-of',
+    description: `The groups, including nested groups, and directory roles that a user is a member of. Nullable.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'get',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
-    alias: 'get-todo-attachment',
-    description: `Get an attachmentBase object.`,
+    path: '/places/graph.building',
+    alias: 'list-buildings',
+    description: `Get a collection of the specified type of place objects defined in a tenant. You can do the following for a given tenant:
+- List all buildings.
+- List all floors.
+- List all sections.
+- List all desks.
+- List all rooms.
+- List all workspaces.
+- List all room lists.
+- List rooms in a specific room list.
+- List workspaces in a specific room list.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'post',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments',
-    alias: 'create-todo-attachment',
-    description: `Create a new attachmentBase object.`,
+    path: '/planner/buckets',
+    alias: 'create-planner-bucket',
+    description: `Create a new plannerBucket object.`,
     requestFormat: 'json',
     parameters: [
       {
         name: 'body',
-        description: `New attachment`,
+        description: `New navigation property`,
         type: 'Body',
-        schema: microsoft_graph_attachmentBase,
+        schema: microsoft_graph_plannerBucket,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/planner/buckets/:plannerBucketId',
+    alias: 'get-planner-bucket',
+    description: `Retrieve the properties and relationships of a plannerBucket object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/planner/buckets/:plannerBucketId',
+    alias: 'update-planner-bucket',
+    description: `Update the properties of plannerbucket object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_plannerBucket,
+      },
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag value.'),
       },
     ],
     response: z.void()
   },
   {
     method: 'delete',
-    path: '/me/todo/lists/:todoTaskListId/tasks/:todoTaskId/attachments/:attachmentBaseId',
-    alias: 'delete-todo-attachment',
-    description: `Delete an attachmentBase object.`,
+    path: '/planner/buckets/:plannerBucketId',
+    alias: 'delete-planner-bucket',
+    description: `Delete plannerBucket.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
     response: z.void()
   },
   {
     method: 'get',
-    path: '/me/mailFolders/inbox/messageRules',
-    alias: 'list-mail-rules',
-    description: `Get all the messageRule objects defined for the user's inbox.`,
+    path: '/planner/buckets/:plannerBucketId/tasks',
+    alias: 'list-bucket-tasks',
+    description: `Retrieve a list of plannerTask objects associated to a plannerBucket object.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
     response: z.void()
   },
   {
-    method: 'get',
-    path: '/me/outlook/masterCategories',
-    alias: 'list-outlook-categories',
-    description: `Get all the categories that have been defined for the user.`,
+    method: 'post',
+    path: '/planner/plans',
+    alias: 'create-planner-plan',
+    description: `Create a new plannerPlan object.`,
     requestFormat: 'json',
-    parameters: [],
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_plannerPlan,
+      },
+    ],
     response: z.void()
   },
   {
@@ -11583,6 +20076,128 @@ resource.`,
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/planner/plans/:plannerPlanId',
+    alias: 'update-planner-plan',
+    description: `Update the properties of a plannerPlan object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_plannerPlan,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/planner/plans/:plannerPlanId',
+    alias: 'delete-planner-plan',
+    description: `Delete a plannerPlan object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/planner/plans/:plannerPlanId/buckets',
+    alias: 'list-planner-buckets',
+    description: `Retrieve a list of plannerBucket objects contained by a plannerPlan object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/planner/plans/:plannerPlanId/details',
+    alias: 'get-planner-plan-details',
+    description: `Retrieve the properties and relationships of a plannerPlanDetails object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/planner/plans/:plannerPlanId/details',
+    alias: 'update-planner-plan-details',
+    description: `Update the properties of plannerplandetails object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_plannerPlanDetails,
+      },
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag value.'),
       },
     ],
     response: z.void()
@@ -11939,6 +20554,41 @@ resource.`,
     response: z.void()
   },
   {
+    method: 'delete',
+    path: '/planner/tasks/:plannerTaskId',
+    alias: 'delete-planner-task',
+    description: `Delete a plannerTask object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/planner/tasks/:plannerTaskId/details',
+    alias: 'get-planner-task-details',
+    description: `Retrieve the properties and relationships of a plannerTaskDetails object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'patch',
     path: '/planner/tasks/:plannerTaskId/details',
     alias: 'update-planner-task-details',
@@ -12032,6 +20682,96 @@ If you want to list all sites across all geographies, refer to getAllSites. For 
     alias: 'get-sharepoint-site',
     description: `Retrieve properties and relationships for a site resource.
 A site resource represents a team site in SharePoint.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/analytics',
+    alias: 'get-sharepoint-site-analytics',
+    description: `Analytics about the view activities that took place on this site.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/contentTypes',
+    alias: 'list-site-content-types',
+    description: `Get the collection of contentType resources in a site.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/contentTypes/:contentTypeId',
+    alias: 'get-site-content-type',
+    description: `Retrieve the metadata for a content type in a site or a list.`,
     requestFormat: 'json',
     parameters: [
       {
@@ -12247,6 +20987,22 @@ To list them, include system in your $select statement.`,
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/sites/:siteId/lists',
+    alias: 'create-sharepoint-list',
+    description: `Create a new list in a site.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_list,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/sites/:siteId/lists/:listId',
     alias: 'get-sharepoint-site-list',
@@ -12262,6 +21018,170 @@ To list them, include system in your $select statement.`,
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/sites/:siteId/lists/:listId',
+    alias: 'update-sharepoint-list',
+    description: `Update the navigation property lists in sites`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_list,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/sites/:siteId/lists/:listId',
+    alias: 'delete-sharepoint-list',
+    description: `Delete navigation property lists for sites`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/lists/:listId/columns',
+    alias: 'list-sharepoint-list-columns',
+    description: `Get the collection of columns represented as columnDefinition resources in a list.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/sites/:siteId/lists/:listId/columns',
+    alias: 'create-sharepoint-list-column',
+    description: `Create a column for a list with a request that specifies a columnDefinition.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            name: z
+              .string()
+              .describe(
+                'The API-facing name of the column as it appears in the fields on a listItem. For the user-facing name, see displayName.'
+              )
+              .nullish(),
+            displayName: z.string().describe('The user-facing name of the column.').nullish(),
+            description: z
+              .string()
+              .describe('The user-facing description of the column.')
+              .nullish(),
+            type: microsoft_graph_columnTypes.optional(),
+            boolean: microsoft_graph_booleanColumn.optional(),
+            calculated: microsoft_graph_calculatedColumn.optional(),
+            choice: microsoft_graph_choiceColumn.optional(),
+            columnGroup: z
+              .string()
+              .describe(
+                'For site columns, the name of the group this column belongs to. Helps organize related columns.'
+              )
+              .nullish(),
+            contentApprovalStatus: microsoft_graph_contentApprovalStatusColumn.optional(),
+            currency: microsoft_graph_currencyColumn.optional(),
+            dateTime: microsoft_graph_dateTimeColumn.optional(),
+            defaultValue: microsoft_graph_defaultColumnValue.optional(),
+            enforceUniqueValues: z
+              .boolean()
+              .describe('If true, no two list items may have the same value for this column.')
+              .nullish(),
+            geolocation: microsoft_graph_geolocationColumn.optional(),
+            hidden: z
+              .boolean()
+              .describe('Specifies whether the column is displayed in the user interface.')
+              .nullish(),
+            hyperlinkOrPicture: microsoft_graph_hyperlinkOrPictureColumn.optional(),
+            indexed: z
+              .boolean()
+              .describe(
+                'Specifies whether the column values can be used for sorting and searching.'
+              )
+              .nullish(),
+            isDeletable: z
+              .boolean()
+              .describe('Indicates whether this column can be deleted.')
+              .nullish(),
+            isReorderable: z
+              .boolean()
+              .describe('Indicates whether values in the column can be reordered. Read-only.')
+              .nullish(),
+            isSealed: z
+              .boolean()
+              .describe('Specifies whether the column can be changed.')
+              .nullish(),
+            lookup: microsoft_graph_lookupColumn.optional(),
+            number: microsoft_graph_numberColumn.optional(),
+            personOrGroup: microsoft_graph_personOrGroupColumn.optional(),
+            propagateChanges: z
+              .boolean()
+              .describe(
+                "If 'true', changes to this column will be propagated to lists that implement the column."
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
       },
     ],
     response: z.void()
@@ -12317,6 +21237,22 @@ To list them, include system in your $select statement.`,
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/sites/:siteId/lists/:listId/items',
+    alias: 'create-sharepoint-site-list-item',
+    description: `Create a new listItem in a list.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_listItem,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/sites/:siteId/lists/:listId/items/:listItemId',
     alias: 'get-sharepoint-site-list-item',
@@ -12332,6 +21268,103 @@ To list them, include system in your $select statement.`,
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/sites/:siteId/lists/:listId/items/:listItemId',
+    alias: 'update-sharepoint-site-list-item',
+    description: `Update the navigation property items in sites`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_listItem,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/sites/:siteId/lists/:listId/items/:listItemId',
+    alias: 'delete-sharepoint-site-list-item',
+    description: `Removes an item from a list.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/pages',
+    alias: 'list-sharepoint-site-pages',
+    description: `Get the collection of baseSitePage objects from the site pages list in a site. All pages in the site are returned (with pagination). Sort alphabetically by name in ascending order. The following table lists the available subtypes.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/sites/:siteId/pages',
+    alias: 'create-sharepoint-site-page',
+    description: `Create a new sitePage in the site pages list in a site.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_baseSitePage,
       },
     ],
     response: z.void()
@@ -12393,6 +21426,334 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
   },
   {
     method: 'get',
+    path: '/solutions/bookingBusinesses',
+    alias: 'list-booking-businesses',
+    description: `Get a collection of bookingBusiness objects that has been created for the tenant. This operation returns only the id and displayName of each Microsoft Bookings business in the collection. For performance considerations, it does not return other properties. You can get the other properties of a Bookings business by specifying its id in a GET operation.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/solutions/bookingBusinesses',
+    alias: 'create-booking-business',
+    description: `Create a new Microsoft Bookings business in a tenant. This is the first step in setting up a Bookings business where you must specify the business display name. You can include other information such as business address, web site address, and scheduling policy, or set that information later by updating the bookingBusiness.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_bookingBusiness,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/solutions/bookingCurrencies',
+    alias: 'list-booking-currencies',
+    description: `Get a list of bookingCurrency objects available to a Microsoft Bookings business.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/subscriptions',
+    alias: 'list-subscriptions',
+    description: `Retrieve the properties and relationships of webhook subscriptions, based on the app ID, the user, and the user's role with a tenant. The content of the response depends on the context in which the app is calling; for details, see the scenarios in the Permissions section.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/subscriptions',
+    alias: 'create-subscription',
+    description: `Subscribes a listener application to receive change notifications when the requested type of changes occur to the specified resource in Microsoft Graph. To identify the resources for which you can create subscriptions and the limitations on subscriptions, see Set up notifications for changes in resource data: Supported resources. Some resources support rich notifications, that is, notifications that include resource data. For more information about these resources, see Set up change notifications that include resource data: Supported resources.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: microsoft_graph_subscription,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/subscriptions/:subscriptionId',
+    alias: 'get-subscription',
+    description: `Retrieve the properties and relationships of a subscription. See the table in the Permissions section for the list of resources that support subscribing to change notifications.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/subscriptions/:subscriptionId',
+    alias: 'renew-subscription',
+    description: `Renew a subscription by extending its expiry time. The table in the Permissions section lists the resources that support subscribing to change notifications. Subscriptions expire after a length of time that varies by resource type. In order to avoid missing change notifications, an app should renew its subscriptions well in advance of their expiry date. See subscription for maximum length of a subscription for each resource type.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: microsoft_graph_subscription,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/subscriptions/:subscriptionId',
+    alias: 'delete-subscription',
+    description: `Delete a subscription. For the list of resources that support subscribing to change notifications, see the table in the Permissions section.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams',
+    alias: 'create-team',
+    description: `Create a new team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z.string().describe('The name of the team.').nullish(),
+            description: z
+              .string()
+              .describe('An optional description for the team. Maximum length: 1,024 characters.')
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Timestamp at which the team was created.')
+              .nullish(),
+            classification: z
+              .string()
+              .describe(
+                "An optional label. Typically describes the data or business sensitivity of the team. Must match one of a preconfigured set in the tenant's directory."
+              )
+              .nullish(),
+            firstChannelName: z
+              .string()
+              .describe(
+                "The name of the first channel in the team. This is an optional property, only used during team creation and isn't returned in methods to get and list teams."
+              )
+              .nullish(),
+            funSettings: microsoft_graph_teamFunSettings.optional(),
+            guestSettings: microsoft_graph_teamGuestSettings.optional(),
+            internalId: z
+              .string()
+              .describe(
+                'A unique ID for the team that was used in a few places such as the audit log/Office 365 Management Activity API.'
+              )
+              .nullish(),
+            isArchived: z.boolean().describe('Whether this team is in read-only mode.').nullish(),
+            memberSettings: microsoft_graph_teamMemberSettings.optional(),
+            messagingSettings: microsoft_graph_teamMessagingSettings.optional(),
+            specialization: microsoft_graph_teamSpecialization.optional(),
+            summary: microsoft_graph_teamSummary.optional(),
+            tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+            visibility: microsoft_graph_teamVisibilityType.optional(),
+            webUrl: z
+              .string()
+              .describe(
+                'A hyperlink that goes to the team in the Microsoft Teams client. You get this URL when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be treated as an opaque blob, and not parsed.'
+              )
+              .nullish(),
+            allChannels: z
+              .array(microsoft_graph_channel)
+              .describe(
+                'List of channels either hosted in or shared with the team (incoming channels).'
+              )
+              .optional(),
+            channels: z
+              .array(microsoft_graph_channel)
+              .describe('The collection of channels and messages associated with the team.')
+              .optional(),
+            group: microsoft_graph_group
+              .describe('[Note: Simplified from 73 properties to 25 most common ones]')
+              .optional(),
+            incomingChannels: z
+              .array(microsoft_graph_channel)
+              .describe('List of channels shared with the team.')
+              .optional(),
+            installedApps: z
+              .array(microsoft_graph_teamsAppInstallation)
+              .describe('The apps installed in this team.')
+              .optional(),
+            members: z
+              .array(microsoft_graph_conversationMember)
+              .describe('Members and owners of the team.')
+              .optional(),
+            operations: z
+              .array(microsoft_graph_teamsAsyncOperation)
+              .describe('The async operations that ran or are running on this team.')
+              .optional(),
+            permissionGrants: z
+              .array(microsoft_graph_resourceSpecificPermissionGrant)
+              .describe('A collection of permissions granted to apps to access the team.')
+              .optional(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/teams/:teamId',
     alias: 'get-team',
     description: `Retrieve the properties and relationships of the specified team.`,
@@ -12407,6 +21768,126 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/teams/:teamId',
+    alias: 'update-team',
+    description: `Update the properties of the specified team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z.string().describe('The name of the team.').nullish(),
+            description: z
+              .string()
+              .describe('An optional description for the team. Maximum length: 1,024 characters.')
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe('Timestamp at which the team was created.')
+              .nullish(),
+            classification: z
+              .string()
+              .describe(
+                "An optional label. Typically describes the data or business sensitivity of the team. Must match one of a preconfigured set in the tenant's directory."
+              )
+              .nullish(),
+            firstChannelName: z
+              .string()
+              .describe(
+                "The name of the first channel in the team. This is an optional property, only used during team creation and isn't returned in methods to get and list teams."
+              )
+              .nullish(),
+            funSettings: microsoft_graph_teamFunSettings.optional(),
+            guestSettings: microsoft_graph_teamGuestSettings.optional(),
+            internalId: z
+              .string()
+              .describe(
+                'A unique ID for the team that was used in a few places such as the audit log/Office 365 Management Activity API.'
+              )
+              .nullish(),
+            isArchived: z.boolean().describe('Whether this team is in read-only mode.').nullish(),
+            memberSettings: microsoft_graph_teamMemberSettings.optional(),
+            messagingSettings: microsoft_graph_teamMessagingSettings.optional(),
+            specialization: microsoft_graph_teamSpecialization.optional(),
+            summary: microsoft_graph_teamSummary.optional(),
+            tenantId: z.string().describe('The ID of the Microsoft Entra tenant.').nullish(),
+            visibility: microsoft_graph_teamVisibilityType.optional(),
+            webUrl: z
+              .string()
+              .describe(
+                'A hyperlink that goes to the team in the Microsoft Teams client. You get this URL when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be treated as an opaque blob, and not parsed.'
+              )
+              .nullish(),
+            allChannels: z
+              .array(microsoft_graph_channel)
+              .describe(
+                'List of channels either hosted in or shared with the team (incoming channels).'
+              )
+              .optional(),
+            channels: z
+              .array(microsoft_graph_channel)
+              .describe('The collection of channels and messages associated with the team.')
+              .optional(),
+            group: microsoft_graph_group
+              .describe('[Note: Simplified from 73 properties to 25 most common ones]')
+              .optional(),
+            incomingChannels: z
+              .array(microsoft_graph_channel)
+              .describe('List of channels shared with the team.')
+              .optional(),
+            installedApps: z
+              .array(microsoft_graph_teamsAppInstallation)
+              .describe('The apps installed in this team.')
+              .optional(),
+            members: z
+              .array(microsoft_graph_conversationMember)
+              .describe('Members and owners of the team.')
+              .optional(),
+            operations: z
+              .array(microsoft_graph_teamsAsyncOperation)
+              .describe('The async operations that ran or are running on this team.')
+              .optional(),
+            permissionGrants: z
+              .array(microsoft_graph_resourceSpecificPermissionGrant)
+              .describe('A collection of permissions granted to apps to access the team.')
+              .optional(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/archive',
+    alias: 'archive-team',
+    description: `Archive the specified team. 
+When a team is archived, users can no longer make most changes to the team. For example, users can no longer: send or like messages on any channel in the team; edit the team's name or description; nor edit other settings. However, membership changes to the team are still allowed. Archiving is an async operation. A team is archived once the async operation completes successfully, which might occur subsequent to a response from this API. To archive a team, the team and group must have an owner. To restore a team from its archived state, use the API to unarchive.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z
+          .object({ shouldSetSpoSiteReadOnlyForMembers: z.boolean().nullable().default(false) })
+          .partial()
+          .passthrough(),
       },
     ],
     response: z.void()
@@ -12462,6 +21943,22 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/teams/:teamId/channels',
+    alias: 'create-team-channel',
+    description: `Create a new channel in a team, as specified in the request body. When you create a channel, the maximum length of the channel's displayName is 50 characters. This is the name that appears to the user in Microsoft Teams. If you're creating a private channel, you can add a maximum of 200 members.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_channel,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/teams/:teamId/channels/:channelId',
     alias: 'get-team-channel',
@@ -12477,6 +21974,134 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
         name: '$expand',
         type: 'Query',
         schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/teams/:teamId/channels/:channelId',
+    alias: 'update-team-channel',
+    description: `Update the properties of the specified channel.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_channel,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/channels/:channelId',
+    alias: 'delete-team-channel',
+    description: `Delete the channel.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/teams/:teamId/channels/:channelId/members',
+    alias: 'list-channel-members',
+    description: `Get a list of members in a channel, including direct members of standard, private, and shared channels. Use the List allMembers API to retrieve both direct and indirect members of a shared channel. This method supports federation. Only a user who is a member of the shared channel can retrieve the channel member list.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/channels/:channelId/members',
+    alias: 'add-channel-member',
+    description: `Add a conversationMember to a channel. This operation is allowed only for channels with a membershipType value of private or shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_conversationMember,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/teams/:teamId/channels/:channelId/members/:conversationMemberId',
+    alias: 'update-channel-member',
+    description: `Update the role of a conversationMember in a channel. This operation is allowed only for channels with a membershipType value of private or shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_conversationMember,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/channels/:channelId/members/:conversationMemberId',
+    alias: 'remove-channel-member',
+    description: `Delete a conversationMember from a channel. This operation is allowed only for channels with a membershipType value of private or shared.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
       },
     ],
     response: z.void()
@@ -12635,6 +22260,137 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
   },
   {
     method: 'get',
+    path: '/teams/:teamId/channels/:channelId/tabs',
+    alias: 'list-channel-tabs',
+    description: `Retrieve the list of tabs in the specified channel within a team. `,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/channels/:channelId/tabs',
+    alias: 'add-channel-tab',
+    description: `Add (pin) a tab to the specified channel within a team. The app must be preinstalled in the team and have the configurableTabs property defined in the app manifest.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_teamsTab,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/clone',
+    alias: 'clone-team',
+    description: `Create a copy of a team. This operation also creates a copy of the corresponding group.
+You can specify which parts of the team to clone: When tabs are cloned, they aren't configured. The tabs are displayed on the tab bar in Microsoft Teams, and the first time a user opens them, they must go through the configuration screen. 
+If the user who opens the tab doesn't have permission to configure apps, they see a message that says that the tab isn't configured. Cloning is a long-running operation. After the POST clone returns, you need to GET the operation returned by the Location: header to see if it's running, succeeded, or failed. You should continue to GET until the status isn't running. The recommended delay between GETs is 5 seconds.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: clone_team_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/installedApps',
+    alias: 'install-team-app',
+    description: `Install an app to the specified team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_teamsAppInstallation,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/installedApps/:teamsAppInstallationId',
+    alias: 'uninstall-team-app',
+    description: `Uninstalls an app from the specified team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/installedApps/:teamsAppInstallationId/upgrade',
+    alias: 'upgrade-team-app',
+    description: `Upgrade an app installation within a chat.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: upgrade_team_app_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/teams/:teamId/members',
     alias: 'list-team-members',
     description: `Get the conversationMember collection of a team. The membership IDs returned by the server must be treated as opaque strings. The client shouldn't try to parse or make assumptions about these resource IDs. In the future, membership results can include users from various tenants, as indicated in the response. Clients should avoid assuming that all members exclusively belong to the current tenant.`,
@@ -12681,6 +22437,260 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
         schema: z.array(z.string()).describe('Expand related entities').optional(),
       },
     ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/members',
+    alias: 'add-team-member',
+    description: `Add a new conversationMember to a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_conversationMember,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/members/:conversationMemberId',
+    alias: 'remove-team-member',
+    description: `Remove a conversationMember from a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/teams/:teamId/primaryChannel',
+    alias: 'get-team-primary-channel',
+    description: `Get the default channel, General, of a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/sendActivityNotification',
+    alias: 'send-team-activity-notification',
+    description: `Send an activity feed notification in the scope of a team. For more information about sending notifications and the requirements for doing so, see
+sending Teams activity notifications.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: send_team_activity_notification_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/teams/:teamId/tags',
+    alias: 'list-team-tags',
+    description: `Get a list of the tag objects and their properties.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/tags',
+    alias: 'create-team-tag',
+    description: `Create a standard tag for members in a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_teamworkTag,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/teams/:teamId/tags/:teamworkTagId',
+    alias: 'update-team-tag',
+    description: `Update the properties of a tag object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_teamworkTag,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/tags/:teamworkTagId',
+    alias: 'delete-team-tag',
+    description: `Delete a tag object permanently.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/teams/:teamId/tags/:teamworkTagId/members',
+    alias: 'list-team-tag-members',
+    description: `Get a list of the members of a standard tag in a team and their properties.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/tags/:teamworkTagId/members',
+    alias: 'add-team-tag-member',
+    description: `Create a new teamworkTagMember object in a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property`,
+        type: 'Body',
+        schema: microsoft_graph_teamworkTagMember,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'delete',
+    path: '/teams/:teamId/tags/:teamworkTagId/members/:teamworkTagMemberId',
+    alias: 'remove-team-tag-member',
+    description: `Delete a member from a standard tag in a team.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'If-Match',
+        type: 'Header',
+        schema: z.string().describe('ETag').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/teams/:teamId/unarchive',
+    alias: 'unarchive-team',
+    description: `Restore an archived team. This API restores users' ability to send messages and edit the team, abiding by tenant and team settings. A Team is archived using the archive API. Unarchiving is an async operation. A team is unarchived once the async operation completes successfully, which might occur subsequent to a response from this API.`,
+    requestFormat: 'json',
     response: z.void()
   },
   {
@@ -12739,12 +22749,674 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
     response: z.void()
   },
   {
+    method: 'post',
+    path: '/users',
+    alias: 'create-user',
+    description: `Create a new user.
+The request body contains the user to create. At a minimum, you must specify the required properties for the user. You can optionally specify any other writable properties.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New entity`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z
+              .string()
+              .describe(
+                "The name displayed in the address book for the user. This value is usually the combination of the user's first name, middle initial, and family name. This property is required when a user is created and it can't be cleared during updates. Maximum length is 256 characters. Returned by default. Supports $filter (eq, ne, not , ge, le, in, startsWith, and eq on null values), $orderby, and $search."
+              )
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "The date and time the user was created, in ISO 8601 format and UTC. The value can't be modified and is automatically populated when the entity is created. Nullable. For on-premises users, the value represents when they were first created in Microsoft Entra ID. Property is null for some users created before June 2018 and on-premises users that were synced to Microsoft Entra ID before June 2018. Read-only. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in)."
+              )
+              .nullish(),
+            state: z
+              .string()
+              .describe(
+                "The state or province in the user's address. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            userPrincipalName: z
+              .string()
+              .describe(
+                "The user principal name (UPN) of the user. The UPN is an Internet-style sign-in name for the user based on the Internet standard RFC 822. By convention, this value should map to the user's email name. The general format is alias@domain, where the domain must be present in the tenant's collection of verified domains. This property is required when a user is created. The verified domains for the tenant can be accessed from the verifiedDomains property of organization.NOTE: This property can't contain accent characters. Only the following characters are allowed A - Z, a - z, 0 - 9, ' . - _ ! # ^ ~. For the complete list of allowed characters, see username policies. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, endsWith) and $orderby."
+              )
+              .nullish(),
+            deletedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Date and time when this object was deleted. Always null when the object hasn't been deleted."
+              )
+              .nullish(),
+            aboutMe: z
+              .string()
+              .describe(
+                'A freeform text entry field for the user to describe themselves. Returned only on $select.'
+              )
+              .nullish(),
+            accountEnabled: z
+              .boolean()
+              .describe(
+                'true if the account is enabled; otherwise, false. This property is required when a user is created. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            ageGroup: z
+              .string()
+              .describe(
+                'Sets the age group of the user. Allowed values: null, Minor, NotAdult, and Adult. For more information, see legal age group property definitions. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            assignedLicenses: z
+              .array(microsoft_graph_assignedLicense)
+              .describe(
+                "The licenses that are assigned to the user, including inherited (group-based) licenses. This property doesn't differentiate between directly assigned and inherited licenses. Use the licenseAssignmentStates property to identify the directly assigned and inherited licenses. Not nullable. Returned only on $select. Supports $filter (eq, not, /$count eq 0, /$count ne 0)."
+              )
+              .optional(),
+            assignedPlans: z
+              .array(microsoft_graph_assignedPlan)
+              .describe(
+                'The plans that are assigned to the user. Read-only. Not nullable. Returned only on $select. Supports $filter (eq and not).'
+              )
+              .optional(),
+            authorizationInfo: microsoft_graph_authorizationInfo.optional(),
+            birthday: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The birthday of the user. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014, is 2014-01-01T00:00:00Z. Returned only on $select.'
+              )
+              .optional(),
+            businessPhones: z
+              .array(z.string())
+              .describe(
+                "The telephone numbers for the user. NOTE: Although it's a string collection, only one number can be set for this property. Read-only for users synced from the on-premises directory. Returned by default. Supports $filter (eq, not, ge, le, startsWith)."
+              )
+              .optional(),
+            city: z
+              .string()
+              .describe(
+                'The city where the user is located. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            companyName: z
+              .string()
+              .describe(
+                'The name of the company that the user is associated with. This property can be useful for describing the company that a guest comes from. The maximum length is 64 characters.Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            consentProvidedForMinor: z
+              .string()
+              .describe(
+                'Sets whether consent was obtained for minors. Allowed values: null, Granted, Denied, and NotRequired. For more information, see legal age group property definitions. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            country: z
+              .string()
+              .describe(
+                'The country or region where the user is located; for example, US or UK. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            creationType: z
+              .string()
+              .describe(
+                'Indicates whether the user account was created through one of the following methods:  As a regular school or work account (null). As an external account (Invitation). As a local account for an Azure Active Directory B2C tenant (LocalAccount). Through self-service sign-up by an internal user using email verification (EmailVerified). Through self-service sign-up by a guest signing up through a link that is part of a user flow (SelfServiceSignUp). Read-only.Returned only on $select. Supports $filter (eq, ne, not, in).'
+              )
+              .nullish(),
+            customSecurityAttributes: microsoft_graph_customSecurityAttributeValue.optional(),
+            department: z
+              .string()
+              .describe(
+                'The name of the department in which the user works. Maximum length is 64 characters. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in, and eq on null values).'
+              )
+              .nullish(),
+            deviceEnrollmentLimit: z
+              .number()
+              .gte(-2147483648)
+              .lte(2147483647)
+              .describe(
+                'The limit on the maximum number of devices that the user is permitted to enroll. Allowed values are 5 or 1000.'
+              )
+              .optional(),
+            employeeHireDate: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The date and time when the user was hired or will start work in a future hire. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in).'
+              )
+              .nullish(),
+            employeeId: z
+              .string()
+              .describe(
+                'The employee identifier assigned to the user by the organization. The maximum length is 16 characters. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            employeeLeaveDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The date and time when the user left or will leave the organization. To read this property, the calling app must be assigned the User-LifeCycleInfo.Read.All permission. To write this property, the calling app must be assigned the User.Read.All and User-LifeCycleInfo.ReadWrite.All permissions. To read this property in delegated scenarios, the admin needs at least one of the following Microsoft Entra roles: Lifecycle Workflows Administrator (least privilege), Global Reader. To write this property in delegated scenarios, the admin needs the Global Administrator role. Supports $filter (eq, ne, not , ge, le, in). For more information, see Configure the employeeLeaveDateTime property for a user.'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId',
+    alias: 'get-user',
+    description: `Retrieve the properties and relationships of user object. This operation returns by default only a subset of the more commonly used properties for each user. These default properties are noted in the Properties section. To get properties that are not returned by default, do a GET operation for the user and specify the properties in a $select OData query option. Because the user resource supports extensions, you can also use the GET operation to get custom properties and extension data in a user instance. Customers through Microsoft Entra ID for customers can also use this API operation to retrieve their details.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/users/:userId',
+    alias: 'update-user',
+    description: `Update the properties of a user object.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New property values`,
+        type: 'Body',
+        schema: z
+          .object({
+            id: z.string().describe('The unique identifier for an entity. Read-only.').optional(),
+            displayName: z
+              .string()
+              .describe(
+                "The name displayed in the address book for the user. This value is usually the combination of the user's first name, middle initial, and family name. This property is required when a user is created and it can't be cleared during updates. Maximum length is 256 characters. Returned by default. Supports $filter (eq, ne, not , ge, le, in, startsWith, and eq on null values), $orderby, and $search."
+              )
+              .nullish(),
+            createdDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "The date and time the user was created, in ISO 8601 format and UTC. The value can't be modified and is automatically populated when the entity is created. Nullable. For on-premises users, the value represents when they were first created in Microsoft Entra ID. Property is null for some users created before June 2018 and on-premises users that were synced to Microsoft Entra ID before June 2018. Read-only. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in)."
+              )
+              .nullish(),
+            state: z
+              .string()
+              .describe(
+                "The state or province in the user's address. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values)."
+              )
+              .nullish(),
+            userPrincipalName: z
+              .string()
+              .describe(
+                "The user principal name (UPN) of the user. The UPN is an Internet-style sign-in name for the user based on the Internet standard RFC 822. By convention, this value should map to the user's email name. The general format is alias@domain, where the domain must be present in the tenant's collection of verified domains. This property is required when a user is created. The verified domains for the tenant can be accessed from the verifiedDomains property of organization.NOTE: This property can't contain accent characters. Only the following characters are allowed A - Z, a - z, 0 - 9, ' . - _ ! # ^ ~. For the complete list of allowed characters, see username policies. Returned by default. Supports $filter (eq, ne, not, ge, le, in, startsWith, endsWith) and $orderby."
+              )
+              .nullish(),
+            deletedDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                "Date and time when this object was deleted. Always null when the object hasn't been deleted."
+              )
+              .nullish(),
+            aboutMe: z
+              .string()
+              .describe(
+                'A freeform text entry field for the user to describe themselves. Returned only on $select.'
+              )
+              .nullish(),
+            accountEnabled: z
+              .boolean()
+              .describe(
+                'true if the account is enabled; otherwise, false. This property is required when a user is created. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            ageGroup: z
+              .string()
+              .describe(
+                'Sets the age group of the user. Allowed values: null, Minor, NotAdult, and Adult. For more information, see legal age group property definitions. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            assignedLicenses: z
+              .array(microsoft_graph_assignedLicense)
+              .describe(
+                "The licenses that are assigned to the user, including inherited (group-based) licenses. This property doesn't differentiate between directly assigned and inherited licenses. Use the licenseAssignmentStates property to identify the directly assigned and inherited licenses. Not nullable. Returned only on $select. Supports $filter (eq, not, /$count eq 0, /$count ne 0)."
+              )
+              .optional(),
+            assignedPlans: z
+              .array(microsoft_graph_assignedPlan)
+              .describe(
+                'The plans that are assigned to the user. Read-only. Not nullable. Returned only on $select. Supports $filter (eq and not).'
+              )
+              .optional(),
+            authorizationInfo: microsoft_graph_authorizationInfo.optional(),
+            birthday: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The birthday of the user. The Timestamp type represents date and time information using ISO 8601 format and is always in UTC. For example, midnight UTC on Jan 1, 2014, is 2014-01-01T00:00:00Z. Returned only on $select.'
+              )
+              .optional(),
+            businessPhones: z
+              .array(z.string())
+              .describe(
+                "The telephone numbers for the user. NOTE: Although it's a string collection, only one number can be set for this property. Read-only for users synced from the on-premises directory. Returned by default. Supports $filter (eq, not, ge, le, startsWith)."
+              )
+              .optional(),
+            city: z
+              .string()
+              .describe(
+                'The city where the user is located. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            companyName: z
+              .string()
+              .describe(
+                'The name of the company that the user is associated with. This property can be useful for describing the company that a guest comes from. The maximum length is 64 characters.Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            consentProvidedForMinor: z
+              .string()
+              .describe(
+                'Sets whether consent was obtained for minors. Allowed values: null, Granted, Denied, and NotRequired. For more information, see legal age group property definitions. Returned only on $select. Supports $filter (eq, ne, not, and in).'
+              )
+              .nullish(),
+            country: z
+              .string()
+              .describe(
+                'The country or region where the user is located; for example, US or UK. Maximum length is 128 characters. Returned only on $select. Supports $filter (eq, ne, not, ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            creationType: z
+              .string()
+              .describe(
+                'Indicates whether the user account was created through one of the following methods:  As a regular school or work account (null). As an external account (Invitation). As a local account for an Azure Active Directory B2C tenant (LocalAccount). Through self-service sign-up by an internal user using email verification (EmailVerified). Through self-service sign-up by a guest signing up through a link that is part of a user flow (SelfServiceSignUp). Read-only.Returned only on $select. Supports $filter (eq, ne, not, in).'
+              )
+              .nullish(),
+            customSecurityAttributes: microsoft_graph_customSecurityAttributeValue.optional(),
+            department: z
+              .string()
+              .describe(
+                'The name of the department in which the user works. Maximum length is 64 characters. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in, and eq on null values).'
+              )
+              .nullish(),
+            deviceEnrollmentLimit: z
+              .number()
+              .gte(-2147483648)
+              .lte(2147483647)
+              .describe(
+                'The limit on the maximum number of devices that the user is permitted to enroll. Allowed values are 5 or 1000.'
+              )
+              .optional(),
+            employeeHireDate: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The date and time when the user was hired or will start work in a future hire. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in).'
+              )
+              .nullish(),
+            employeeId: z
+              .string()
+              .describe(
+                'The employee identifier assigned to the user by the organization. The maximum length is 16 characters. Returned only on $select. Supports $filter (eq, ne, not , ge, le, in, startsWith, and eq on null values).'
+              )
+              .nullish(),
+            employeeLeaveDateTime: z
+              .string()
+              .regex(
+                /^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$/
+              )
+              .datetime({ offset: true })
+              .describe(
+                'The date and time when the user left or will leave the organization. To read this property, the calling app must be assigned the User-LifeCycleInfo.Read.All permission. To write this property, the calling app must be assigned the User.Read.All and User-LifeCycleInfo.ReadWrite.All permissions. To read this property in delegated scenarios, the admin needs at least one of the following Microsoft Entra roles: Lifecycle Workflows Administrator (least privilege), Global Reader. To write this property in delegated scenarios, the admin needs the Global Administrator role. Supports $filter (eq, ne, not , ge, le, in). For more information, see Configure the employeeLeaveDateTime property for a user.'
+              )
+              .nullish(),
+          })
+          .passthrough()
+          .passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/users/:userId/assignLicense',
+    alias: 'assign-user-license',
+    description: `Add or remove licenses for the user to enable or disable their use of Microsoft cloud offerings that the company has licenses to. For example, an organization can have a Microsoft 365 Enterprise E3 subscription with 100 licenses, and this request assigns one of those licenses to a specific user. You can also enable and disable specific plans associated with a subscription. Direct user licensing method is an alternative to group-based licensing.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: assign_user_license_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/directReports',
+    alias: 'list-user-direct-reports',
+    description: `The users and contacts that report to the user. (The users and contacts that have their manager property set to this user.) Read-only. Nullable. Supports $expand.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/licenseDetails',
+    alias: 'list-user-license-details',
+    description: `A collection of this user's license details. Read-only.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/mailFolders',
+    alias: 'list-shared-mailbox-folders',
+    description: `The user's mail folders. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'includeHiddenFolders',
+        type: 'Query',
+        schema: z.string().describe('Include Hidden Folders').optional(),
+      },
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'get',
     path: '/users/:userId/mailFolders/:mailFolderId/messages',
     alias: 'list-shared-mailbox-folder-messages',
     description: `The collection of messages in the mailFolder.`,
     requestFormat: 'json',
     parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/manager',
+    alias: 'get-user-manager',
+    description: `Returns the user or organizational contact assigned as the user's manager. Optionally, you can expand the manager's chain up to the root node.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'put',
+    path: '/users/:userId/manager/$ref',
+    alias: 'assign-user-manager',
+    description: `Assign a user's manager.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property ref values`,
+        type: 'Body',
+        schema: z.object({ '@odata.id': z.string() }).partial().passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/memberOf',
+    alias: 'list-user-member-of',
+    description: `Get groups, directory roles, and administrative units that the user is a direct member of. This operation isn't transitive. To retrieve groups, directory roles, and administrative units that the user is a member through transitive membership, use the List user transitive memberOf API.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'ConsistencyLevel',
+        type: 'Header',
+        schema: z
+          .string()
+          .describe(
+            'Indicates the requested consistency level. Documentation URL: https://docs.microsoft.com/graph/aad-advanced-queries'
+          )
+          .optional(),
+      },
       {
         name: '$top',
         type: 'Query',
@@ -12869,6 +23541,58 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
     response: z.void()
   },
   {
+    method: 'get',
+    path: '/users/:userId/presence',
+    alias: 'get-user-presence',
+    description: `Get a user's presence information.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/users/:userId/presence/clearPresence',
+    alias: 'clear-user-presence',
+    description: `Clear the application's presence session for a user. If it is the user's only presence session, the user's presence will change to Offline/Offline. For details about presences sessions, see presence: setPresence.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: z.object({ sessionId: z.string().nullable() }).partial().passthrough(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/users/:userId/presence/setPresence',
+    alias: 'set-user-presence',
+    description: `Set the state of a user's presence session as an application. For more information about presence sessions, states permutations, and timeouts, see Manage presence state using the Microsoft Graph API.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: set_my_presence_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
     method: 'post',
     path: '/users/:userId/sendMail',
     alias: 'send-shared-mailbox-mail',
@@ -12880,6 +23604,58 @@ To monitor future changes, call the delta API by using the @odata.deltaLink in t
         description: `Action parameters`,
         type: 'Body',
         schema: send_mail_Body,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/users/:userId/settings',
+    alias: 'get-user-settings',
+    description: `Get settings from users`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'patch',
+    path: '/users/:userId/settings',
+    alias: 'update-user-settings',
+    description: `Update the navigation property settings in users`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `New navigation property values`,
+        type: 'Body',
+        schema: microsoft_graph_userSettings,
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'post',
+    path: '/users/:userId/teamwork/sendActivityNotification',
+    alias: 'send-teams-activity-notification',
+    description: `Send an activity feed notification to a user. For more information, see sending Teams activity notifications.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        description: `Action parameters`,
+        type: 'Body',
+        schema: send_me_activity_notification_Body,
       },
     ],
     response: z.void()

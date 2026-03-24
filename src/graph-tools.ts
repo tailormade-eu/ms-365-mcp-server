@@ -25,6 +25,7 @@ interface EndpointConfig {
   llmTip?: string;
   skipEncoding?: string[]; // Parameter names that should NOT be URL-encoded (for function-style API calls)
   contentType?: string;
+  nonDestructive?: boolean;
   acceptType?: string; // Custom Accept header for endpoints returning non-JSON content (e.g., text/vtt)
 }
 
@@ -410,12 +411,11 @@ async function executeGraphTool(
         }
         delete combinedResponse['@odata.nextLink'];
 
-        let resultText = JSON.stringify(combinedResponse);
         if (hitPageCap) {
-          resultText +=
-            '\n[PAGINATION NOTE: Stopped at 100 pages. There may be more results. Use $top and $skip or $skipToken for paging.]';
+          combinedResponse['_paginationNote'] =
+            'Stopped at 100 pages. There may be more results. Use $top and $skip or $skipToken for paging.';
         }
-        response.content[0].text = resultText;
+        response.content[0].text = JSON.stringify(combinedResponse);
 
         logger.info(
           `Pagination complete: collected ${allItems.length} items across ${pageCount} pages`
@@ -469,30 +469,25 @@ async function executeGraphTool(
   }
 }
 
-// POST tools that are non-destructive (read-only lookups or draft creation)
-const NON_DESTRUCTIVE_POST_TOOLS = new Set([
-  'find-meeting-times',
-  'get-mail-tips',
-  'check-member-groups',
-  'create-draft-email',
-  'create-forward-draft',
-  'create-reply-draft',
-  'create-reply-all-draft',
-  'translate-exchange-ids',
-  'get-schedule',
-  'dismiss-reminder',
-  'snooze-reminder',
-  'search-query',
-]);
+const PROPER_NOUNS: Record<string, string> = {
+  onenote: 'OneNote',
+  onedrive: 'OneDrive',
+  oauth: 'OAuth',
+  ews: 'EWS',
+  sharepoint: 'SharePoint',
+  todo: 'To Do',
+  mcp: 'MCP',
+};
 
 /**
  * Convert kebab-case tool alias to sentence case title.
  * Example: "list-mail-messages" → "List mail messages"
+ * Preserves proper noun casing: "get-onenote-page" → "Get OneNote page"
  */
 function toSentenceCaseTitle(alias: string): string {
   return alias
     .split('-')
-    .map((w, i) => (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w))
+    .map((w, i) => PROPER_NOUNS[w] ?? (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w))
     .join(' ');
 }
 
@@ -641,8 +636,7 @@ function registerSingleTool(
 
   const method = tool.method.toUpperCase();
   const isDestructive =
-    method === 'DELETE' ||
-    (['POST', 'PATCH'].includes(method) && !NON_DESTRUCTIVE_POST_TOOLS.has(tool.alias));
+    method === 'DELETE' || (['POST', 'PATCH'].includes(method) && !endpointConfig?.nonDestructive);
 
   try {
     server.tool(
@@ -816,7 +810,7 @@ export function registerGraphTools(
 
     // Add body parameter for write operations
     if (['post', 'patch', 'put'].includes(endpointConfig.method.toLowerCase())) {
-      paramSchema['body'] = z.any().describe('Request body (JSON object)').optional();
+      paramSchema['body'] = z.unknown().describe('Request body (JSON object)').optional();
     }
 
     // Add OData parameters for GET endpoints (synthetic tools don't have generated params)
@@ -1026,7 +1020,7 @@ export function registerDiscoveryTools(
     {
       tool_name: z.string().describe('Name of the tool to execute (e.g., "list-mail-messages")'),
       parameters: z
-        .record(z.any())
+        .record(z.unknown())
         .describe('Parameters to pass to the tool as key-value pairs')
         .optional(),
     },

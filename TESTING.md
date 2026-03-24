@@ -2,18 +2,18 @@
 
 ## Acceptance Tests
 
-| #   | Test           | Command/Action                        | Expected                                    | Status     |
-| --- | -------------- | ------------------------------------- | ------------------------------------------- | ---------- |
-| 1   | Build          | `npm run build`                       | 0 errors                                    | ✅         |
-| 2   | Unit tests     | `npm run test`                        | All tests pass                              | ✅ 98/98   |
-| 3   | Lint           | `npm run verify`                      | 0 lint errors, build + test pass            | ⬜         |
-| 4   | MCP stdio      | `node dist/index.js`                  | Server starts, tools registered             | ⬜         |
-| 5   | Auth flow      | Login via MCP client                  | Token acquired, account listed              | ⬜         |
-| 6   | List mail      | `list-mail-messages` tool             | Returns inbox messages                      | ⬜         |
-| 7   | Calendar view  | `get-calendar-view` tool              | Returns events for date range               | ⬜         |
-| 8   | Planner tasks  | `list-planner-tasks` tool             | Returns tasks with ETag                     | ⬜         |
-| 9   | Discovery mode | `--discovery` flag                    | Only search-tools + execute-tool registered | ⬜         |
-| 10  | Pagination     | `fetchAllPages=true` on list endpoint | All pages concatenated                      | ⬜         |
+| #   | Test           | Command/Action                        | Expected                                    | Status   |
+| --- | -------------- | ------------------------------------- | ------------------------------------------- | -------- |
+| 1   | Build          | `npm run build`                       | 0 errors                                    | ✅       |
+| 2   | Unit tests     | `npm run test`                        | All tests pass                              | ✅ 98/98 |
+| 3   | Lint           | `npm run verify`                      | 0 lint errors, build + test pass            | ✅       |
+| 4   | MCP stdio      | `node dist/index.js`                  | Server starts, tools registered             | ⬜       |
+| 5   | Auth flow      | Login via MCP client                  | Token acquired, account listed              | ⬜       |
+| 6   | List mail      | `list-mail-messages` tool             | Returns inbox messages                      | ⬜       |
+| 7   | Calendar view  | `get-calendar-view` tool              | Returns events for date range               | ⬜       |
+| 8   | Planner tasks  | `list-planner-tasks` tool             | Returns tasks with ETag                     | ⬜       |
+| 9   | Discovery mode | `--discovery` flag                    | Only search-tools + execute-tool registered | ⬜       |
+| 10  | Pagination     | `fetchAllPages=true` on list endpoint | All pages concatenated                      | ⬜       |
 
 ## Test file location convention
 
@@ -1281,6 +1281,19 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 | V26 | Non-destructive POST hints | `src/graph-tools.ts` | `find-meeting-times`, `get-mail-tips`, draft tools have `destructiveHint: false` | ⬜     |
 | V29 | Sentence case titles       | `src/graph-tools.ts` | `toSentenceCaseTitle()` converts `list-mail-messages` → `List mail messages`     | ⬜     |
 | V30 | Pagination cap note        | `src/graph-tools.ts` | Response includes `[PAGINATION NOTE: ...]` when 100-page cap hit                 | ⬜     |
+
+---
+
+## Task 99 — Cleanup fixes V32-V37
+
+| Fix | Description                            | File(s)                                     | Acceptance criteria                                                            | Status |
+| --- | -------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
+| V32 | `z.any()` → `z.unknown()` in body/exec | `src/graph-tools.ts`                        | No `z.any()` in body param or execute-tool schema                              | ✅     |
+| V33 | Pagination note inside JSON            | `src/graph-tools.ts`                        | `_paginationNote` field in JSON response, not appended text                    | ✅     |
+| V34 | nonDestructive declarative flag        | `src/endpoints.json`, `graph-tools.ts`      | `NON_DESTRUCTIVE_POST_TOOLS` Set removed, `nonDestructive` read from endpoints | ✅     |
+| V35 | Proper noun casing in titles           | `src/graph-tools.ts`                        | `get-onenote-page` → `Get OneNote page`                                        | ✅     |
+| V36 | Lint errors in test files              | `src/__tests__/*.ts`, `test/*.ts`           | 0 lint errors (warnings acceptable)                                            | ✅     |
+| V37 | Lint errors in gap-check.cjs           | `scripts/gap-check.cjs`, `eslint.config.js` | 0 lint errors for scripts/                                                     | ✅     |
 
 ---
 

@@ -109,7 +109,8 @@
     "method": "post",
     "toolName": "create-draft-email",
     "scopes": ["Mail.ReadWrite"],
-    "llmTip": "Creates a draft email (does not send). Body format: {\"subject\": \"...\", \"body\": {\"contentType\": \"html\", \"content\": \"<p>...</p>\"}, \"toRecipients\": [{\"emailAddress\": {\"address\": \"user@example.com\", \"name\": \"Display Name\"}}]}. Can include ccRecipients, bccRecipients in same format. Use contentType 'html' for rich formatting or 'text' for plain text. CRITICAL: Do not guess email addresses — use list-users to find them. After creating the draft, use send-draft-message with the returned message id to send it."
+    "llmTip": "Creates a draft email (does not send). Body format: {\"subject\": \"...\", \"body\": {\"contentType\": \"html\", \"content\": \"<p>...</p>\"}, \"toRecipients\": [{\"emailAddress\": {\"address\": \"user@example.com\", \"name\": \"Display Name\"}}]}. Can include ccRecipients, bccRecipients in same format. Use contentType 'html' for rich formatting or 'text' for plain text. CRITICAL: Do not guess email addresses — use list-users to find them. After creating the draft, use send-draft-message with the returned message id to send it.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/messages/{message-id}",
@@ -186,21 +187,24 @@
     "method": "post",
     "toolName": "create-forward-draft",
     "scopes": ["Mail.ReadWrite"],
-    "llmTip": "Create a forward draft (does not send). Useful when user wants to review before sending."
+    "llmTip": "Create a forward draft (does not send). Useful when user wants to review before sending.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/messages/{message-id}/createReply",
     "method": "post",
     "toolName": "create-reply-draft",
     "scopes": ["Mail.ReadWrite"],
-    "llmTip": "Creates a reply draft to sender only (does not send). Returns a new draft message that can be modified before sending with send-draft-message. Useful when user wants to review or edit before sending."
+    "llmTip": "Creates a reply draft to sender only (does not send). Returns a new draft message that can be modified before sending with send-draft-message. Useful when user wants to review or edit before sending.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/messages/{message-id}/createReplyAll",
     "method": "post",
     "toolName": "create-reply-all-draft",
     "scopes": ["Mail.ReadWrite"],
-    "llmTip": "Creates a reply-all draft (sender + all To/CC recipients, does not send). Returns a new draft message that can be modified before sending with send-draft-message."
+    "llmTip": "Creates a reply-all draft (sender + all To/CC recipients, does not send). Returns a new draft message that can be modified before sending with send-draft-message.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/messages/{message-id}/send",
@@ -326,7 +330,8 @@
     "method": "post",
     "toolName": "find-meeting-times",
     "workScopes": ["Calendars.Read.Shared"],
-    "llmTip": "Suggests meeting times based on attendee availability. CRITICAL: Do not guess email addresses — use list-users first. Body format: {\"attendees\": [{\"emailAddress\": {\"address\": \"user@example.com\", \"name\": \"Display Name\"}, \"type\": \"required\"}], \"timeConstraint\": {\"timeslots\": [{\"start\": {\"dateTime\": \"2026-03-04T09:00:00\", \"timeZone\": \"Europe/Brussels\"}, \"end\": {\"dateTime\": \"2026-03-04T17:00:00\", \"timeZone\": \"Europe/Brussels\"}}]}, \"meetingDuration\": \"PT1H\"}. meetingDuration uses ISO 8601 duration (PT30M=30min, PT1H=1hour). Returns suggested time slots with confidence ratings."
+    "llmTip": "Suggests meeting times based on attendee availability. CRITICAL: Do not guess email addresses — use list-users first. Body format: {\"attendees\": [{\"emailAddress\": {\"address\": \"user@example.com\", \"name\": \"Display Name\"}, \"type\": \"required\"}], \"timeConstraint\": {\"timeslots\": [{\"start\": {\"dateTime\": \"2026-03-04T09:00:00\", \"timeZone\": \"Europe/Brussels\"}, \"end\": {\"dateTime\": \"2026-03-04T17:00:00\", \"timeZone\": \"Europe/Brussels\"}}]}, \"meetingDuration\": \"PT1H\"}. meetingDuration uses ISO 8601 duration (PT30M=30min, PT1H=1hour). Returns suggested time slots with confidence ratings.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/drives",
@@ -1006,7 +1011,8 @@
     "toolName": "search-query",
     "scopes": ["Mail.Read", "Calendars.Read", "Files.Read.All", "People.Read"],
     "workScopes": ["Sites.Read.All", "Chat.Read", "ChannelMessage.Read.All"],
-    "llmTip": "Microsoft Search across M365 content. Body format: {\"requests\": [{\"entityTypes\": [\"message\"], \"query\": {\"queryString\": \"budget report\"}, \"from\": 0, \"size\": 25}]}. Supported entityTypes: 'message' (email), 'event' (calendar), 'driveItem' (files), 'site' (SharePoint), 'listItem' (SharePoint lists), 'chatMessage' (Teams). queryString uses KQL syntax: 'from:user@example.com', 'subject:meeting', 'filetype:pdf', 'path:\"sitename\"'. Can search multiple entity types in one request by adding more objects to the requests array. Results include hitsContainers with hits and hitHighlights. Maximum size: 25 for messages/events, 500 for driveItems."
+    "llmTip": "Microsoft Search across M365 content. Body format: {\"requests\": [{\"entityTypes\": [\"message\"], \"query\": {\"queryString\": \"budget report\"}, \"from\": 0, \"size\": 25}]}. Supported entityTypes: 'message' (email), 'event' (calendar), 'driveItem' (files), 'site' (SharePoint), 'listItem' (SharePoint lists), 'chatMessage' (Teams). queryString uses KQL syntax: 'from:user@example.com', 'subject:meeting', 'filetype:pdf', 'path:\"sitename\"'. Can search multiple entity types in one request by adding more objects to the requests array. Results include hitsContainers with hits and hitHighlights. Maximum size: 25 for messages/events, 500 for driveItems.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/onlineMeetings",
@@ -1201,7 +1207,7 @@
     "llmTip": "Body: {parentReference: {driveId, id}, name (optional)}. Returns 202 Accepted — async operation. Response Location header has monitor URL."
   },
   {
-    "pathPattern": "/drives/{drive-id}/root/search(q='{q}')",
+    "pathPattern": "/drives/{drive-id}/search(q='{q}')",
     "method": "get",
     "toolName": "search-drive",
     "scopes": ["Files.Read"],
@@ -1785,14 +1791,16 @@
     "method": "post",
     "toolName": "snooze-reminder",
     "scopes": ["Calendars.ReadWrite"],
-    "llmTip": "Body: {newReminderTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}}. Snoozes reminder until newReminderTime. Use get-calendar-event to find current reminderMinutesBeforeStart."
+    "llmTip": "Body: {newReminderTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}}. Snoozes reminder until newReminderTime. Use get-calendar-event to find current reminderMinutesBeforeStart.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/events/{event-id}/dismissReminder",
     "method": "post",
     "toolName": "dismiss-reminder",
     "scopes": ["Calendars.ReadWrite"],
-    "llmTip": "Dismisses the reminder for this event occurrence. No body required. Only affects the reminder — event remains on calendar."
+    "llmTip": "Dismisses the reminder for this event occurrence. No body required. Only affects the reminder — event remains on calendar.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets/{workbookWorksheet-id}",
@@ -2095,14 +2103,16 @@
     "method": "post",
     "toolName": "get-mail-tips",
     "scopes": ["Mail.Read"],
-    "llmTip": "Body: {emailAddresses: ['recipient@example.com'], mailTipsOptions: 'automaticReplies,mailboxFullStatus,outOfOffice,deliveryRestriction,maxMessageSize'}. Returns OOF status and auto-reply message per recipient. Use before send-mail to check if recipients are out of office."
+    "llmTip": "Body: {emailAddresses: ['recipient@example.com'], mailTipsOptions: 'automaticReplies,mailboxFullStatus,outOfOffice,deliveryRestriction,maxMessageSize'}. Returns OOF status and auto-reply message per recipient. Use before send-mail to check if recipients are out of office.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/me/calendar/getSchedule",
     "method": "post",
     "toolName": "get-schedule",
     "scopes": ["Calendars.Read"],
-    "llmTip": "Body: {schedules: ['user@example.com', 'room@example.com'], startTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, endTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, availabilityViewInterval: 30}. Returns free/busy blocks per schedule. scheduleItems show busy slots with subject if permission allows. Use for meeting scheduling and room availability checks."
+    "llmTip": "Body: {schedules: ['user@example.com', 'room@example.com'], startTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, endTime: {dateTime: 'ISO 8601', timeZone: 'UTC'}, availabilityViewInterval: 30}. Returns free/busy blocks per schedule. scheduleItems show busy slots with subject if permission allows. Use for meeting scheduling and room availability checks.",
+    "nonDestructive": true
   },
   {
     "pathPattern": "/users/{user-id}/manager",
@@ -2992,7 +3002,8 @@
     "toolName": "check-member-groups",
     "workScopes": ["GroupMember.Read.All"],
     "contentType": "application/json",
-    "llmTip": "Body: {groupIds: ['group-id-1', 'group-id-2'], securityEnabledOnly: false}. Returns array of group IDs from the provided list that the user is a member of (direct or transitive). Use to batch-check group membership for authorization. More efficient than calling list-member-of and filtering client-side."
+    "llmTip": "Body: {groupIds: ['group-id-1', 'group-id-2'], securityEnabledOnly: false}. Returns array of group IDs from the provided list that the user is a member of (direct or transitive). Use to batch-check group membership for authorization. More efficient than calling list-member-of and filtering client-side.",
+    "nonDestructive": true
   },
 
   {

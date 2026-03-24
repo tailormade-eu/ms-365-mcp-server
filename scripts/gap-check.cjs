@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global __dirname, console, process */
 /**
  * Graph API Gap Check
  * Compares endpoints.json against the local Graph API v1.0 OpenAPI spec.
@@ -26,9 +27,9 @@ let currentPath = null;
 const specOpsMap = new Map();
 
 for (const line of lines) {
-  const pathMatch = line.match(/^  (\/[^:]+):$/);
+  const pathMatch = line.match(/^ {2}(\/[^:]+):$/);
   if (pathMatch) { currentPath = pathMatch[1]; continue; }
-  const methodMatch = line.match(/^    (get|post|patch|delete|put):/);
+  const methodMatch = line.match(/^ {4}(get|post|patch|delete|put):/);
   if (methodMatch && currentPath) {
     const key = methodMatch[1].toUpperCase() + ' ' + normalize(currentPath);
     if (!specOpsMap.has(key)) specOpsMap.set(key, { method: methodMatch[1].toUpperCase(), path: currentPath });

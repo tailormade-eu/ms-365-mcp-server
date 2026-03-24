@@ -14,7 +14,10 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 /** Capture tool handlers registered via server.tool() */
 function createMockServer() {
-  const handlers = new Map<string, { handler: Function; schema: Record<string, unknown> }>();
+  const handlers = new Map<
+    string,
+    { handler: (...args: unknown[]) => unknown; schema: Record<string, unknown> }
+  >();
   const server = {
     tool: vi.fn(
       (
@@ -22,7 +25,7 @@ function createMockServer() {
         _description: string,
         schema: Record<string, unknown>,
         _annotations: unknown,
-        handler: Function
+        handler: (...args: unknown[]) => unknown
       ) => {
         handlers.set(name, { handler, schema });
       }
@@ -31,7 +34,7 @@ function createMockServer() {
   return { server, handlers };
 }
 
-function createMockGraphClient(makeRequestFn: Function = vi.fn()) {
+function createMockGraphClient(makeRequestFn: (...args: unknown[]) => unknown = vi.fn()) {
   return {
     makeRequest: makeRequestFn,
     graphRequest: vi.fn(async (endpoint: string, options: Record<string, unknown> = {}) => {
@@ -76,7 +79,7 @@ describe('normalizeSubject', () => {
 
 describe('get-archive-messages', () => {
   const originalFetch = global.fetch;
-  let handler: Function;
+  let handler: (...args: unknown[]) => unknown;
 
   beforeEach(() => {
     global.fetch = vi.fn();
@@ -183,7 +186,7 @@ describe('get-archive-messages', () => {
 // ─── update-todo-cache ────────────────────────────────────────────────────
 
 describe('update-todo-cache', () => {
-  let handler: Function;
+  let handler: (...args: unknown[]) => unknown;
   let makeRequestMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -262,7 +265,7 @@ describe('update-todo-cache', () => {
 // ─── beta-get ────────────────────────────────────────────────────────────
 
 describe('beta-get', () => {
-  let handler: Function;
+  let handler: (...args: unknown[]) => unknown;
   let makeRequestMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {

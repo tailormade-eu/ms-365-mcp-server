@@ -8,10 +8,12 @@ export function createAndSaveSimplifiedOpenAPI(endpointsFile, openapiFile, opena
   const spec = fs.readFileSync(openapiFile, 'utf8');
   const openApiSpec = yaml.load(spec);
 
-  for (const endpoint of endpoints) {
-    if (!openApiSpec.paths[endpoint.pathPattern]) {
-      throw new Error(`Path "${endpoint.pathPattern}" not found in OpenAPI spec.`);
-    }
+  // Only validate endpoints that exist in the OpenAPI spec.
+  // Endpoints not found in the spec are "synthetic" — they are registered
+  // with minimal param schemas in graph-tools.ts and don't need generated code.
+  const syntheticCount = endpoints.filter((ep) => !openApiSpec.paths[ep.pathPattern]).length;
+  if (syntheticCount > 0) {
+    console.log(`   Skipping ${syntheticCount} synthetic endpoints (not in OpenAPI spec)`);
   }
 
   for (const [key, value] of Object.entries(openApiSpec.paths)) {

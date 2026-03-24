@@ -31,6 +31,12 @@ export default [
     },
   },
   {
+    files: ['scripts/**/*.cjs', 'scripts/**/*.js'],
+    rules: {
+      'no-regex-spaces': 'off',
+    },
+  },
+  {
     ignores: [
       'node_modules/**',
       'dist/**',

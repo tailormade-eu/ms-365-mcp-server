@@ -87,10 +87,21 @@ async function loadModule() {
 }
 
 function createMockServer() {
-  const tools = new Map<string, { description: string; schema: any; handler: Function }>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tools = new Map<
+    string,
+    { description: string; schema: any; handler: (...args: unknown[]) => unknown }
+  >();
   return {
     tool: vi.fn(
-      (name: string, description: string, schema: any, annotations: any, handler: Function) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (
+        name: string,
+        description: string,
+        schema: any,
+        annotations: any,
+        handler: (...args: unknown[]) => unknown
+      ) => {
         tools.set(name, { description, schema, handler });
       }
     ),
