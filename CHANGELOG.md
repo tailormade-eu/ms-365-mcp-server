@@ -1,6 +1,6 @@
 # Changelog — ms-365-mcp-server
 
-## [0.9.1] - 2026-03-24
+## [0.10.0] - 2026-03-24
 
 ### Added
 
@@ -10,6 +10,11 @@
   - `list-site-onenote-section-pages` — list pages in a site notebook section
   - `get-site-onenote-page-content` — get HTML content of a site OneNote page
   - All use `workScopes: ["Notes.Read.All"]` (work/school accounts only)
+- 2 unit tests for site-level OneNote tools (path resolution + acceptType)
+
+### Fixed
+
+- Prettier formatting on graph-tools.ts and TESTING.md
 
 ---
 

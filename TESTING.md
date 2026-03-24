@@ -5,7 +5,7 @@
 | #   | Test           | Command/Action                        | Expected                                    | Status     |
 | --- | -------------- | ------------------------------------- | ------------------------------------------- | ---------- |
 | 1   | Build          | `npm run build`                       | 0 errors                                    | ✅         |
-| 2   | Unit tests     | `npm run test`                        | All tests pass                              | ✅ 103/103 |
+| 2   | Unit tests     | `npm run test`                        | All tests pass                              | ✅ 105/105 |
 | 3   | Lint           | `npm run verify`                      | 0 lint errors, build + test pass            | ✅         |
 | 4   | MCP stdio      | `node dist/index.js`                  | Server starts, tools registered             | ⬜         |
 | 5   | Auth flow      | Login via MCP client                  | Token acquired, account listed              | ⬜         |

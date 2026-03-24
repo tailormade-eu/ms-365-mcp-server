@@ -469,4 +469,107 @@ describe('graph-tools', () => {
       expect(tool!.schema['timezone']).toBeUndefined();
     });
   });
+
+  // ---- 7. Site-level OneNote tools ----
+  describe('site-level OneNote tools', () => {
+    it('should register list-site-onenote-notebooks with correct path and workScopes', async () => {
+      const endpoint = makeEndpoint({
+        alias: 'list-site-onenote-notebooks',
+        path: '/sites/:siteId/onenote/notebooks',
+        parameters: [
+          { name: 'siteId', type: 'Path', schema: z.string() },
+          { name: 'top', type: 'Query', schema: z.number().optional() },
+        ],
+      });
+      const config = makeConfig({
+        toolName: 'list-site-onenote-notebooks',
+        pathPattern: '/sites/{site-id}/onenote/notebooks',
+        scopes: undefined,
+        workScopes: ['Notes.Read.All'],
+        llmTip:
+          'Lists OneNote notebooks on a SharePoint site. Requires site-id (use search-query or list-followed-sites to find it). Returns notebook-id needed for list-site-onenote-sections.',
+      });
+      delete config.scopes;
+      mockEndpoints.push(endpoint);
+      mockEndpointsJson = [config];
+
+      const graphClient = createMockGraphClient([
+        {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                value: [{ id: 'nb-1', displayName: 'Site Notebook' }],
+              }),
+            },
+          ],
+        },
+      ]);
+
+      const server = createMockServer();
+      const { registerGraphTools } = await loadModule();
+      // orgMode=true needed: site-onenote tools have only workScopes, no personal scopes
+      registerGraphTools(server as any, graphClient as any, false, undefined, true);
+
+      const tool = server.tools.get('list-site-onenote-notebooks');
+      expect(tool).toBeDefined();
+      expect(tool!.description).toContain('OneNote notebooks on a SharePoint site');
+
+      await tool!.handler({ 'site-id': 'site123' });
+
+      const [requestedPath] = graphClient.graphRequest.mock.calls[0];
+      expect(requestedPath).toContain('/sites/site123/onenote/notebooks');
+    });
+
+    it('should register get-site-onenote-page-content with acceptType text/html', async () => {
+      const endpoint = makeEndpoint({
+        alias: 'get-site-onenote-page-content',
+        path: '/sites/:siteId/onenote/pages/:onenotePageId/content',
+        parameters: [
+          { name: 'siteId', type: 'Path', schema: z.string() },
+          { name: 'onenotePageId', type: 'Path', schema: z.string() },
+        ],
+      });
+      const config = makeConfig({
+        toolName: 'get-site-onenote-page-content',
+        pathPattern: '/sites/{site-id}/onenote/pages/{onenotePage-id}/content',
+        scopes: undefined,
+        workScopes: ['Notes.Read.All'],
+        acceptType: 'text/html',
+        llmTip:
+          'Returns the HTML content of a OneNote page on a SharePoint site. The response is raw HTML, not JSON.',
+      });
+      delete config.scopes;
+      mockEndpoints.push(endpoint);
+      mockEndpointsJson = [config];
+
+      const graphClient = createMockGraphClient([
+        {
+          content: [
+            {
+              type: 'text',
+              text: '<html><body><p>Page content</p></body></html>',
+            },
+          ],
+        },
+      ]);
+
+      const server = createMockServer();
+      const { registerGraphTools } = await loadModule();
+      // orgMode=true needed: site-onenote tools have only workScopes, no personal scopes
+      registerGraphTools(server as any, graphClient as any, false, undefined, true);
+
+      const tool = server.tools.get('get-site-onenote-page-content');
+      expect(tool).toBeDefined();
+
+      await tool!.handler({
+        'site-id': 'site123',
+        'onenotePage-id': 'page-123',
+      });
+
+      const [requestedPath, options] = graphClient.graphRequest.mock.calls[0];
+      expect(requestedPath).toContain('/sites/site123/onenote/pages/page-123');
+      expect(options.headers['Accept']).toBe('text/html');
+    });
+  });
 });
