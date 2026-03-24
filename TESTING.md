@@ -15,6 +15,14 @@
 | 9 | Discovery mode | `--discovery` flag | Only search-tools + execute-tool registered | ⬜ |
 | 10 | Pagination | `fetchAllPages=true` on list endpoint | All pages concatenated | ⬜ |
 
+## Test file location convention
+
+All unit tests live in **`src/__tests__/`**. This keeps tests close to source and matches the vitest default include pattern. Do not use a separate `test/` directory at root level for new tests — legacy tests in `test/` should be migrated to `src/__tests__/` when touched.
+
+Mock pattern: mock `graphClient.graphRequest` (not `fetch` or `makeRequest`). See `src/__tests__/graph-tools.test.ts` for the reference pattern.
+
+---
+
 ## Task 10 — New endpoints added
 
 ### OneNote — individual page operations
