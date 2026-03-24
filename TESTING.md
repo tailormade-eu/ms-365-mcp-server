@@ -1100,6 +1100,17 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 | V28 | `issuerUrl` from env var | `src/server.ts` | Uses `MS365_MCP_ISSUER_URL` when set | ⬜ |
 | V31 | `JSON.parse` try/catch in pagination | `src/graph-tools.ts` | Parse failure stops pagination, returns collected data with error note | ⬜ |
 
+## Task 99 — MCP annotations title llmTips fixes V10 V11 V12 V26 V29 V30
+
+| # | Test | File | What to verify | Status |
+|---|------|------|----------------|--------|
+| V10 | Shared registerTool helper | `src/graph-tools.ts` | `registerSingleTool()` helper exists, both loops call it, same tools registered | ⬜ |
+| V11 | Subscription llmTip scope | `src/endpoints.json` | `create-subscription` llmTip documents Mail.Read-only limitation | ⬜ |
+| V12 | list-deleted-items llmTip | `src/endpoints.json` | No suggestion of runtime path modification | ⬜ |
+| V26 | Non-destructive POST hints | `src/graph-tools.ts` | `find-meeting-times`, `get-mail-tips`, draft tools have `destructiveHint: false` | ⬜ |
+| V29 | Sentence case titles | `src/graph-tools.ts` | `toSentenceCaseTitle()` converts `list-mail-messages` → `List mail messages` | ⬜ |
+| V30 | Pagination cap note | `src/graph-tools.ts` | Response includes `[PAGINATION NOTE: ...]` when 100-page cap hit | ⬜ |
+
 ---
 
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

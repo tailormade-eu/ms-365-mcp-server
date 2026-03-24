@@ -1959,7 +1959,7 @@
     "method": "post",
     "toolName": "create-subscription",
     "scopes": ["Mail.Read"],
-    "llmTip": "Body: {changeType: 'created,updated,deleted', notificationUrl (public HTTPS), resource: '/me/messages', expirationDateTime, clientState (optional secret)}. notificationUrl must respond to Graph validation request (echo validationToken). Max expiry: mail/calendar/contacts 4230min, driveRoot 4230min."
+    "llmTip": "CRITICAL: Current scopes only support mail subscriptions (Mail.Read). Calendar/contacts subscriptions require additional scopes (Calendars.Read, Contacts.Read) not configured here. Body: {changeType: 'created,updated,deleted', notificationUrl (public HTTPS), resource: '/me/messages', expirationDateTime, clientState (optional secret)}. notificationUrl must respond to Graph validation request (echo validationToken). Max subscription expiry for mail: 4230 minutes."
   },
   {
     "pathPattern": "/subscriptions",
@@ -2173,7 +2173,7 @@
     "method": "get",
     "toolName": "list-deleted-items",
     "workScopes": ["Group.ReadWrite.All"],
-    "llmTip": "Returns soft-deleted M365 groups within 30-day retention window. Each item has id, displayName, deletedDateTime. Change path suffix to microsoft.graph.user for deleted users (requires User.ReadWrite.All). Use restore-deleted-item to recover."
+    "llmTip": "Returns soft-deleted M365 groups within 30-day retention window. Each item has id, displayName, deletedDateTime. NOTE: This tool only lists deleted groups (Group.ReadWrite.All scope). Deleted users require a separate tool with User.ReadWrite.All scope. Use restore-deleted-item to recover."
   },
   {
     "pathPattern": "/directory/deletedItems/{directory-object-id}/restore",

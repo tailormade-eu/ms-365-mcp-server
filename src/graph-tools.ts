@@ -395,7 +395,9 @@ async function executeGraphTool(
           }
         }
 
-        if (pageCount >= 100) {
+        const hitPageCap = pageCount >= 100 && nextLink;
+
+        if (hitPageCap) {
           logger.warn(`Reached maximum page limit (100) for pagination`);
         }
 
@@ -405,7 +407,11 @@ async function executeGraphTool(
         }
         delete combinedResponse['@odata.nextLink'];
 
-        response.content[0].text = JSON.stringify(combinedResponse);
+        let resultText = JSON.stringify(combinedResponse);
+        if (hitPageCap) {
+          resultText += '\n[PAGINATION NOTE: Stopped at 100 pages. There may be more results. Use $top and $skip or $skipToken for paging.]';
+        }
+        response.content[0].text = resultText;
 
         logger.info(
           `Pagination complete: collected ${allItems.length} items across ${pageCount} pages`
@@ -456,6 +462,201 @@ async function executeGraphTool(
       ],
       isError: true,
     };
+  }
+}
+
+// POST tools that are non-destructive (read-only lookups or draft creation)
+const NON_DESTRUCTIVE_POST_TOOLS = new Set([
+  'find-meeting-times',
+  'get-mail-tips',
+  'check-member-groups',
+  'create-draft-email',
+  'create-forward-draft',
+  'create-reply-draft',
+  'create-reply-all-draft',
+  'translate-exchange-ids',
+  'get-schedule',
+  'dismiss-reminder',
+  'snooze-reminder',
+  'search-query',
+]);
+
+/**
+ * Convert kebab-case tool alias to sentence case title.
+ * Example: "list-mail-messages" → "List mail messages"
+ */
+function toSentenceCaseTitle(alias: string): string {
+  return alias
+    .split('-')
+    .map((w, i) => (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w))
+    .join(' ');
+}
+
+/**
+ * Shared helper that registers a single tool on the MCP server.
+ * Called by both the generated-client loop and the synthetic-endpoint loop.
+ */
+function registerSingleTool(
+  server: McpServer,
+  tool: (typeof api.endpoints)[0],
+  endpointConfig: EndpointConfig | undefined,
+  paramSchema: Record<string, z.ZodTypeAny>,
+  graphClient: GraphClient,
+  authManager: AuthManager | undefined,
+  multiAccount: boolean,
+  accountNames: string[],
+  pathParamDescriptions: Record<string, string>
+): boolean {
+  // Extract path parameters from the path pattern
+  const pathParamMatches = tool.path.matchAll(/:([a-zA-Z]+)/g);
+  for (const match of pathParamMatches) {
+    const pathParamName = match[1];
+    if (!(pathParamName in paramSchema)) {
+      const description =
+        pathParamDescriptions[pathParamName] ||
+        'ID for this resource. Use the corresponding list-* tool to obtain it.';
+      paramSchema[pathParamName] = z.string().describe(description);
+    }
+  }
+
+  if (tool.method.toUpperCase() === 'GET' && tool.path.includes('/')) {
+    paramSchema['fetchAllPages'] = z
+      .boolean()
+      .describe('Automatically fetch all pages of results')
+      .optional();
+  }
+
+  // Override OData parameter descriptions with informative guidance
+  if (paramSchema['filter'] !== undefined || paramSchema['$filter'] !== undefined) {
+    const key = paramSchema['$filter'] !== undefined ? '$filter' : 'filter';
+    paramSchema[key] = z
+      .string()
+      .describe(
+        'OData filter expression. Add $count=true for advanced filters (flag/flagStatus, contains()). Cannot combine with $search.'
+      )
+      .optional();
+  }
+  if (paramSchema['search'] !== undefined || paramSchema['$search'] !== undefined) {
+    const key = paramSchema['$search'] !== undefined ? '$search' : 'search';
+    paramSchema[key] = z
+      .string()
+      .describe(
+        'KQL search query, wrap in double quotes. Cannot combine with $filter. Example: "from:john@example.com subject:meeting"'
+      )
+      .optional();
+  }
+  if (paramSchema['select'] !== undefined || paramSchema['$select'] !== undefined) {
+    const key = paramSchema['$select'] !== undefined ? '$select' : 'select';
+    paramSchema[key] = z
+      .string()
+      .describe(
+        'Comma-separated fields to return. Always use to reduce response size. Example: id,subject,from,receivedDateTime'
+      )
+      .optional();
+  }
+  if (paramSchema['orderby'] !== undefined || paramSchema['$orderby'] !== undefined) {
+    const key = paramSchema['$orderby'] !== undefined ? '$orderby' : 'orderby';
+    paramSchema[key] = z
+      .string()
+      .describe('Sort expression. Example: receivedDateTime desc')
+      .optional();
+  }
+  if (paramSchema['top'] !== undefined || paramSchema['$top'] !== undefined) {
+    const key = paramSchema['$top'] !== undefined ? '$top' : 'top';
+    paramSchema[key] = z
+      .number()
+      .describe(
+        'Max items per page (default varies, max 999 for mail). Server auto-paginates via nextLink.'
+      )
+      .optional();
+  }
+  if (paramSchema['skip'] !== undefined || paramSchema['$skip'] !== undefined) {
+    const key = paramSchema['$skip'] !== undefined ? '$skip' : 'skip';
+    paramSchema[key] = z
+      .number()
+      .describe('Items to skip for manual pagination. Not supported with $search.')
+      .optional();
+  }
+  if (paramSchema['count'] !== undefined || paramSchema['$count'] !== undefined) {
+    const countKey = paramSchema['$count'] !== undefined ? '$count' : 'count';
+    paramSchema[countKey] = z
+      .boolean()
+      .describe(
+        'Set true to enable advanced query mode (ConsistencyLevel: eventual). Required for complex $filter expressions like flag/flagStatus or contains().'
+      )
+      .optional();
+  }
+
+  // Multi-account support
+  if (multiAccount) {
+    const accountHint =
+      accountNames.length > 0 ? `Known accounts: ${accountNames.join(', ')}. ` : '';
+    paramSchema['account'] = z
+      .string()
+      .describe(
+        `${accountHint}Microsoft account email to use for this request. ` +
+          `Required when multiple accounts are configured. ` +
+          `Use the list-accounts tool to discover all currently available accounts.`
+      )
+      .optional();
+  }
+
+  paramSchema['includeHeaders'] = z
+    .boolean()
+    .describe('Include response headers (including ETag) in the response metadata')
+    .optional();
+  paramSchema['excludeResponse'] = z
+    .boolean()
+    .describe('Exclude the full response body and only return success or failure indication')
+    .optional();
+
+  if (endpointConfig?.supportsTimezone) {
+    paramSchema['timezone'] = z
+      .string()
+      .describe(
+        'IANA timezone name (e.g., "America/New_York", "Europe/London", "Asia/Tokyo") for calendar event times. If not specified, times are returned in UTC.'
+      )
+      .optional();
+  }
+
+  if (endpointConfig?.supportsExpandExtendedProperties) {
+    paramSchema['expandExtendedProperties'] = z
+      .boolean()
+      .describe(
+        'When true, expands singleValueExtendedProperties on each event. Use this to retrieve custom extended properties (e.g., sync metadata) stored on calendar events.'
+      )
+      .optional();
+  }
+
+  // Build the tool description, optionally appending LLM tips
+  let toolDescription =
+    tool.description || `Execute ${tool.method.toUpperCase()} request to ${tool.path}`;
+  if (endpointConfig?.llmTip) {
+    toolDescription += `\n\nTIP: ${endpointConfig.llmTip}`;
+  }
+
+  const method = tool.method.toUpperCase();
+  const isDestructive =
+    method === 'DELETE' ||
+    ((['POST', 'PATCH'].includes(method)) && !NON_DESTRUCTIVE_POST_TOOLS.has(tool.alias));
+
+  try {
+    server.tool(
+      tool.alias,
+      toolDescription,
+      paramSchema,
+      {
+        title: toSentenceCaseTitle(tool.alias),
+        readOnlyHint: method === 'GET',
+        destructiveHint: isDestructive,
+        openWorldHint: true, // All tools call Microsoft Graph API
+      },
+      async (params) => executeGraphTool(tool, endpointConfig, graphClient, params, authManager)
+    );
+    return true;
+  } catch (error) {
+    logger.error(`Failed to register tool ${tool.alias}: ${(error as Error).message}`);
+    return false;
   }
 }
 
@@ -521,6 +722,7 @@ export function registerGraphTools(
     plannerPlanId: 'Planner plan ID. Use list-planner-plans to find it.',
   };
 
+  // Loop 1: Register endpoints from the generated API client that are in endpoints.json
   for (const tool of api.endpoints) {
     const endpointConfig = endpointsData.find((e) => e.toolName === tool.alias);
     if (!orgMode && endpointConfig && !endpointConfig.scopes && endpointConfig.workScopes) {
@@ -541,6 +743,7 @@ export function registerGraphTools(
       continue;
     }
 
+    // Build param schema from generated client parameters
     const paramSchema: Record<string, z.ZodTypeAny> = {};
     if (tool.parameters && tool.parameters.length > 0) {
       for (const param of tool.parameters) {
@@ -548,163 +751,14 @@ export function registerGraphTools(
       }
     }
 
-    // Extract path parameters from the path pattern
-    const pathParamMatches = tool.path.matchAll(/:([a-zA-Z]+)/g);
-    for (const match of pathParamMatches) {
-      const pathParamName = match[1];
-      if (!(pathParamName in paramSchema)) {
-        const description =
-          pathParamDescriptions[pathParamName] ||
-          'ID for this resource. Use the corresponding list-* tool to obtain it.';
-        paramSchema[pathParamName] = z.string().describe(description);
-      }
-    }
-
-    if (tool.method.toUpperCase() === 'GET' && tool.path.includes('/')) {
-      paramSchema['fetchAllPages'] = z
-        .boolean()
-        .describe('Automatically fetch all pages of results')
-        .optional();
-    }
-
-    // Override OData parameter descriptions with informative guidance
-    if (paramSchema['filter'] !== undefined || paramSchema['$filter'] !== undefined) {
-      const key = paramSchema['$filter'] !== undefined ? '$filter' : 'filter';
-      paramSchema[key] = z
-        .string()
-        .describe(
-          'OData filter expression. Add $count=true for advanced filters (flag/flagStatus, contains()). Cannot combine with $search.'
-        )
-        .optional();
-    }
-    if (paramSchema['search'] !== undefined || paramSchema['$search'] !== undefined) {
-      const key = paramSchema['$search'] !== undefined ? '$search' : 'search';
-      paramSchema[key] = z
-        .string()
-        .describe(
-          'KQL search query, wrap in double quotes. Cannot combine with $filter. Example: "from:john@example.com subject:meeting"'
-        )
-        .optional();
-    }
-    if (paramSchema['select'] !== undefined || paramSchema['$select'] !== undefined) {
-      const key = paramSchema['$select'] !== undefined ? '$select' : 'select';
-      paramSchema[key] = z
-        .string()
-        .describe(
-          'Comma-separated fields to return. Always use to reduce response size. Example: id,subject,from,receivedDateTime'
-        )
-        .optional();
-    }
-    if (paramSchema['orderby'] !== undefined || paramSchema['$orderby'] !== undefined) {
-      const key = paramSchema['$orderby'] !== undefined ? '$orderby' : 'orderby';
-      paramSchema[key] = z
-        .string()
-        .describe('Sort expression. Example: receivedDateTime desc')
-        .optional();
-    }
-    if (paramSchema['top'] !== undefined || paramSchema['$top'] !== undefined) {
-      const key = paramSchema['$top'] !== undefined ? '$top' : 'top';
-      paramSchema[key] = z
-        .number()
-        .describe(
-          'Max items per page (default varies, max 999 for mail). Server auto-paginates via nextLink.'
-        )
-        .optional();
-    }
-    if (paramSchema['skip'] !== undefined || paramSchema['$skip'] !== undefined) {
-      const key = paramSchema['$skip'] !== undefined ? '$skip' : 'skip';
-      paramSchema[key] = z
-        .number()
-        .describe('Items to skip for manual pagination. Not supported with $search.')
-        .optional();
-    }
-    if (paramSchema['count'] !== undefined || paramSchema['$count'] !== undefined) {
-      const countKey = paramSchema['$count'] !== undefined ? '$count' : 'count';
-      paramSchema[countKey] = z
-        .boolean()
-        .describe(
-          'Set true to enable advanced query mode (ConsistencyLevel: eventual). Required for complex $filter expressions like flag/flagStatus or contains().'
-        )
-        .optional();
-    }
-
-    // Add account parameter for multi-account mode.
-    // Layer 2: Account names are surfaced in the description (not as a strict enum) so the LLM
-    // sees available accounts upfront without a round-trip, but accounts added mid-session via
-    // --login are still accepted — getTokenForAccount() handles validation at runtime.
-    if (multiAccount) {
-      const accountHint =
-        accountNames.length > 0 ? `Known accounts: ${accountNames.join(', ')}. ` : '';
-      paramSchema['account'] = z
-        .string()
-        .describe(
-          `${accountHint}Microsoft account email to use for this request. ` +
-            `Required when multiple accounts are configured. ` +
-            `Use the list-accounts tool to discover all currently available accounts.`
-        )
-        .optional();
-    }
-
-    // Add includeHeaders parameter for all tools to capture ETags and other headers
-    paramSchema['includeHeaders'] = z
-      .boolean()
-      .describe('Include response headers (including ETag) in the response metadata')
-      .optional();
-
-    // Add excludeResponse parameter to only return success/failure indication
-    paramSchema['excludeResponse'] = z
-      .boolean()
-      .describe('Exclude the full response body and only return success or failure indication')
-      .optional();
-
-    // Add timezone parameter for calendar endpoints that support it
-    if (endpointConfig?.supportsTimezone) {
-      paramSchema['timezone'] = z
-        .string()
-        .describe(
-          'IANA timezone name (e.g., "America/New_York", "Europe/London", "Asia/Tokyo") for calendar event times. If not specified, times are returned in UTC.'
-        )
-        .optional();
-    }
-
-    // Add expandExtendedProperties parameter for calendar endpoints that support it
-    if (endpointConfig?.supportsExpandExtendedProperties) {
-      paramSchema['expandExtendedProperties'] = z
-        .boolean()
-        .describe(
-          'When true, expands singleValueExtendedProperties on each event. Use this to retrieve custom extended properties (e.g., sync metadata) stored on calendar events.'
-        )
-        .optional();
-    }
-
-    // Build the tool description, optionally appending LLM tips
-    let toolDescription =
-      tool.description || `Execute ${tool.method.toUpperCase()} request to ${tool.path}`;
-    if (endpointConfig?.llmTip) {
-      toolDescription += `\n\nTIP: ${endpointConfig.llmTip}`;
-    }
-
-    try {
-      server.tool(
-        tool.alias,
-        toolDescription,
-        paramSchema,
-        {
-          title: tool.alias,
-          readOnlyHint: tool.method.toUpperCase() === 'GET',
-          destructiveHint: ['POST', 'PATCH', 'DELETE'].includes(tool.method.toUpperCase()),
-          openWorldHint: true, // All tools call Microsoft Graph API
-        },
-        async (params) => executeGraphTool(tool, endpointConfig, graphClient, params, authManager)
-      );
+    if (registerSingleTool(server, tool, endpointConfig, paramSchema, graphClient, authManager, multiAccount, accountNames, pathParamDescriptions)) {
       registeredCount++;
-    } catch (error) {
-      logger.error(`Failed to register tool ${tool.alias}: ${(error as Error).message}`);
+    } else {
       failedCount++;
     }
   }
 
-  // Register endpoints from endpoints.json that are NOT in the generated client.
+  // Loop 2: Register endpoints from endpoints.json that are NOT in the generated client.
   // The generated client only covers ~130 endpoints from the OpenAPI spec; endpoints.json
   // may define additional tools that need registration with minimal param schemas.
   const generatedAliases = new Set(api.endpoints.map((e) => e.alias));
@@ -741,7 +795,7 @@ export function registerGraphTools(
       response: z.void(),
     };
 
-    // Build param schema — path params + body + OData are handled the same as above
+    // Build param schema — path params + body + OData for synthetic endpoints
     const paramSchema: Record<string, z.ZodTypeAny> = {};
 
     // Add body parameter for write operations
@@ -749,27 +803,7 @@ export function registerGraphTools(
       paramSchema['body'] = z.any().describe('Request body (JSON object)').optional();
     }
 
-    // Extract path parameters
-    const pathParamMatches = toolPath.matchAll(/:([a-zA-Z]+)/g);
-    for (const match of pathParamMatches) {
-      const pathParamName = match[1];
-      if (!(pathParamName in paramSchema)) {
-        const description =
-          pathParamDescriptions[pathParamName] ||
-          'ID for this resource. Use the corresponding list-* tool to obtain it.';
-        paramSchema[pathParamName] = z.string().describe(description);
-      }
-    }
-
-    // Add fetchAllPages for GET endpoints
-    if (syntheticTool.method.toUpperCase() === 'GET' && toolPath.includes('/')) {
-      paramSchema['fetchAllPages'] = z
-        .boolean()
-        .describe('Automatically fetch all pages of results')
-        .optional();
-    }
-
-    // Add OData parameters for GET endpoints
+    // Add OData parameters for GET endpoints (synthetic tools don't have generated params)
     if (syntheticTool.method.toUpperCase() === 'GET') {
       paramSchema['$filter'] = z
         .string()
@@ -799,77 +833,9 @@ export function registerGraphTools(
         .optional();
     }
 
-    // Multi-account support
-    if (multiAccount) {
-      const accountHint =
-        accountNames.length > 0 ? `Known accounts: ${accountNames.join(', ')}. ` : '';
-      paramSchema['account'] = z
-        .string()
-        .describe(
-          `${accountHint}Microsoft account email to use for this request. ` +
-            `Required when multiple accounts are configured. ` +
-            `Use the list-accounts tool to discover all currently available accounts.`
-        )
-        .optional();
-    }
-
-    paramSchema['includeHeaders'] = z
-      .boolean()
-      .describe('Include response headers (including ETag) in the response metadata')
-      .optional();
-    paramSchema['excludeResponse'] = z
-      .boolean()
-      .describe('Exclude the full response body and only return success or failure indication')
-      .optional();
-
-    if (endpointConfig.supportsTimezone) {
-      paramSchema['timezone'] = z
-        .string()
-        .describe(
-          'IANA timezone name (e.g., "America/New_York", "Europe/London", "Asia/Tokyo") for calendar event times. If not specified, times are returned in UTC.'
-        )
-        .optional();
-    }
-
-    if (endpointConfig.supportsExpandExtendedProperties) {
-      paramSchema['expandExtendedProperties'] = z
-        .boolean()
-        .describe(
-          'When true, expands singleValueExtendedProperties on each event. Use this to retrieve custom extended properties (e.g., sync metadata) stored on calendar events.'
-        )
-        .optional();
-    }
-
-    let toolDescription = syntheticTool.description;
-    if (endpointConfig.llmTip) {
-      toolDescription += `\n\nTIP: ${endpointConfig.llmTip}`;
-    }
-
-    try {
-      server.tool(
-        syntheticTool.alias,
-        toolDescription,
-        paramSchema,
-        {
-          title: syntheticTool.alias,
-          readOnlyHint: syntheticTool.method.toUpperCase() === 'GET',
-          destructiveHint: ['POST', 'PATCH', 'DELETE'].includes(syntheticTool.method.toUpperCase()),
-          openWorldHint: true,
-        },
-        async (params) =>
-          executeGraphTool(
-            syntheticTool as (typeof api.endpoints)[0],
-            endpointConfig,
-            graphClient,
-            params,
-            authManager
-          )
-      );
+    if (registerSingleTool(server, syntheticTool as (typeof api.endpoints)[0], endpointConfig, paramSchema, graphClient, authManager, multiAccount, accountNames, pathParamDescriptions)) {
       registeredCount++;
-    } catch (error) {
-      logger.error(
-        `Failed to register tool ${syntheticTool.alias}: ${(error as Error).message}`
-      );
+    } else {
       failedCount++;
     }
   }
@@ -967,7 +933,7 @@ export function registerDiscoveryTools(
       limit: z.number().describe('Maximum results to return (default: 20, max: 50)').optional(),
     },
     {
-      title: 'search-tools',
+      title: 'Search tools',
       readOnlyHint: true,
       openWorldHint: true, // Searches Microsoft Graph API tools
     },
@@ -1037,7 +1003,7 @@ export function registerDiscoveryTools(
         .optional(),
     },
     {
-      title: 'execute-tool',
+      title: 'Execute tool',
       readOnlyHint: false,
       destructiveHint: true, // Can execute any tool, including write operations
       openWorldHint: true, // Executes against Microsoft Graph API
