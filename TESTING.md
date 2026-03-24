@@ -43,6 +43,15 @@ Mock pattern: mock `graphClient.graphRequest` (not `fetch` or `makeRequest`). Se
 | `get-group-onenote-page-content`   | GET    | `/groups/{group-id}/onenote/pages/{onenotePage-id}/content`     |
 | `create-group-onenote-page`        | POST   | `/groups/{group-id}/onenote/sections/{onenoteSection-id}/pages` |
 
+### OneNote — site notebooks
+
+| Tool                              | Method | Path                                                          |
+| --------------------------------- | ------ | ------------------------------------------------------------- |
+| `list-site-onenote-notebooks`     | GET    | `/sites/{site-id}/onenote/notebooks`                          |
+| `list-site-onenote-sections`      | GET    | `/sites/{site-id}/onenote/notebooks/{notebook-id}/sections`   |
+| `list-site-onenote-section-pages` | GET    | `/sites/{site-id}/onenote/sections/{onenoteSection-id}/pages` |
+| `get-site-onenote-page-content`   | GET    | `/sites/{site-id}/onenote/pages/{onenotePage-id}/content`     |
+
 ### Teams — meeting management
 
 | Tool                              | Method | Path                                                      |

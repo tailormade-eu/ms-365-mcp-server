@@ -21254,6 +21254,164 @@ To list them, include system in your $select statement.`,
   },
   {
     method: 'get',
+    path: '/sites/:siteId/onenote/notebooks',
+    alias: 'list-site-onenote-notebooks',
+    description: `The collection of OneNote notebooks that are owned by the user or group. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/onenote/notebooks/:notebookId/sections',
+    alias: 'list-site-onenote-sections',
+    description: `The sections in the notebook. Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/onenote/pages/:onenotePageId/content',
+    alias: 'get-site-onenote-page-content',
+    description: `The page's HTML content.`,
+    requestFormat: 'json',
+    response: z.void()
+  },
+  {
+    method: 'get',
+    path: '/sites/:siteId/onenote/sections/:onenoteSectionId/pages',
+    alias: 'list-site-onenote-section-pages',
+    description: `The collection of pages in the section.  Read-only. Nullable.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: '$top',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
+      },
+      {
+        name: '$skip',
+        type: 'Query',
+        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
+      },
+      {
+        name: '$search',
+        type: 'Query',
+        schema: z.string().describe('Search items by search phrases').optional(),
+      },
+      {
+        name: '$filter',
+        type: 'Query',
+        schema: z.string().describe('Filter items by property values').optional(),
+      },
+      {
+        name: '$count',
+        type: 'Query',
+        schema: z.boolean().describe('Include count of items').optional(),
+      },
+      {
+        name: '$orderby',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Order items by property values').optional(),
+      },
+      {
+        name: '$select',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
+      },
+      {
+        name: '$expand',
+        type: 'Query',
+        schema: z.array(z.string()).describe('Expand related entities').optional(),
+      },
+    ],
+    response: z.void()
+  },
+  {
+    method: 'get',
     path: '/sites/:siteId/pages',
     alias: 'list-sharepoint-site-pages',
     description: `Get the collection of baseSitePage objects from the site pages list in a site. All pages in the site are returned (with pagination). Sort alphabetically by name in ascending order. The following table lists the available subtypes.`,

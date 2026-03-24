@@ -522,6 +522,35 @@
     "llmTip": "Returns the HTML content of a OneNote page in a group/Teams notebook. The response is raw HTML, not JSON."
   },
   {
+    "pathPattern": "/sites/{site-id}/onenote/notebooks",
+    "method": "get",
+    "toolName": "list-site-onenote-notebooks",
+    "workScopes": ["Notes.Read.All"],
+    "llmTip": "Lists OneNote notebooks on a SharePoint site. Requires site-id (use search-query or list-followed-sites to find it). Returns notebook-id needed for list-site-onenote-sections."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/onenote/notebooks/{notebook-id}/sections",
+    "method": "get",
+    "toolName": "list-site-onenote-sections",
+    "workScopes": ["Notes.Read.All"],
+    "llmTip": "Lists sections in a site notebook. Returns onenoteSection-id needed for list-site-onenote-section-pages."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/onenote/sections/{onenoteSection-id}/pages",
+    "method": "get",
+    "toolName": "list-site-onenote-section-pages",
+    "workScopes": ["Notes.Read.All"],
+    "llmTip": "Lists pages in a site notebook section. Returns onenotePage-id needed for get-site-onenote-page-content."
+  },
+  {
+    "pathPattern": "/sites/{site-id}/onenote/pages/{onenotePage-id}/content",
+    "method": "get",
+    "toolName": "get-site-onenote-page-content",
+    "workScopes": ["Notes.Read.All"],
+    "acceptType": "text/html",
+    "llmTip": "Returns the HTML content of a OneNote page on a SharePoint site. The response is raw HTML, not JSON."
+  },
+  {
     "pathPattern": "/groups/{group-id}/onenote/sections/{onenoteSection-id}/pages",
     "method": "post",
     "toolName": "create-group-onenote-page",

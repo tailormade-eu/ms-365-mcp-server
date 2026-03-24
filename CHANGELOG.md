@@ -1,5 +1,18 @@
 # Changelog — ms-365-mcp-server
 
+## [0.9.1] - 2026-03-24
+
+### Added
+
+- **Site-level OneNote tools** — 4 new tools for accessing OneNote notebooks on SharePoint sites:
+  - `list-site-onenote-notebooks` — list notebooks on a site
+  - `list-site-onenote-sections` — list sections in a site notebook
+  - `list-site-onenote-section-pages` — list pages in a site notebook section
+  - `get-site-onenote-page-content` — get HTML content of a site OneNote page
+  - All use `workScopes: ["Notes.Read.All"]` (work/school accounts only)
+
+---
+
 ## [0.9.0] - 2026-03-24
 
 ### Added
