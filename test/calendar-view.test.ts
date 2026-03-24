@@ -25,7 +25,8 @@ vi.mock('fs', async (importOriginal) => {
             scopes: ['Calendars.Read'],
             supportsTimezone: true,
             supportsExpandExtendedProperties: true,
-            llmTip: 'CRITICAL: list-calendar-events returns seriesMasters — use get-calendar-view for recurring event instances.',
+            llmTip:
+              'CRITICAL: list-calendar-events returns seriesMasters — use get-calendar-view for recurring event instances.',
           },
           {
             toolName: 'get-specific-calendar-view',
@@ -34,7 +35,8 @@ vi.mock('fs', async (importOriginal) => {
             scopes: ['Calendars.Read'],
             supportsTimezone: true,
             supportsExpandExtendedProperties: true,
-            llmTip: 'Same as get-calendar-view but for a specific calendar. Use for recurring event instances.',
+            llmTip:
+              'Same as get-calendar-view but for a specific calendar. Use for recurring event instances.',
           },
           {
             toolName: 'list-calendar-event-instances',
@@ -43,7 +45,8 @@ vi.mock('fs', async (importOriginal) => {
             scopes: ['Calendars.Read'],
             supportsTimezone: true,
             supportsExpandExtendedProperties: true,
-            llmTip: 'CRITICAL: startDateTime and endDateTime are required query params. Returns individual occurrences of a recurring event.',
+            llmTip:
+              'CRITICAL: startDateTime and endDateTime are required query params. Returns individual occurrences of a recurring event.',
           },
         ]);
       }

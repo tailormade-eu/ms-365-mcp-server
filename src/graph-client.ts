@@ -215,7 +215,10 @@ class GraphClient {
         ...options,
         accessToken: options.accessToken ? '[REDACTED]' : undefined,
         headers: options.headers
-          ? { ...options.headers, Authorization: options.headers.Authorization ? '[REDACTED]' : undefined }
+          ? {
+              ...options.headers,
+              Authorization: options.headers.Authorization ? '[REDACTED]' : undefined,
+            }
           : undefined,
       };
       logger.info(`Calling ${endpoint} with options: ${JSON.stringify(safeOptions)}`);

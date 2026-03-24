@@ -165,11 +165,15 @@ class MicrosoftGraphServer {
       // Add CORS headers for all routes
       const corsOrigin = process.env.MS365_MCP_CORS_ORIGIN || '*';
       if (corsOrigin === '*' && process.env.MS365_MCP_ALLOW_WILDCARD_CORS !== 'true') {
-        logger.error('MS365_MCP_CORS_ORIGIN is not set. In HTTP mode, wildcard CORS exposes credentials to any origin. Set MS365_MCP_CORS_ORIGIN to a specific origin, or set MS365_MCP_ALLOW_WILDCARD_CORS=true to allow wildcard explicitly.');
+        logger.error(
+          'MS365_MCP_CORS_ORIGIN is not set. In HTTP mode, wildcard CORS exposes credentials to any origin. Set MS365_MCP_CORS_ORIGIN to a specific origin, or set MS365_MCP_ALLOW_WILDCARD_CORS=true to allow wildcard explicitly.'
+        );
         process.exit(1);
       }
       if (corsOrigin === '*') {
-        logger.warn('MS365_MCP_ALLOW_WILDCARD_CORS=true — using wildcard CORS. Credentials may be exposed to any origin.');
+        logger.warn(
+          'MS365_MCP_ALLOW_WILDCARD_CORS=true — using wildcard CORS. Credentials may be exposed to any origin.'
+        );
       }
       app.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', corsOrigin);

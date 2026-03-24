@@ -91,17 +91,9 @@ Returns: [{id, subject, from, received}]
 ⚠️ Azure app needs "full_access_as_app" on Office 365 Exchange Online (not just Graph)
 💡 search filters on subject substring — not full-text body search`,
     {
-      account: z
-        .string()
-        .describe('Mailbox email address to impersonate (e.g. user@example.com).'),
-      search: z
-        .string()
-        .describe('Subject substring filter, e.g. "hoy.be". Optional.')
-        .optional(),
-      top: z
-        .number()
-        .describe('Max results per folder (default 25, max 999).')
-        .optional(),
+      account: z.string().describe('Mailbox email address to impersonate (e.g. user@example.com).'),
+      search: z.string().describe('Subject substring filter, e.g. "hoy.be". Optional.').optional(),
+      top: z.number().describe('Max results per folder (default 25, max 999).').optional(),
     },
     {
       title: 'get-archive-messages',
@@ -116,12 +108,21 @@ Returns: [{id, subject, from, received}]
 
         if (!clientId || !clientSecret || !tenantId) {
           return {
-            content: [{ type: 'text' as const, text: 'EWS credentials not configured. Set EWS_CLIENT_ID, EWS_CLIENT_SECRET, EWS_TENANT_ID environment variables.' }],
+            content: [
+              {
+                type: 'text' as const,
+                text: 'EWS credentials not configured. Set EWS_CLIENT_ID, EWS_CLIENT_SECRET, EWS_TENANT_ID environment variables.',
+              },
+            ],
             isError: true,
           };
         }
 
-        const userEmail = account.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const userEmail = account
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
         const limit = top ?? 25;
 
         // EWS token — different scope from Graph
@@ -134,7 +135,11 @@ Returns: [{id, subject, from, received}]
 
         const tokenRes = await fetch(
           `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-          { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: tokenBody.toString() }
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: tokenBody.toString(),
+          }
         );
         if (!tokenRes.ok) throw new Error(`EWS token failed: ${await tokenRes.text()}`);
         const { access_token } = (await tokenRes.json()) as { access_token: string };
@@ -172,7 +177,10 @@ Returns: [{id, subject, from, received}]
 
         const ffRes = await fetch('https://outlook.office365.com/EWS/Exchange.asmx', {
           method: 'POST',
-          headers: { ...ewsHeaders, 'SOAPAction': '"http://schemas.microsoft.com/exchange/services/2006/messages/FindFolder"' },
+          headers: {
+            ...ewsHeaders,
+            SOAPAction: '"http://schemas.microsoft.com/exchange/services/2006/messages/FindFolder"',
+          },
           body: findFolderSoap,
         });
         const ffText = await ffRes.text();
@@ -185,7 +193,8 @@ Returns: [{id, subject, from, received}]
         while ((fm = folderIdRegex.exec(ffText)) !== null) {
           folderIds.push(fm[1]);
         }
-        if (folderIds.length === 0) throw new Error(`No archive folders found. FindFolder response:\n${ffText}`);
+        if (folderIds.length === 0)
+          throw new Error(`No archive folders found. FindFolder response:\n${ffText}`);
 
         // Step 2: FindItem (Deep) on real folder IDs
         const restriction = search
@@ -197,9 +206,7 @@ Returns: [{id, subject, from, received}]
             </m:Restriction>`
           : '';
 
-        const parentFolders = folderIds
-          .map(id => `<t:FolderId Id="${id}"/>`)
-          .join('\n        ');
+        const parentFolders = folderIds.map((id) => `<t:FolderId Id="${id}"/>`).join('\n        ');
 
         const findItemSoap = `${soapHeader}
   <soap:Body>
@@ -223,7 +230,10 @@ Returns: [{id, subject, from, received}]
 
         const ewsRes = await fetch('https://outlook.office365.com/EWS/Exchange.asmx', {
           method: 'POST',
-          headers: { ...ewsHeaders, 'SOAPAction': '"http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"' },
+          headers: {
+            ...ewsHeaders,
+            SOAPAction: '"http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"',
+          },
           body: findItemSoap,
         });
 
@@ -239,7 +249,8 @@ Returns: [{id, subject, from, received}]
           const id = (/<t:ItemId Id="([^"]+)"/.exec(block) ?? [])[1] ?? '';
           const subject = (/<t:Subject>(.*?)<\/t:Subject>/.exec(block) ?? [])[1] ?? '';
           const from = (/<t:EmailAddress>(.*?)<\/t:EmailAddress>/.exec(block) ?? [])[1] ?? '';
-          const received = (/<t:DateTimeReceived>(.*?)<\/t:DateTimeReceived>/.exec(block) ?? [])[1] ?? '';
+          const received =
+            (/<t:DateTimeReceived>(.*?)<\/t:DateTimeReceived>/.exec(block) ?? [])[1] ?? '';
           items.push({ id, subject, from, received });
         }
 
@@ -248,7 +259,9 @@ Returns: [{id, subject, from, received}]
         };
       } catch (error) {
         return {
-          content: [{ type: 'text' as const, text: JSON.stringify({ error: (error as Error).message }) }],
+          content: [
+            { type: 'text' as const, text: JSON.stringify({ error: (error as Error).message }) },
+          ],
           isError: true,
         };
       }
@@ -271,13 +284,9 @@ so the join uses normalized subject matching. Emails in non-standard folders
     {
       account: z
         .string()
-        .describe(
-          'Microsoft account email to use. Required when multiple accounts are configured.'
-        )
+        .describe('Microsoft account email to use. Required when multiple accounts are configured.')
         .optional(),
-      outputPath: z
-        .string()
-        .describe('Absolute path where todo-cache.json will be written.'),
+      outputPath: z.string().describe('Absolute path where todo-cache.json will be written.'),
     },
     {
       title: 'update-todo-cache',
@@ -298,9 +307,7 @@ so the join uses normalized subject matching. Emails in non-standard folders
           accessToken,
         })) as { value: Array<{ id: string; wellknownListName: string; displayName: string }> };
 
-        const flaggedList = listsResult.value?.find(
-          (l) => l.wellknownListName === 'flaggedEmails'
-        );
+        const flaggedList = listsResult.value?.find((l) => l.wellknownListName === 'flaggedEmails');
         if (!flaggedList) {
           throw new Error('Flagged Emails todo list not found');
         }
@@ -330,7 +337,7 @@ so the join uses normalized subject matching. Emails in non-standard folders
           graphClient,
           `/me/messages?$filter=flag/flagStatus eq 'flagged'&$select=id,subject,from,receivedDateTime,bodyPreview,categories&$top=999&$count=true`,
           accessToken,
-          { 'ConsistencyLevel': 'eventual' }
+          { ConsistencyLevel: 'eventual' }
         )) as Array<{
           id: string;
           subject: string;
@@ -380,9 +387,19 @@ so the join uses normalized subject matching. Emails in non-standard folders
 
         const resolvedPath = path.resolve(outputPath);
         const allowedDir = path.resolve(process.cwd());
-        if (!resolvedPath.toLowerCase().startsWith(allowedDir.toLowerCase()) || !resolvedPath.endsWith('.json')) {
+        if (
+          !resolvedPath.toLowerCase().startsWith(allowedDir.toLowerCase()) ||
+          !resolvedPath.endsWith('.json')
+        ) {
           return {
-            content: [{ type: 'text' as const, text: JSON.stringify({ error: 'outputPath must be a .json file within the working directory' }) }],
+            content: [
+              {
+                type: 'text' as const,
+                text: JSON.stringify({
+                  error: 'outputPath must be a .json file within the working directory',
+                }),
+              },
+            ],
             isError: true,
           };
         }
@@ -422,13 +439,8 @@ so the join uses normalized subject matching. Emails in non-standard folders
     `Debug tool: GET any Graph endpoint using the /beta API version instead of v1.0.
 Returns the raw JSON response — useful for discovering undocumented properties.`,
     {
-      endpoint: z
-        .string()
-        .describe('Graph endpoint path, e.g. /me/todo/lists/{id}/tasks/{id}'),
-      account: z
-        .string()
-        .describe('Account email')
-        .optional(),
+      endpoint: z.string().describe('Graph endpoint path, e.g. /me/todo/lists/{id}/tasks/{id}'),
+      account: z.string().describe('Account email').optional(),
     },
     {
       title: 'beta-get',
@@ -437,9 +449,7 @@ Returns the raw JSON response — useful for discovering undocumented properties
     },
     async ({ endpoint, account }) => {
       try {
-        const accessToken = account
-          ? await authManager?.getTokenForAccount(account)
-          : undefined;
+        const accessToken = account ? await authManager?.getTokenForAccount(account) : undefined;
 
         const result = await graphClient.makeRequest(endpoint, {
           accessToken,

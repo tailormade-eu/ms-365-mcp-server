@@ -15,7 +15,11 @@ vi.mock('../logger.js', () => ({
 // Mock generated client
 const mockEndpoints: any[] = [];
 vi.mock('../generated/client.js', () => ({
-  api: { get endpoints() { return mockEndpoints; } },
+  api: {
+    get endpoints() {
+      return mockEndpoints;
+    },
+  },
 }));
 
 // Mock endpoints.json
@@ -85,9 +89,11 @@ async function loadModule() {
 function createMockServer() {
   const tools = new Map<string, { description: string; schema: any; handler: Function }>();
   return {
-    tool: vi.fn((name: string, description: string, schema: any, annotations: any, handler: Function) => {
-      tools.set(name, { description, schema, handler });
-    }),
+    tool: vi.fn(
+      (name: string, description: string, schema: any, annotations: any, handler: Function) => {
+        tools.set(name, { description, schema, handler });
+      }
+    ),
     tools,
   };
 }
@@ -109,7 +115,12 @@ describe('mail-folders MCP tools', () => {
       mockEndpoints.push(endpoint);
       mockEndpointsJson = [config];
 
-      const folders = { value: [{ id: 'inbox-id', displayName: 'Inbox' }, { id: 'drafts-id', displayName: 'Drafts' }] };
+      const folders = {
+        value: [
+          { id: 'inbox-id', displayName: 'Inbox' },
+          { id: 'drafts-id', displayName: 'Drafts' },
+        ],
+      };
       const graphClient = createMockGraphClient([
         { content: [{ type: 'text', text: JSON.stringify(folders) }] },
       ]);
@@ -141,7 +152,11 @@ describe('mail-folders MCP tools', () => {
       mockEndpointsJson = [config];
 
       const graphClient = createMockGraphClient([
-        { content: [{ type: 'text', text: JSON.stringify({ value: [{ id: 'f1', displayName: 'Work' }] }) }] },
+        {
+          content: [
+            { type: 'text', text: JSON.stringify({ value: [{ id: 'f1', displayName: 'Work' }] }) },
+          ],
+        },
       ]);
 
       const server = createMockServer();
@@ -177,7 +192,14 @@ describe('mail-folders MCP tools', () => {
       mockEndpointsJson = [config];
 
       const graphClient = createMockGraphClient([
-        { content: [{ type: 'text', text: JSON.stringify({ value: [{ id: 'child-1', displayName: 'Sub' }] }) }] },
+        {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({ value: [{ id: 'child-1', displayName: 'Sub' }] }),
+            },
+          ],
+        },
       ]);
 
       const server = createMockServer();
@@ -207,7 +229,14 @@ describe('mail-folders MCP tools', () => {
 
       const graphClient = createMockGraphClient([
         {
-          content: [{ type: 'text', text: JSON.stringify({ error: { code: 'ErrorAccessDenied', message: 'Access is denied.' } }) }],
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                error: { code: 'ErrorAccessDenied', message: 'Access is denied.' },
+              }),
+            },
+          ],
           isError: true,
         },
       ]);

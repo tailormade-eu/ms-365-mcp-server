@@ -62,9 +62,13 @@ async function main(): Promise<void> {
     if (args.selectAccount) {
       const success = await authManager.selectAccount(args.selectAccount);
       if (success) {
-        process.stdout.write(JSON.stringify({ message: `Selected account: ${args.selectAccount}` }) + '\n');
+        process.stdout.write(
+          JSON.stringify({ message: `Selected account: ${args.selectAccount}` }) + '\n'
+        );
       } else {
-        process.stdout.write(JSON.stringify({ error: `Account not found: ${args.selectAccount}` }) + '\n');
+        process.stdout.write(
+          JSON.stringify({ error: `Account not found: ${args.selectAccount}` }) + '\n'
+        );
         process.exit(1);
       }
       process.exit(0);
@@ -73,9 +77,13 @@ async function main(): Promise<void> {
     if (args.removeAccount) {
       const success = await authManager.removeAccount(args.removeAccount);
       if (success) {
-        process.stdout.write(JSON.stringify({ message: `Removed account: ${args.removeAccount}` }) + '\n');
+        process.stdout.write(
+          JSON.stringify({ message: `Removed account: ${args.removeAccount}` }) + '\n'
+        );
       } else {
-        process.stdout.write(JSON.stringify({ error: `Account not found: ${args.removeAccount}` }) + '\n');
+        process.stdout.write(
+          JSON.stringify({ error: `Account not found: ${args.removeAccount}` }) + '\n'
+        );
         process.exit(1);
       }
       process.exit(0);

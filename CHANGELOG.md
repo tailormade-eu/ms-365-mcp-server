@@ -1,8 +1,33 @@
 # Changelog — ms-365-mcp-server
 
+## [0.8.3] - 2026-03-24
+
+### Fixed
+
+- **V2+V4: Test improvements** — mail-folders test migrated from `test/` to `src/__tests__/`, now tests MCP handler via `registerGraphTools()` instead of fetch wrapper; legacy `test/mail-folders.test.ts` removed
+- **V5: workScopes consistency** — endpoints with empty `workScopes: []` normalized (removed where no work-only scopes needed)
+- **V7: `let result: any`** — replaced with `unknown` in graph-client.ts
+- **V8: `trust proxy` conditional** — now only enabled when `MS365_MCP_TRUST_PROXY=true` env var set
+- **V10: registerSingleTool extraction** — deduplicated ~150 lines of registration logic into shared helper
+- **V11: create-subscription llmTip** — clarified scope limitation (Mail.Read only)
+- **V12: list-deleted-items llmTip** — removed misleading scope flexibility claim
+- **V18: Prefer header normalization** — lowercase `prefer` merged into canonical `Prefer` key
+- **V19: safeOptions header redaction** — now redacts all `authorization`/`prefer` header variants
+- **V25: `z.any()` fallback** — replaced with `z.unknown()` for unknown param schemas
+- **V26: POST destructiveHint** — non-destructive POST tools (find-meeting-times, create-draft-email, etc.) now have `destructiveHint: false`
+- **V27: CORS wildcard error** — HTTP mode now throws error when no `MS365_MCP_CORS_ORIGIN` env var set (was just warning)
+- **V28: issuerUrl env var** — `MS365_MCP_ISSUER_URL` env var for reverse proxy configuration
+- **V29: MCP annotation titles** — all tools now use sentence-case title instead of kebab-case
+- **V30: Pagination cap visible** — 100-page cap now included in fetchAllPages parameter description
+- **V31: JSON.parse safety** — pagination loop now has try/catch for non-JSON error responses
+- **Formatting** — prettier applied to all 57 files
+
+---
+
 ## [0.8.2] - 2026-03-23
 
 ### Fixed
+
 - **V20-V24: Code review fixes** — `console.log` → `process.stdout.write` in CLI paths, `any` → `unknown` types, `isError: true` on EWS env var error, path traversal case-insensitive on Windows
 - **fetchAllPages refactor** — switched from `makeRequest` to `graphRequest` with proper error propagation (`isError` check + throw)
 - **403 error message** — removed obsolete `--org-mode` reference
@@ -11,6 +36,7 @@
 ## [fork-1.16.1] - 2026-03-23
 
 ### Fixed
+
 - **B2: Prefer header case-insensitive merge** — `graph-client.ts` now checks both `Prefer` and `prefer` keys when merging headers
 - **B4: CORS wildcard warning** — `server.ts` logs `logger.warn` when wildcard `*` origin is used in HTTP mode
 - **B7: `list-drive-item-activities` beta-only** — added `useBeta: true` flag + WARNING prefix in llmTip (endpoint only exists in `/beta/`)
@@ -23,6 +49,7 @@
 ## [fork-1.16.0] - 2026-03-23
 
 ### Added
+
 - 13 new endpoints across 7 groups (total: 429 endpoints, up from 416)
   - Presence: clear-me-presence — revert to automatic presence detection (1)
   - Calendar: get-default-calendar — default calendar metadata (1)
@@ -33,11 +60,13 @@
   - Places: list-buildings — organization building directory (1)
 
 ### Fixed
+
 - **CRITICAL: `get-default-calendar` missing scopes** — had empty `workScopes: []` and no `scopes`, making it unreachable. Added `scopes: ["Calendars.Read"]` and `workScopes: ["Calendars.Read"]`
 
 ## [fork-1.15.0] - 2026-03-23
 
 ### Added
+
 - 12 new endpoints across 7 groups (total: 416 endpoints, up from 404)
   - Mailbox: get-mailbox-settings, update-mailbox-settings — OOF, timezone, language prefs (2)
   - Directory: list-member-of, check-member-groups, change-password, revoke-sign-in-sessions — membership + security (4)
@@ -46,12 +75,14 @@
   - Meetings: create-or-get-online-meeting — idempotent meeting creation via externalId (1)
 
 ### Fixed
+
 - **CRITICAL: 3 duplicate insights endpoints removed** — `get-insights-used`, `get-insights-trending`, `get-insights-shared` duplicated existing `list-used-files`, `list-trending-files`, `list-shared-insights`
 - `revoke-sign-in-sessions` removed unnecessary `contentType: "application/json"` (no body required)
 
 ## [fork-1.14.0] - 2026-03-23
 
 ### Added
+
 - 8 new endpoints across 6 groups (total: 404 endpoints, up from 396)
   - Calendar: get-calendar-permission, create-calendar-permission — calendar sharing management (2)
   - Rooms: list-rooms-in-list — rooms within a specific room list (1)
@@ -61,11 +92,13 @@
   - Directory: assign-user-license — license assignment for users (1)
 
 ### Fixed
+
 - **CRITICAL: `list-rooms-in-list` pathPattern** — corrected from `/places/roomlists/{roomList-id}/rooms` to `/places/{roomList-emailAddress}/microsoft.graph.roomList/rooms` (Graph API v1.0 correct path)
 
 ## [fork-1.13.0] - 2026-03-23
 
 ### Added
+
 - 18 new endpoints across 7 groups (total: 396 endpoints, up from 378)
   - Calendar: list-event-instances, get/update/delete-event-exception — recurring event instance management (4)
   - Mail: list/create/get/update/delete-search-folder — virtual search folder CRUD (5)
@@ -76,6 +109,7 @@
   - Directory: assign-user-manager — set user's manager (1)
 
 ### Fixed
+
 - **CRITICAL: `{instanceId}` path param** — changed to `{instance-id}` for kebab-case consistency with all other path params
 - `set-user-presence` llmTip listed `Offline` as valid availability — removed (Graph API returns 400 for Offline)
 - Winston `stderrLevels` now includes all levels (verbose, silly) — prevents stdout leakage at any LOG_LEVEL
@@ -85,6 +119,7 @@
 ## [fork-1.12.0] - 2026-03-23
 
 ### Added
+
 - 23 new endpoints across 10 groups (total: 378 endpoints, up from 355)
   - Group calendar: update-group-calendar-event, delete-group-calendar-event — complete group calendar CRUD (2)
   - Focused Inbox: list/create/update/delete-focused-inbox-override — sender classification rules (4)
@@ -99,6 +134,7 @@
 ## [fork-1.11.0] - 2026-03-23
 
 ### Added
+
 - 20 new endpoints across 11 groups (total: 355 endpoints, up from 335)
   - People: list-people — relevant people suggestions based on collaboration patterns (1)
   - OneDrive: create-drive-item-link — create shareable links (view/edit/embed) (1)
@@ -112,6 +148,7 @@
   - Chat: update-chat — rename group chat topic (1)
 
 ### Fixed
+
 - **4 endpoints missing scopes** — create-drive-item-link (Files.ReadWrite), get-drive-item-version (Files.Read), get-drive-item-permission (Files.Read), get-excel-table (Files.Read) all had empty scopes
 - **list-people missing scopes** — added People.Read scope alongside workScopes (is /me endpoint)
 - **create-link renamed** to `create-drive-item-link` for consistency with drive-item naming convention
@@ -119,6 +156,7 @@
 ## [fork-1.10.0] - 2026-03-23
 
 ### Added
+
 - 19 new endpoints across 9 groups (total: 335 endpoints, up from 317)
   - Mail: list-message-rules — list inbox rules with conditions/actions (1)
   - Groups: add-group-member, remove-group-member — manage group membership (2)
@@ -131,17 +169,20 @@
   - Users: create-user, update-user — user admin (2)
 
 ### Fixed
+
 - **CRITICAL: Duplicate endpoint `list-mail-rules`** — removed in favor of `list-message-rules` (consistent naming with update-message-rule/delete-message-rule)
 
 ## [fork-1.9.0] - 2026-03-23
 
 ### Added
+
 - 2 new endpoints (total: 317 endpoints, up from 315)
   - Teams: update-channel-message — PATCH channel messages (soft-delete/restore, bot message updates) (1)
   - SharePoint: list-sharepoint-list-views — list view definitions for SharePoint lists (1)
 - 19 new tests for custom-tools.ts: normalizeSubject (13), get-archive-messages (4), update-todo-cache (2), beta-get (2). Total tests: 83→104
 
 ### Fixed
+
 - **CRITICAL: `removeODataProps` duplicate** — module-level function was shadowed by local copy in `formatJsonResponse`. Removed local duplicate so refactored function is actually used
 - **CRITICAL: `normalizeSubject` now strips repeated prefixes** — `Re: Re: FW: Invoice` → `invoice` (was only stripping first prefix)
 - `get-archive-messages` account parameter now required in schema (was `.optional()` but handler threw on missing)
@@ -153,6 +194,7 @@
 ## [fork-1.8.0] - 2026-03-23
 
 ### Added
+
 - 4 new endpoints (total: 315 endpoints, up from 312)
   - OneDrive: get-drive-item-by-path — navigate by path instead of item ID (1)
   - OneDrive: get-special-drive-folder — access special folders (documents, photos, etc.) (1)
@@ -160,6 +202,7 @@
   - Teams: send-teams-activity-notification — send in-app Teams notifications (1)
 
 ### Fixed
+
 - B1: `login` tool catch block now returns `isError: true` (was silently failing)
 - B1: `logout` catch block now includes error details + `isError: true`
 - B3: `console.log` in auth.ts device code callback replaced with `process.stderr.write` (was breaking MCP stdio protocol)
@@ -169,6 +212,7 @@
 ## [fork-1.7.0] - 2026-03-23
 
 ### Added
+
 - 9 new endpoints across 7 groups (total: 312 endpoints, up from 303)
   - Users: list-user-member-of — group membership lookup (1)
   - Teams: list-teams-app-catalog, clone-team (2)
@@ -180,6 +224,7 @@
 ## [fork-1.6.0] - 2026-03-23
 
 ### Added
+
 - 14 new endpoints across 9 groups (total: 303 endpoints, up from 289)
   - Calendar: get-schedule — free/busy schedule lookup (1)
   - Org chart: get-user-manager, list-user-direct-reports (2)
@@ -189,6 +234,7 @@
   - Directory: create-guest-invitation, list-deleted-items, restore-deleted-item (3)
 
 ### Fixed
+
 - B6: `get-mail-mime-content` acceptType corrected from `text/plain` to `message/rfc822`
 - 5 endpoints with empty `workScopes: []` now have proper `scopes` (add-excel-table-row, list-drive-item-thumbnails, list-drive-item-activities, list-excel-named-items, get-excel-named-item)
 - `get-schedule` changed from `workScopes` to `scopes` (is a `/me/` endpoint, works with personal accounts)
@@ -197,6 +243,7 @@
 ## [fork-1.5.0] - 2026-03-23
 
 ### Added
+
 - 23 new endpoints across 10 groups (total: 289 endpoints, up from 267)
   - User presence: get-my-presence, get-user-presence, set-my-presence (3)
   - Change notifications: create/list/renew/delete-subscription (4)
@@ -210,12 +257,14 @@
   - Mail tips: get-mail-tips (1)
 
 ### Fixed
+
 - Removed duplicate `list-meeting-recordings` entry (B5)
 - 1 endpoint missing llmTip (delete-subscription)
 
 ## [fork-1.4.0] - 2026-03-23
 
 ### Added
+
 - 29 new endpoints across 18 groups (total: 267 endpoints, up from 238)
   - OneDrive: share-drive-item, remove-drive-item-permission, get-folder-delta, restore-drive-item-version (4)
   - Mail: copy-mail-message, list-shared-mailbox-folders, create-mail-attachment-upload-session (3)
@@ -226,11 +275,13 @@
   - SharePoint: list/get-site-content-type (2)
 
 ### Fixed
+
 - 4 endpoints missing llmTip (delete-event-attachment, delete-team-tag, get-meeting-recording, get-site-content-type)
 
 ## [fork-1.3.0] - 2026-03-23
 
 ### Added
+
 - 25 new endpoints across 17 groups (total: 238 endpoints, up from 214)
   - Users: get-user by ID (1)
   - Calendar event attachments: list + add (2)
@@ -243,12 +294,14 @@
   - OneDrive search: search-drive (1)
 
 ### Fixed
+
 - **CRITICAL: 108 endpoints were dead config** — registration loop only iterated over generated client (130 entries), silently ignoring all endpoints.json-only entries. Added second registration loop for synthetic tool objects.
 - 2 endpoints missing llmTip (delete-outlook-category, unarchive-team)
 
 ## [fork-1.2.0] - 2026-03-23
 
 ### Added
+
 - 62 new endpoints across 22 categories (total: 214 endpoints, up from 153)
   - Planner: full CRUD for plans, buckets, tasks + plan details (12 endpoints)
   - Calendar: accept/decline/tentative/cancel/forward event + calendar CRUD (9 endpoints)
@@ -263,6 +316,7 @@
 - Removed duplicate `get-root-folder` endpoint (kept `get-drive-root-item` as canonical)
 
 ### Fixed
+
 - 4 endpoints missing llmTip (delete-sharepoint-site-list-item, get-planner-bucket, get/delete-contact-folder)
 - update-sharepoint-site-list-item llmTip referenced non-existent tool
 - update-planner-plan llmTip referenced non-existent GET endpoint
@@ -270,12 +324,14 @@
 ## [fork-1.1.0] - 2026-03-22
 
 ### Added
+
 - 12 new endpoints: OneNote individual page ops (get/delete/update), group/Teams notebook ops (5), meeting management (create/get/attendance), channel creation
 - `acceptType: "text/html"` for get-onenote-page-content
 - `workScopes` for all 6 existing OneNote endpoints (org-only access)
 - OData param fixes: kebab-case path params, auto-inject missing path params, comma preservation, key encoding
 
 ### Fixed
+
 - Test assertions: URL encoding expectations aligned with actual Graph API behavior ($expand not %24expand)
 - Hardcoded email removed from custom-tools.ts — account param now required
 - XML injection: added missing `&` escape in EWS search parameter
@@ -287,6 +343,7 @@
 ## [fork-1.0.0] - 2026-03-22
 
 ### Added
+
 - Planner task details endpoint (get-planner-task-details)
 - Meeting recording endpoints
 - llmTips for all 111 Graph API tools
@@ -297,6 +354,7 @@
 - get-archive-messages (EWS), beta-get, update-todo-cache custom tools
 
 ### Fixed
+
 - Silent catch blocks in graph-tools.ts now log properly
 - llmTip deduplication — removed redundant $select/pagination from mail tools
 - Self-containment gaps in planner and sharepoint llmTips
@@ -304,4 +362,3 @@
 ## [0.8.2] - 2026-03-23
 
 ---
-

@@ -43,10 +43,7 @@ function createMockGraphClient(makeRequestFn: Function = vi.fn()) {
   } as any;
 }
 
-function createMockAuthManager(opts?: {
-  oauthEnabled?: boolean;
-  token?: string | undefined;
-}) {
+function createMockAuthManager(opts?: { oauthEnabled?: boolean; token?: string | undefined }) {
   return {
     isOAuthModeEnabled: vi.fn().mockReturnValue(opts?.oauthEnabled ?? false),
     getTokenForAccount: vi.fn().mockResolvedValue(opts?.token ?? undefined),
@@ -128,7 +125,10 @@ describe('get-archive-messages', () => {
         return { ok: true, json: async () => ({ access_token: 'tok123' }) };
       }
       // FindFolder — no folder IDs
-      return { ok: true, text: async () => '<soap:Body><m:FindFolderResponse></m:FindFolderResponse></soap:Body>' };
+      return {
+        ok: true,
+        text: async () => '<soap:Body><m:FindFolderResponse></m:FindFolderResponse></soap:Body>',
+      };
     });
 
     const result = await handler({ account: 'user@test.com' });
@@ -211,9 +211,7 @@ describe('update-todo-cache', () => {
     makeRequestMock.mockImplementation(async (endpoint: string) => {
       if (endpoint === '/me/todo/lists') {
         return {
-          value: [
-            { id: 'list1', wellknownListName: 'flaggedEmails', displayName: 'Flagged' },
-          ],
+          value: [{ id: 'list1', wellknownListName: 'flaggedEmails', displayName: 'Flagged' }],
         };
       }
       if (endpoint.startsWith('/me/todo/lists/list1/tasks')) {

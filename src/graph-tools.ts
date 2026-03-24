@@ -381,8 +381,11 @@ async function executeGraphTool(
             try {
               nextJsonResponse = JSON.parse(nextResponse.content[0].text);
             } catch {
-              logger.warn(`Failed to parse pagination response on page ${pageCount + 1}, stopping pagination`);
-              combinedResponse['_paginationError'] = `Failed to parse response on page ${pageCount + 1}`;
+              logger.warn(
+                `Failed to parse pagination response on page ${pageCount + 1}, stopping pagination`
+              );
+              combinedResponse['_paginationError'] =
+                `Failed to parse response on page ${pageCount + 1}`;
               break;
             }
             if (nextJsonResponse.value && Array.isArray(nextJsonResponse.value)) {
@@ -409,7 +412,8 @@ async function executeGraphTool(
 
         let resultText = JSON.stringify(combinedResponse);
         if (hitPageCap) {
-          resultText += '\n[PAGINATION NOTE: Stopped at 100 pages. There may be more results. Use $top and $skip or $skipToken for paging.]';
+          resultText +=
+            '\n[PAGINATION NOTE: Stopped at 100 pages. There may be more results. Use $top and $skip or $skipToken for paging.]';
         }
         response.content[0].text = resultText;
 
@@ -638,7 +642,7 @@ function registerSingleTool(
   const method = tool.method.toUpperCase();
   const isDestructive =
     method === 'DELETE' ||
-    ((['POST', 'PATCH'].includes(method)) && !NON_DESTRUCTIVE_POST_TOOLS.has(tool.alias));
+    (['POST', 'PATCH'].includes(method) && !NON_DESTRUCTIVE_POST_TOOLS.has(tool.alias));
 
   try {
     server.tool(
@@ -676,7 +680,9 @@ export function registerGraphTools(
       enabledToolsRegex = new RegExp(enabledToolsPattern, 'i');
       logger.info(`Tool filtering enabled with pattern: ${enabledToolsPattern}`);
     } catch (e) {
-      logger.error(`Invalid tool filter regex pattern: ${enabledToolsPattern}. Ignoring filter. Error: ${e}`);
+      logger.error(
+        `Invalid tool filter regex pattern: ${enabledToolsPattern}. Ignoring filter. Error: ${e}`
+      );
     }
   }
 
@@ -686,39 +692,37 @@ export function registerGraphTools(
 
   // Path parameter descriptions — shared between generated and synthetic endpoint loops
   const pathParamDescriptions: Record<string, string> = {
-      todoTaskListId: 'Todo task list ID. Use list-todo-task-lists to obtain.',
-      todoTaskId: 'Todo task ID. Use list-todo-tasks to obtain.',
-      messageId: 'Mail message ID. Use list-mail-messages to obtain.',
-      mailFolderId: 'Mail folder ID. Use list-mail-folders or list-mail-child-folders to obtain.',
-      eventId: 'Calendar event ID. Use list-calendar-events or get-calendar-view to obtain.',
-      userId: 'User ID or userPrincipalName (email). Use list-users to obtain.',
-      onlineMeetingId: 'Online meeting ID. Use list-online-meetings to obtain.',
-      callTranscriptId: 'Transcript ID. Use list-meeting-transcripts to obtain.',
-      siteId: 'SharePoint site ID. Use list-sharepoint-sites to obtain.',
-      listId: 'SharePoint list ID. Use list-sharepoint-site-lists to obtain.',
-      listItemId: 'SharePoint list item ID. Use list-sharepoint-site-list-items to obtain.',
-      driveItemId: 'OneDrive item ID. Use list-folder-files to obtain.',
-      contactId: 'Contact ID. Use list-outlook-contacts to obtain.',
-      plannerTaskId: 'Planner task ID. Use list-planner-tasks or list-plan-tasks to obtain.',
-      notebookId: 'OneNote notebook ID. Use list-onenote-notebooks to obtain.',
-      sectionId: 'OneNote section ID. Use list-onenote-notebook-sections to obtain.',
-      pageId: 'OneNote page ID. Use list-onenote-section-pages to obtain.',
-      callAttendanceReportId:
-        'Attendance report ID. Use list-meeting-attendance-reports to find it.',
-      calendarId:
-        'Calendar ID. Use list-calendars to find it. The default calendar does not need an ID.',
-      channelId: 'Teams channel ID. Use list-team-channels to find it.',
-      chatId: 'Chat ID. Use list-chats or search to find it.',
-      contactFolderId: 'Contact folder ID. Use list-contact-folders to find it.',
-      conversationMemberId:
-        'Conversation member ID (NOT the same as userId). Use the list-*-members tool for the relevant resource.',
-      groupId:
-        'Microsoft 365 group ID. Use list-groups to find it. Note: for Teams, group-id = team-id.',
-      messageRuleId: 'Mail rule ID. Use list-mail-rules to find it.',
-      onenotePageId: 'OneNote page ID. Use list-onenote-section-pages to find it.',
-      onenoteSectionId:
-        'OneNote section ID. Use list-onenote-notebook-sections to find it.',
-      plannerBucketId: 'Planner bucket ID. Use list-planner-buckets to find it.',
+    todoTaskListId: 'Todo task list ID. Use list-todo-task-lists to obtain.',
+    todoTaskId: 'Todo task ID. Use list-todo-tasks to obtain.',
+    messageId: 'Mail message ID. Use list-mail-messages to obtain.',
+    mailFolderId: 'Mail folder ID. Use list-mail-folders or list-mail-child-folders to obtain.',
+    eventId: 'Calendar event ID. Use list-calendar-events or get-calendar-view to obtain.',
+    userId: 'User ID or userPrincipalName (email). Use list-users to obtain.',
+    onlineMeetingId: 'Online meeting ID. Use list-online-meetings to obtain.',
+    callTranscriptId: 'Transcript ID. Use list-meeting-transcripts to obtain.',
+    siteId: 'SharePoint site ID. Use list-sharepoint-sites to obtain.',
+    listId: 'SharePoint list ID. Use list-sharepoint-site-lists to obtain.',
+    listItemId: 'SharePoint list item ID. Use list-sharepoint-site-list-items to obtain.',
+    driveItemId: 'OneDrive item ID. Use list-folder-files to obtain.',
+    contactId: 'Contact ID. Use list-outlook-contacts to obtain.',
+    plannerTaskId: 'Planner task ID. Use list-planner-tasks or list-plan-tasks to obtain.',
+    notebookId: 'OneNote notebook ID. Use list-onenote-notebooks to obtain.',
+    sectionId: 'OneNote section ID. Use list-onenote-notebook-sections to obtain.',
+    pageId: 'OneNote page ID. Use list-onenote-section-pages to obtain.',
+    callAttendanceReportId: 'Attendance report ID. Use list-meeting-attendance-reports to find it.',
+    calendarId:
+      'Calendar ID. Use list-calendars to find it. The default calendar does not need an ID.',
+    channelId: 'Teams channel ID. Use list-team-channels to find it.',
+    chatId: 'Chat ID. Use list-chats or search to find it.',
+    contactFolderId: 'Contact folder ID. Use list-contact-folders to find it.',
+    conversationMemberId:
+      'Conversation member ID (NOT the same as userId). Use the list-*-members tool for the relevant resource.',
+    groupId:
+      'Microsoft 365 group ID. Use list-groups to find it. Note: for Teams, group-id = team-id.',
+    messageRuleId: 'Mail rule ID. Use list-mail-rules to find it.',
+    onenotePageId: 'OneNote page ID. Use list-onenote-section-pages to find it.',
+    onenoteSectionId: 'OneNote section ID. Use list-onenote-notebook-sections to find it.',
+    plannerBucketId: 'Planner bucket ID. Use list-planner-buckets to find it.',
     plannerPlanId: 'Planner plan ID. Use list-planner-plans to find it.',
   };
 
@@ -751,7 +755,19 @@ export function registerGraphTools(
       }
     }
 
-    if (registerSingleTool(server, tool, endpointConfig, paramSchema, graphClient, authManager, multiAccount, accountNames, pathParamDescriptions)) {
+    if (
+      registerSingleTool(
+        server,
+        tool,
+        endpointConfig,
+        paramSchema,
+        graphClient,
+        authManager,
+        multiAccount,
+        accountNames,
+        pathParamDescriptions
+      )
+    ) {
       registeredCount++;
     } else {
       failedCount++;
@@ -833,7 +849,19 @@ export function registerGraphTools(
         .optional();
     }
 
-    if (registerSingleTool(server, syntheticTool as (typeof api.endpoints)[0], endpointConfig, paramSchema, graphClient, authManager, multiAccount, accountNames, pathParamDescriptions)) {
+    if (
+      registerSingleTool(
+        server,
+        syntheticTool as (typeof api.endpoints)[0],
+        endpointConfig,
+        paramSchema,
+        graphClient,
+        authManager,
+        multiAccount,
+        accountNames,
+        pathParamDescriptions
+      )
+    ) {
       registeredCount++;
     } else {
       failedCount++;

@@ -19,7 +19,11 @@ vi.mock('../logger.js', () => ({
 // Mock the generated client — we supply our own endpoint definitions per test
 const mockEndpoints: any[] = [];
 vi.mock('../generated/client.js', () => ({
-  api: { get endpoints() { return mockEndpoints; } },
+  api: {
+    get endpoints() {
+      return mockEndpoints;
+    },
+  },
 }));
 
 // Mock endpoints.json — we supply our own config per test
@@ -106,13 +110,7 @@ function createMockServer() {
   const tools = new Map<string, { description: string; schema: any; handler: Function }>();
   return {
     tool: vi.fn(
-      (
-        name: string,
-        description: string,
-        schema: any,
-        annotations: any,
-        handler: Function
-      ) => {
+      (name: string, description: string, schema: any, annotations: any, handler: Function) => {
         tools.set(name, { description, schema, handler });
       }
     ),
@@ -289,9 +287,7 @@ describe('graph-tools', () => {
       const endpoint = makeEndpoint({
         alias: 'download-file',
         path: '/me/drive/items/:driveItem-id/content',
-        parameters: [
-          { name: 'driveItem-id', type: 'Path', schema: z.string() },
-        ],
+        parameters: [{ name: 'driveItem-id', type: 'Path', schema: z.string() }],
       });
       const config = makeConfig({
         toolName: 'download-file',
@@ -376,9 +372,7 @@ describe('graph-tools', () => {
         alias: 'get-mail-message2',
         method: 'get',
         path: '/me/messages/:messageId',
-        parameters: [
-          { name: 'messageId', type: 'Path', schema: z.string() },
-        ],
+        parameters: [{ name: 'messageId', type: 'Path', schema: z.string() }],
       });
       const config = makeConfig({
         toolName: 'get-mail-message2',
