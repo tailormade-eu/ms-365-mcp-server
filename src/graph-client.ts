@@ -182,10 +182,11 @@ class GraphClient {
     const preferValue = callerPrefer
       ? `IdType="ImmutableId", ${callerPrefer}`
       : 'IdType="ImmutableId"';
+    const { Prefer: _p, prefer: _p2, ...restHeaders } = options.headers ?? {};
     const headers: Record<string, string> = {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...restHeaders,
       Prefer: preferValue,
     };
 
@@ -210,7 +211,13 @@ class GraphClient {
 
   async graphRequest(endpoint: string, options: GraphRequestOptions = {}): Promise<McpResponse> {
     try {
-      const safeOptions = { ...options, accessToken: options.accessToken ? '[REDACTED]' : undefined };
+      const safeOptions = {
+        ...options,
+        accessToken: options.accessToken ? '[REDACTED]' : undefined,
+        headers: options.headers
+          ? { ...options.headers, Authorization: options.headers.Authorization ? '[REDACTED]' : undefined }
+          : undefined,
+      };
       logger.info(`Calling ${endpoint} with options: ${JSON.stringify(safeOptions)}`);
 
       // Use new OAuth-aware request method

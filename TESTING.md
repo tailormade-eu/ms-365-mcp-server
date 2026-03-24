@@ -1086,4 +1086,20 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Task 99 — Code quality fixes V5 V7 V8 V18 V19 V25 V27 V28 V31
+
+| # | Fix | File | Verify | Status |
+|---|-----|------|--------|--------|
+| V5 | Remove empty `workScopes: []` | `src/endpoints.json` | `grep -c '"workScopes": \[\]' src/endpoints.json` returns 0 | ⬜ |
+| V7 | `let result: any` → `unknown` | `src/graph-client.ts` | Already fixed (V21). No `let result: any` found | ✅ |
+| V8 | `trust proxy` conditional | `src/server.ts` | Only set when `MS365_MCP_TRUST_PROXY=true` | ⬜ |
+| V18 | Strip lowercase `prefer` before spread | `src/graph-client.ts` | `restHeaders` spread excludes `Prefer`/`prefer` | ⬜ |
+| V19 | Redact `Authorization` header in safeOptions | `src/graph-client.ts` | `Authorization` header shows `[REDACTED]` in logs | ⬜ |
+| V25 | `z.any()` → `z.unknown()` fallback | `src/graph-tools.ts` | Line 540 uses `z.unknown()` | ⬜ |
+| V27 | CORS wildcard = startup error | `src/server.ts` | Server exits if `MS365_MCP_CORS_ORIGIN` unset and `MS365_MCP_ALLOW_WILDCARD_CORS!=true` | ⬜ |
+| V28 | `issuerUrl` from env var | `src/server.ts` | Uses `MS365_MCP_ISSUER_URL` when set | ⬜ |
+| V31 | `JSON.parse` try/catch in pagination | `src/graph-tools.ts` | Parse failure stops pagination, returns collected data with error note | ⬜ |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

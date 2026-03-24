@@ -377,11 +377,18 @@ async function executeGraphTool(
 
           const nextResponse = await graphClient.graphRequest(nextPath, nextOptions);
           if (nextResponse?.content?.[0]?.text) {
-            const nextJsonResponse = JSON.parse(nextResponse.content[0].text);
+            let nextJsonResponse: Record<string, unknown>;
+            try {
+              nextJsonResponse = JSON.parse(nextResponse.content[0].text);
+            } catch {
+              logger.warn(`Failed to parse pagination response on page ${pageCount + 1}, stopping pagination`);
+              combinedResponse['_paginationError'] = `Failed to parse response on page ${pageCount + 1}`;
+              break;
+            }
             if (nextJsonResponse.value && Array.isArray(nextJsonResponse.value)) {
               allItems = allItems.concat(nextJsonResponse.value);
             }
-            nextLink = nextJsonResponse['@odata.nextLink'];
+            nextLink = nextJsonResponse['@odata.nextLink'] as string | undefined;
             pageCount++;
           } else {
             break;
@@ -537,7 +544,7 @@ export function registerGraphTools(
     const paramSchema: Record<string, z.ZodTypeAny> = {};
     if (tool.parameters && tool.parameters.length > 0) {
       for (const param of tool.parameters) {
-        paramSchema[param.name] = param.schema || z.any();
+        paramSchema[param.name] = param.schema || z.unknown();
       }
     }
 

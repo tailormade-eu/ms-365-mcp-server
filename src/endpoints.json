@@ -1355,7 +1355,6 @@
     "method": "get",
     "toolName": "get-my-drive",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns the user's personal OneDrive. Use the returned id as drive-id for all /drives/{drive-id}/... operations. This is the primary way to discover your own drive-id."
   },
 
@@ -1386,7 +1385,6 @@
     "method": "get",
     "toolName": "get-planner-bucket",
     "scopes": ["Tasks.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single Planner bucket by ID. Use list-planner-buckets to find bucket IDs. Response includes @odata.etag needed for update/delete operations."
   },
   {
@@ -1394,7 +1392,6 @@
     "method": "patch",
     "toolName": "update-planner-bucket",
     "scopes": ["Tasks.ReadWrite"],
-    "workScopes": [],
     "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-bucket. Body: {name} to rename bucket."
   },
   {
@@ -1402,7 +1399,6 @@
     "method": "delete",
     "toolName": "delete-planner-bucket",
     "scopes": ["Tasks.ReadWrite"],
-    "workScopes": [],
     "llmTip": "CRITICAL: Requires If-Match header with ETag from get-planner-bucket. Returns 412 without it."
   },
   {
@@ -1410,7 +1406,6 @@
     "method": "get",
     "toolName": "list-bucket-tasks",
     "scopes": ["Tasks.Read"],
-    "workScopes": [],
     "llmTip": "Returns all tasks in a specific bucket. Use list-planner-buckets to get bucket IDs for a plan."
   },
 
@@ -1449,7 +1444,6 @@
     "method": "get",
     "toolName": "list-recent-files",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns recently accessed files from the user's OneDrive and SharePoint. Includes files opened from any device. Each item has id and parentReference.driveId for further operations."
   },
   {
@@ -1457,7 +1451,6 @@
     "method": "get",
     "toolName": "list-shared-with-me",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns files and folders shared with the user. Each item has remoteItem.id and remoteItem.parentReference.driveId — use these (not the top-level id) for accessing the actual item."
   },
 
@@ -1466,7 +1459,6 @@
     "method": "get",
     "toolName": "get-contact-folder",
     "scopes": ["Contacts.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single contact folder by ID. Use list-contact-folders to find folder IDs."
   },
   {
@@ -1474,7 +1466,6 @@
     "method": "patch",
     "toolName": "update-contact-folder",
     "scopes": ["Contacts.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Body: {displayName} to rename folder."
   },
   {
@@ -1482,7 +1473,6 @@
     "method": "delete",
     "toolName": "delete-contact-folder",
     "scopes": ["Contacts.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Permanently deletes a contact folder and all contacts within it. Use list-contact-folders to find folder IDs."
   },
   {
@@ -1490,7 +1480,6 @@
     "method": "get",
     "toolName": "list-contact-folder-contacts",
     "scopes": ["Contacts.Read"],
-    "workScopes": [],
     "llmTip": "Returns contacts in a specific folder. Use list-contact-folders to get folder IDs."
   },
 
@@ -1499,7 +1488,6 @@
     "method": "get",
     "toolName": "get-planner-plan-details",
     "scopes": ["Tasks.Read"],
-    "workScopes": [],
     "llmTip": "Returns plan details: categoryDescriptions (labels 1-6 used in task categories), sharedWith (who can access the plan). Use get-planner-plan for the plan title and other metadata."
   },
 
@@ -1508,7 +1496,6 @@
     "method": "post",
     "toolName": "create-upload-session",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Creates an upload session for files >4MB. Body: {item: {'@microsoft.graph.conflictBehavior': 'rename'/'replace', name: 'filename'}}. Returns uploadUrl (valid 48h) and expirationDateTime. Upload file in chunks via PUT to uploadUrl with Content-Range header. Final chunk returns driveItem."
   },
 
@@ -1517,7 +1504,6 @@
     "method": "post",
     "toolName": "forward-calendar-event",
     "scopes": ["Calendars.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Body: {toRecipients: [{emailAddress: {address, name}}], comment (optional)}. Forwards the meeting invitation to additional recipients. They receive the same meeting details as the original invite."
   },
 
@@ -2229,7 +2215,6 @@
     "method": "get",
     "toolName": "list-calendar-groups",
     "scopes": ["Calendars.Read"],
-    "workScopes": [],
     "llmTip": "Returns calendar groups (folders for organizing calendars). Default groups: 'My Calendars', 'Other Calendars'. Each group has id, name. Use group id with list-calendars to see calendars in a specific group."
   },
   {
@@ -2237,7 +2222,6 @@
     "method": "post",
     "toolName": "create-calendar-group",
     "scopes": ["Calendars.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Body: {name (required)}. Creates a new calendar group. Use create-calendar with calendarGroupId to add calendars to this group."
   },
   {
@@ -2259,7 +2243,6 @@
     "method": "post",
     "toolName": "add-excel-table-column",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Body: {name (required), index (optional, 0-based), values: [['Header'], ['row1value'], ['row2value']]}. Omit index to append at end. values array length must match existing row count + 1 (header). Complement to add-excel-table-row."
   },
   {
@@ -2267,7 +2250,6 @@
     "method": "get",
     "toolName": "search-drive-folder",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "skipEncoding": ["q"],
     "llmTip": "Searches within a specific folder and all its subfolders. q is the search query (filename or content). driveItem-id must be a folder — use list-folder-files or get-drive-item to find folder IDs. Use search-drive for root-level search."
   },
@@ -2276,7 +2258,6 @@
     "method": "get",
     "toolName": "get-drive-item-by-path",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "skipEncoding": ["item-path"],
     "llmTip": "Navigates to a file or folder by path string instead of item ID. item-path is relative from drive root, e.g. 'Documents/Projects/report.xlsx' (no leading slash). URL-encode spaces as %20. Returns same driveItem as get-drive-item. Use when folder structure is known but item ID is not."
   },
@@ -2285,7 +2266,6 @@
     "method": "get",
     "toolName": "get-special-drive-folder",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns a special OneDrive folder by name. Valid names: 'documents', 'photos', 'cameraroll', 'approot', 'music'. Returns driveItem with id — use as driveItem-id for list-folder-files. 'approot' is a per-app private folder created automatically on first access."
   },
   {
@@ -2462,7 +2442,6 @@
     "method": "post",
     "toolName": "create-drive-item-link",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": [],
     "llmTip": "Body: {type: 'view'/'edit'/'embed', scope: 'anonymous'/'organization', expirationDateTime (ISO 8601, optional), password (optional)}. Returns a sharing link with webUrl. 'anonymous' = anyone with link, 'organization' = org members only. Different from share-drive-item which sends email invitations. Use when you need a shareable URL."
   },
   {
@@ -2491,7 +2470,6 @@
     "method": "get",
     "toolName": "get-drive-item-version",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns a specific version of a file. version-id from list-drive-item-versions (e.g. '1.0', '2.0'). Includes lastModifiedDateTime, size. Use restore-drive-item-version to restore this version."
   },
   {
@@ -2499,7 +2477,6 @@
     "method": "get",
     "toolName": "get-drive-item-permission",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single sharing permission by id. permission-id from list-drive-item-permissions. Includes grantedTo (user/group), roles (read/write/owner), link (if sharing link), expirationDateTime."
   },
   {
@@ -2584,7 +2561,6 @@
     "method": "get",
     "toolName": "get-excel-table",
     "scopes": ["Files.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single table definition: name, showHeaders, showTotals, style, highlightFirstColumn, highlightLastColumn. table-id or table name from list-excel-tables. Requires an active workbook session — use create-excel-session first."
   },
   {
@@ -2615,7 +2591,6 @@
     "method": "get",
     "toolName": "list-focused-inbox-overrides",
     "scopes": ["Mail.Read"],
-    "workScopes": [],
     "llmTip": "Returns all Focused Inbox sender overrides. Each override has id, classifyAs ('focused' or 'other'), senderEmailAddress. Use to see which senders are pinned to Focused or Other inbox. Use id with update-focused-inbox-override or delete-focused-inbox-override."
   },
   {
@@ -2656,7 +2631,6 @@
     "method": "get",
     "toolName": "get-contact-in-folder",
     "scopes": ["Contacts.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single contact from a specific contact folder. contactId from list-contact-folder-contacts. Returns all standard contact fields: displayName, emailAddresses, phones, jobTitle, companyName."
   },
   {
@@ -2929,7 +2903,6 @@
     "method": "get",
     "toolName": "get-calendar-permission",
     "scopes": ["Calendars.Read"],
-    "workScopes": [],
     "llmTip": "Returns a single calendar sharing permission by id. calendarPermission-id from list-calendar-permissions. Includes emailAddress (of the person shared with), role (freeBusyRead/limitedRead/read/write/delegateWithoutPrivateEventAccess/delegateWithPrivateEventAccess/custom/owner/none), isInsideOrganization, isRemovable."
   },
   {
@@ -2971,7 +2944,6 @@
     "method": "get",
     "toolName": "get-teams-app-catalog-app",
     "scopes": ["AppCatalog.Read.All"],
-    "workScopes": [],
     "llmTip": "Returns a single Teams app from the app catalog by id. teamsApp-id from list-teams-app-catalog. Use $expand=appDefinitions to include version details and permission requirements. Different from get-team-app which returns an app installed in a specific team."
   },
 
