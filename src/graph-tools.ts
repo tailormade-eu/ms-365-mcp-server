@@ -870,7 +870,11 @@ export function registerGraphTools(
         'parse-teams-url',
         'Converts any Teams meeting URL format (short /meet/, full /meetup-join/, or recap ?threadId=) into a standard joinWebUrl. Use this before list-online-meetings when the user provides a recap or short URL.',
         {
-          url: z.string().describe('Teams meeting URL. Accepts: short /meet/ URLs, full /meetup-join/ joinWebUrls, and recap URLs with ?threadId=&tenantId=&organizerId= params. Returns a standard joinWebUrl for use with list-online-meetings $filter.'),
+          url: z
+            .string()
+            .describe(
+              'Teams meeting URL. Accepts: short /meet/ URLs, full /meetup-join/ joinWebUrls, and recap URLs with ?threadId=&tenantId=&organizerId= params. Returns a standard joinWebUrl for use with list-online-meetings $filter.'
+            ),
         },
         {
           title: 'Parse Teams URL',
