@@ -12965,57 +12965,6 @@ You can search within a folder hierarchy, a whole drive, or files shared with th
   },
   {
     method: 'get',
-    path: `/drives/:driveId/search(q=':q')`,
-    alias: 'search-drive',
-    description: `Search the hierarchy of items for items matching a query.
-You can search within a folder hierarchy, a whole drive, or files shared with the current user.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: '$top',
-        type: 'Query',
-        schema: z.number().int().gte(0).describe('Show only the first n items').optional(),
-      },
-      {
-        name: '$skip',
-        type: 'Query',
-        schema: z.number().int().gte(0).describe('Skip the first n items').optional(),
-      },
-      {
-        name: '$search',
-        type: 'Query',
-        schema: z.string().describe('Search items by search phrases').optional(),
-      },
-      {
-        name: '$filter',
-        type: 'Query',
-        schema: z.string().describe('Filter items by property values').optional(),
-      },
-      {
-        name: '$count',
-        type: 'Query',
-        schema: z.boolean().describe('Include count of items').optional(),
-      },
-      {
-        name: '$select',
-        type: 'Query',
-        schema: z.array(z.string()).describe('Select properties to be returned').optional(),
-      },
-      {
-        name: '$orderby',
-        type: 'Query',
-        schema: z.array(z.string()).describe('Order items by property values').optional(),
-      },
-      {
-        name: '$expand',
-        type: 'Query',
-        schema: z.array(z.string()).describe('Expand related entities').optional(),
-      },
-    ],
-    response: z.void()
-  },
-  {
-    method: 'get',
     path: '/groups',
     alias: 'list-groups',
     description: `List all the groups available in an organization, excluding dynamic distribution groups. To retrieve dynamic distribution groups, use the Exchange admin center. This operation returns by default only a subset of the properties for each group. These default properties are noted in the Properties section. To get properties that are not returned by default, do a GET operation for the group and specify the properties in a $select OData query option. The hasMembersWithLicenseErrors and isArchived properties are an exception and are not returned in the $select query.`,

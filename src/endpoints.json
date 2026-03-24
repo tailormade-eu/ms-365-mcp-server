@@ -1207,7 +1207,7 @@
     "llmTip": "Body: {parentReference: {driveId, id}, name (optional)}. Returns 202 Accepted — async operation. Response Location header has monitor URL."
   },
   {
-    "pathPattern": "/drives/{drive-id}/search(q='{q}')",
+    "pathPattern": "/drives/{drive-id}/root/search(q='{q}')",
     "method": "get",
     "toolName": "search-drive",
     "scopes": ["Files.Read"],

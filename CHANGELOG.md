@@ -1,5 +1,20 @@
 # Changelog — ms-365-mcp-server
 
+## [0.8.4] - 2026-03-24
+
+### Fixed
+
+- **V32: `z.any()` body param** — replaced with `z.unknown()` in graph-tools.ts body param and execute-tool `z.record(z.any())` → `z.record(z.unknown())`
+- **V33: Pagination note in JSON** — pagination cap note now returned as `_paginationNote` field inside JSON object instead of appended text that broke `JSON.parse()`
+- **V34: `NON_DESTRUCTIVE_POST_TOOLS` declarative** — hardcoded Set replaced with `nonDestructive: true` flag in endpoints.json (11 POST endpoints marked)
+- **V35: Proper noun handling** — `toSentenceCaseTitle()` now preserves proper nouns (OneNote, OneDrive, SharePoint, OAuth, EWS, etc.)
+- **V36: Test type cleanup** — `Function` type replaced with `(...args: unknown[]) => unknown` in all test files
+- **V37: Script lint config** — `scripts/gap-check.cjs` now has proper eslint globals + `no-regex-spaces` override
+- **`search-drive` path restored** — path reverted to `/drives/{drive-id}/root/search(q='{q}')` (was incorrectly changed to `/drives/{drive-id}/search(q='{q}')` which is not a valid Graph API path)
+- **`simplified-openapi.mjs` resilience** — generate script now skips synthetic endpoints not found in OpenAPI spec instead of throwing
+
+---
+
 ## [0.8.3] - 2026-03-24
 
 ### Fixed
