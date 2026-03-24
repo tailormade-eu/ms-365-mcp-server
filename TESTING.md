@@ -1297,4 +1297,24 @@ Note: 12 of 30 proposed endpoints already existed under different names (accept-
 
 ---
 
+## Task 99 — Port parse-teams-url utility tool (N4)
+
+### Utility tool — no Graph API call
+
+| Tool              | Type    | Description                                                   |
+| ----------------- | ------- | ------------------------------------------------------------- |
+| `parse-teams-url` | Utility | Converts Teams meeting URL formats into standard `joinWebUrl` |
+
+### Unit tests
+
+| #   | Test                                    | Expected                                          | Status |
+| --- | --------------------------------------- | ------------------------------------------------- | ------ |
+| 1   | Short `/meet/` URL passed through       | Returns URL as-is                                 | ✅     |
+| 2   | Full `/meetup-join/` URL passed through | Returns URL as-is                                 | ✅     |
+| 3   | Recap URL reconstructed                 | Valid `joinWebUrl` with threadId, context params  | ✅     |
+| 4   | Recap URL missing params throws         | Error: missing threadId, tenantId, or organizerId | ✅     |
+| 5   | Unknown URL format passed through       | Returns URL as-is                                 | ✅     |
+
+---
+
 **Legend:** ✅ pass | ❌ fail | ⬜ not tested | 🔄 flaky

@@ -180,6 +180,7 @@ describe('Calendar View Tools', () => {
       registerGraphTools(mockServer, mockGraphClient, false);
 
       for (const call of mockServer.tool.mock.calls) {
+        if (call[0] === 'parse-teams-url') continue; // utility tool, no Graph params
         const paramSchema = call[2] as Record<string, z.ZodTypeAny>;
         expect(paramSchema).toHaveProperty('fetchAllPages');
       }
