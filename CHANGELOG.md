@@ -1,5 +1,17 @@
 # Changelog — ms-365-mcp-server
 
+## [0.9.0] - 2026-03-24
+
+### Added
+
+- **N4: `parse-teams-url` utility tool** — ported from upstream (commit 0b6eef9). Converts Teams meeting URLs (short `/meet/`, full `/meetup-join/`, recap `?threadId=`) into standard joinWebUrl for use with `list-online-meetings` `$filter`. Includes `src/lib/teams-url-parser.ts` parser + 5 unit tests.
+
+### Fixed
+
+- **`url` parameter describe improved** — parse-teams-url `url` parameter now documents all three accepted URL formats and return value
+
+---
+
 ## [0.8.4] - 2026-03-24
 
 ### Fixed
