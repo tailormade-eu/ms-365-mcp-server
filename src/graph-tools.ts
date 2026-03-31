@@ -816,29 +816,29 @@ export function registerGraphTools(
 
     // Add OData parameters for GET endpoints (synthetic tools don't have generated params)
     if (syntheticTool.method.toUpperCase() === 'GET') {
-      paramSchema['$filter'] = z
+      paramSchema['filter'] = z
         .string()
         .describe(
           'OData filter expression. Add $count=true for advanced filters (flag/flagStatus, contains()). Cannot combine with $search.'
         )
         .optional();
-      paramSchema['$select'] = z
+      paramSchema['select'] = z
         .string()
         .describe(
           'Comma-separated fields to return. Always use to reduce response size. Example: id,subject,from,receivedDateTime'
         )
         .optional();
-      paramSchema['$top'] = z
+      paramSchema['top'] = z
         .number()
         .describe(
           'Max items per page (default varies, max 999 for mail). Server auto-paginates via nextLink.'
         )
         .optional();
-      paramSchema['$orderby'] = z
+      paramSchema['orderby'] = z
         .string()
         .describe('Sort expression. Example: receivedDateTime desc')
         .optional();
-      paramSchema['$expand'] = z
+      paramSchema['expand'] = z
         .string()
         .describe('Expand related entities. Example: members')
         .optional();
