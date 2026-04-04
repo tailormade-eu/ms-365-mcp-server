@@ -421,32 +421,32 @@
     "pathPattern": "/me/onenote/notebooks",
     "method": "get",
     "toolName": "list-onenote-notebooks",
-    "scopes": ["Notes.Read"],
-    "workScopes": ["Notes.Read"],
+    "scopes": ["Notes.Read.All"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Returns notebook-id needed for list-onenote-notebook-sections."
   },
   {
     "pathPattern": "/me/onenote/notebooks/{notebook-id}/sections",
     "method": "get",
     "toolName": "list-onenote-notebook-sections",
-    "scopes": ["Notes.Read"],
-    "workScopes": ["Notes.Read"],
+    "scopes": ["Notes.Read.All"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Returns onenoteSection-id needed for list-onenote-section-pages and create-onenote-section-page."
   },
   {
     "pathPattern": "/me/onenote/sections/{onenoteSection-id}/pages",
     "method": "get",
     "toolName": "list-onenote-section-pages",
-    "scopes": ["Notes.Read"],
-    "workScopes": ["Notes.Read"],
+    "scopes": ["Notes.Read.All"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Returns onenotePage-id needed for get-onenote-page-content."
   },
   {
     "pathPattern": "/me/onenote/pages/{onenotePage-id}/content",
     "method": "get",
     "toolName": "get-onenote-page-content",
-    "scopes": ["Notes.Read"],
-    "workScopes": ["Notes.Read"],
+    "scopes": ["Notes.Read.All"],
+    "workScopes": ["Notes.Read.All"],
     "acceptType": "text/html",
     "llmTip": "Returns the HTML content of a OneNote page. The response is raw HTML, not JSON. Contains OneNote-specific HTML tags and data attributes. Images are embedded as data URIs or referenced by URL."
   },
@@ -455,7 +455,7 @@
     "method": "post",
     "toolName": "create-onenote-page",
     "scopes": ["Notes.Create"],
-    "workScopes": ["Notes.ReadWrite"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "contentType": "text/html",
     "llmTip": "CRITICAL: Request body must be valid HTML with proper structure: <html><head><title>Page Title</title></head><body><p>Content here</p></body></html>. Partial HTML or plain text will fail silently or create malformed pages. Content-Type is text/html (handled automatically). Creates page in the default section. Use create-onenote-section-page to target a specific section."
   },
@@ -464,7 +464,7 @@
     "method": "post",
     "toolName": "create-onenote-section-page",
     "scopes": ["Notes.Create"],
-    "workScopes": ["Notes.ReadWrite"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "contentType": "text/html",
     "llmTip": "CRITICAL: Request body must be valid HTML with proper structure: <html><head><title>Page Title</title></head><body><p>Content here</p></body></html>. Partial HTML or plain text will fail silently or create malformed pages. Content-Type is text/html (handled automatically). Requires onenoteSection-id — use list-onenote-notebook-sections to find it."
   },
@@ -472,52 +472,52 @@
     "pathPattern": "/me/onenote/pages/{onenotePage-id}",
     "method": "get",
     "toolName": "get-onenote-page",
-    "scopes": ["Notes.Read"],
-    "workScopes": ["Notes.Read"],
+    "scopes": ["Notes.Read.All"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Returns page metadata (title, createdDateTime, lastModifiedDateTime, contentUrl). For the actual HTML content, use get-onenote-page-content instead."
   },
   {
     "pathPattern": "/me/onenote/pages/{onenotePage-id}",
     "method": "delete",
     "toolName": "delete-onenote-page",
-    "scopes": ["Notes.ReadWrite"],
-    "workScopes": ["Notes.ReadWrite"],
+    "scopes": ["Notes.ReadWrite.All"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "llmTip": "Deletes a OneNote page permanently. Use list-onenote-section-pages to find the page ID."
   },
   {
     "pathPattern": "/me/onenote/pages/{onenotePage-id}/content",
     "method": "patch",
     "toolName": "update-onenote-page",
-    "scopes": ["Notes.ReadWrite"],
-    "workScopes": ["Notes.ReadWrite"],
+    "scopes": ["Notes.ReadWrite.All"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "llmTip": "CRITICAL: Body is a JSON array of patch commands, NOT raw HTML. Each command: {target, action, content}. target='body' appends to page body. Use action='replace' with target='title' to rename page. Valid actions: append, insert, prepend, replace. Valid targets: body, title, or CSS selector. Example: [{\"target\": \"body\", \"action\": \"append\", \"content\": \"<p>New text</p>\"}]."
   },
   {
     "pathPattern": "/groups/{group-id}/onenote/notebooks",
     "method": "get",
     "toolName": "list-group-onenote-notebooks",
-    "workScopes": ["Notes.Read"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Lists shared notebooks in a Microsoft 365 Group (Teams). group-id is the same as team-id from list-joined-teams."
   },
   {
     "pathPattern": "/groups/{group-id}/onenote/notebooks/{notebook-id}/sections",
     "method": "get",
     "toolName": "list-group-onenote-sections",
-    "workScopes": ["Notes.Read"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Lists sections in a group notebook. Returns onenoteSection-id needed for list-group-onenote-section-pages."
   },
   {
     "pathPattern": "/groups/{group-id}/onenote/sections/{onenoteSection-id}/pages",
     "method": "get",
     "toolName": "list-group-onenote-section-pages",
-    "workScopes": ["Notes.Read"],
+    "workScopes": ["Notes.Read.All"],
     "llmTip": "Lists pages in a group notebook section. Returns onenotePage-id needed for get-group-onenote-page-content."
   },
   {
     "pathPattern": "/groups/{group-id}/onenote/pages/{onenotePage-id}/content",
     "method": "get",
     "toolName": "get-group-onenote-page-content",
-    "workScopes": ["Notes.Read"],
+    "workScopes": ["Notes.Read.All"],
     "acceptType": "text/html",
     "llmTip": "Returns the HTML content of a OneNote page in a group/Teams notebook. The response is raw HTML, not JSON."
   },
@@ -554,7 +554,7 @@
     "pathPattern": "/groups/{group-id}/onenote/sections/{onenoteSection-id}/pages",
     "method": "post",
     "toolName": "create-group-onenote-page",
-    "workScopes": ["Notes.ReadWrite"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "contentType": "text/html",
     "llmTip": "CRITICAL: Request body must be valid HTML with proper structure: <html><head><title>Page Title</title></head><body><p>Content here</p></body></html>. Partial HTML or plain text will fail silently or create malformed pages. Creates page in a group/Teams notebook section."
   },
@@ -2754,16 +2754,16 @@
     "pathPattern": "/me/onenote/pages/{pageId}/copyToSection",
     "method": "post",
     "toolName": "copy-onenote-page",
-    "scopes": ["Notes.ReadWrite"],
-    "workScopes": ["Notes.ReadWrite"],
+    "scopes": ["Notes.ReadWrite.All"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "llmTip": "Body: {id: 'target-section-id', groupId: 'group-id (optional)'}. Copies a page to another section. Returns 202 Accepted with an operation location header — the copy is async. Use the operation URL to check completion status. pageId from list-onenote-section-pages."
   },
   {
     "pathPattern": "/me/onenote/sections/{sectionId}/copyToNotebook",
     "method": "post",
     "toolName": "copy-onenote-section",
-    "scopes": ["Notes.ReadWrite"],
-    "workScopes": ["Notes.ReadWrite"],
+    "scopes": ["Notes.ReadWrite.All"],
+    "workScopes": ["Notes.ReadWrite.All"],
     "llmTip": "Body: {id: 'target-notebook-id', groupId: 'group-id (optional)'}. Copies a section to another notebook. Returns 202 Accepted — async operation. sectionId from list-onenote-notebook-sections. Can also use copyToSectionGroup: POST /onenote/sections/{id}/copyToSectionGroup."
   },
 
