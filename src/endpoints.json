@@ -423,7 +423,7 @@
     "toolName": "list-onenote-notebooks",
     "scopes": ["Notes.Read.All"],
     "workScopes": ["Notes.Read.All"],
-    "llmTip": "Returns notebook-id needed for list-onenote-notebook-sections."
+    "llmTip": "Returns notebook-id needed for list-onenote-notebook-sections. CRITICAL: webUrl is not a valid $select property on notebooks — Graph returns 400. To get the notebook URL, use links in $select — returns links.oneNoteWebUrl.href (web) and links.oneNoteClientUrl.href (client app)."
   },
   {
     "pathPattern": "/me/onenote/notebooks/{notebook-id}/sections",
@@ -955,7 +955,7 @@
     "method": "get",
     "toolName": "search-sharepoint-sites",
     "workScopes": ["Sites.Read.All"],
-    "llmTip": "Searches SharePoint sites. Use $search query parameter: $search=\"keyword\". Returns site-id needed for all other SharePoint operations. Use $select=id,displayName,webUrl,description to reduce response size."
+    "llmTip": "Searches SharePoint sites. Use $search query parameter: $search=\"keyword\". Returns site-id needed for all other SharePoint operations. Use $select=id,displayName,webUrl,description to reduce response size. WARNING: $search queries starting with a digit (e.g. \"1testsite\", \"3demo\") return 400 Bad Request. Workaround: use beta-get with path /sites/hostname:/sites/sitename: to look up the site by URL directly (beta endpoint — may change without notice)."
   },
   {
     "pathPattern": "/sites/{site-id}",
