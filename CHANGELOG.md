@@ -1,5 +1,15 @@
 # Changelog — ms-365-mcp-server
 
+## [0.10.1] - 2026-04-05
+
+### Fixed
+
+- **`list-onenote-notebooks` llmTip** — CRITICAL: `webUrl` is not a valid `$select` field; use `links` instead to get notebook URLs
+- **`search-sharepoint-sites` llmTip** — WARNING: `$search` values starting with a digit return 400; workaround via `beta-get` with `/sites?search=...`
+- **GUIDELINES-MS365.md** — synced Q20 (OneNote webUrl) and Q21 (SharePoint site search digit) quirks
+
+---
+
 ## [0.10.0] - 2026-03-24
 
 ### Added
