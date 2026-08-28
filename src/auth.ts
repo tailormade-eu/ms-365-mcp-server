@@ -380,12 +380,26 @@ class AuthManager {
       if (selectedAccount) {
         return selectedAccount;
       }
+      // b-ms365-verkeerde-mailbox-zonder-signaal (2026-08-28): silently returning accounts[0]
+      // here used to route a request to a DIFFERENT mailbox than the one explicitly selected,
+      // with only a logger.warn (not visible to the session) as trace. With >1 account that
+      // ambiguity must surface the same way getTokenForAccount already refuses to guess.
+      if (accounts.length > 1) {
+        const availableAccounts = accounts
+          .map((a: AccountInfo) => a.username || a.name || 'unknown')
+          .join(', ');
+        throw new Error(
+          `Selected account ${this.selectedAccountId} not found in cache, and ${accounts.length} ` +
+            `accounts are available — refusing to silently pick one. ` +
+            `Available accounts: ${availableAccounts}. Use select-account to choose again.`
+        );
+      }
       logger.warn(
-        `Selected account ${this.selectedAccountId} not found, falling back to first account`
+        `Selected account ${this.selectedAccountId} not found, but only one account is cached — using it`
       );
     }
 
-    // Fall back to first account (backward compatibility)
+    // Fall back to first account (backward compatibility — safe only when unambiguous, i.e. ≤1 account)
     return accounts[0];
   }
 

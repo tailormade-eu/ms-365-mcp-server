@@ -358,11 +358,15 @@ async function executeGraphTool(
 
     const fetchAllPages = params.fetchAllPages === true;
     if (fetchAllPages && response?.content?.[0]?.text) {
+      // Declared outside the try so a mid-loop failure (caught below) can still report how far
+      // pagination got — b-ms365-halve-lijst-lijkt-compleet (2026-08-28): an error here used to
+      // leave the untouched page-1 response in place, with a dangling @odata.nextLink and zero
+      // indication that more pages existed and were never fetched.
+      let combinedResponse = JSON.parse(response.content[0].text);
+      let allItems = combinedResponse.value || [];
+      let pageCount = 1;
       try {
-        let combinedResponse = JSON.parse(response.content[0].text);
-        let allItems = combinedResponse.value || [];
         let nextLink = combinedResponse['@odata.nextLink'];
-        let pageCount = 1;
 
         while (nextLink && pageCount < 100) {
           logger.info(`Fetching page ${pageCount + 1} from: ${nextLink}`);
@@ -423,6 +427,17 @@ async function executeGraphTool(
         );
       } catch (e) {
         logger.error(`Error during pagination: ${e}`);
+        // Best-effort: return what we did collect, but say so loudly — silently returning the
+        // untouched page-1 response (still carrying its own @odata.nextLink) reads as complete.
+        combinedResponse.value = allItems;
+        if (combinedResponse['@odata.count']) {
+          combinedResponse['@odata.count'] = allItems.length;
+        }
+        delete combinedResponse['@odata.nextLink'];
+        combinedResponse['_paginationError'] =
+          `Pagination failed after ${pageCount} page(s): ${e instanceof Error ? e.message : String(e)}. ` +
+          `Results below are incomplete — there may be more.`;
+        response.content[0].text = JSON.stringify(combinedResponse);
       }
     }
 

@@ -67,12 +67,27 @@ class KeyVaultSecretsProvider implements SecretsProvider {
 
     logger.info(`Fetching secrets from Key Vault: ${this.vaultUrl}`);
 
+    // b-ms365-sleutelkluis-fouten-weggegooid (2026-08-28): a missing optional secret (404) and a
+    // real fetch failure (auth/network) both used to collapse to `null` with zero trace — the
+    // exact error that would have explained a wrong-tenant login was thrown away here. Log
+    // anything that isn't a plain "not found" so it survives past this line.
+    const optionalSecret = (name: string) =>
+      client.getSecret(name).catch((err: unknown) => {
+        const statusCode = (err as { statusCode?: number })?.statusCode;
+        if (statusCode !== 404) {
+          logger.warn(
+            `Key Vault secret '${name}' fetch failed (not a plain not-found): ${err instanceof Error ? err.message : String(err)}`
+          );
+        }
+        return null;
+      });
+
     const [clientIdSecret, tenantIdSecret, clientSecretResult, cloudTypeResult] = await Promise.all(
       [
         client.getSecret('ms365-mcp-client-id'),
-        client.getSecret('ms365-mcp-tenant-id').catch(() => null),
-        client.getSecret('ms365-mcp-client-secret').catch(() => null),
-        client.getSecret('ms365-mcp-cloud-type').catch(() => null),
+        optionalSecret('ms365-mcp-tenant-id'),
+        optionalSecret('ms365-mcp-client-secret'),
+        optionalSecret('ms365-mcp-cloud-type'),
       ]
     );
 
